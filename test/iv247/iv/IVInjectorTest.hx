@@ -1,7 +1,7 @@
 package iv247.iv;
 import buddy.BuddySuite;
 
-import iv247.iv.mock.TestObject;
+import iv247.iv.mock.MockObject;
 
 using buddy.Should;
 
@@ -18,18 +18,18 @@ class IVInjectorTest extends BuddySuite {
             });
 
             it ("should be able to tell if a mapping exists", {
-                iv.hasMapping(TestObject).should.be(false);
+                iv.hasMapping(MockObject).should.be(false);
 
-                iv.mapValue(TestObject, new TestObject());
+                iv.mapValue(MockObject, new MockObject());
 
-                iv.hasMapping(TestObject).should.be(true);
+                iv.hasMapping(MockObject).should.be(true);
             });
 
             it ("should be able to remove mappings", {
-                iv.mapValue(TestObject, new TestObject());
-                iv.unmap(TestObject);
+                iv.mapValue(MockObject, new MockObject());
+                iv.unmap(MockObject);
 
-                iv.hasMapping(TestObject).should.be(false);
+                iv.hasMapping(MockObject).should.be(false);
             });
 
             it ("should inject values as arguments for a method");
@@ -38,11 +38,11 @@ class IVInjectorTest extends BuddySuite {
 
             describe ("values", {
                 it ("should be mapped to a type", {
-                    var testObject = new TestObject();
+                    var mock = new MockObject();
 
-                    iv.mapValue(TestObject, testObject);
+                    iv.mapValue(MockObject, mock);
 
-                    iv.getInstance(TestObject).should.be(testObject);
+                    iv.getInstance(MockObject).should.be(mock);
                 });
 
                 it ("should be mapped to a type based on an id", {
