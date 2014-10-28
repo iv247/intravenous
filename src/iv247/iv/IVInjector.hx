@@ -2,16 +2,16 @@ package iv247.iv;
 
 class IVInjector implements IInjector {
 
-    private var classMap : Map<String, Class<Dynamic>>;
+    private var classMap : Map<String, Dynamic>;
 
     public function new ()
     {
         classMap = new Map();
     }
 
-    public function mapValue<T> (whenType : Class<T>, value : T, ?id : String) : Void
+    public function mapValue<T> (whenType : Class<T>, value : T, ?id : String = "") : Void
     {
-
+       classMap.set( Type.getClassName(whenType)+id , value );
     }
 
     public function mapDynamic<T> (whenType : Class<T>, createType : Class<T>, ?id : String) : Void
@@ -24,9 +24,18 @@ class IVInjector implements IInjector {
 
     }
 
+    public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool
+    {
+         return classMap.exists( Type.getClassName(type)+id );
+    }
+
+    public function unmap (type:Class<Dynamic>, ?id : String = "") : Void {
+         classMap.remove( Type.getClassName(type)+id );
+    }
+
     public function getInstance<T> (type : Class<T>) : T
     {
-        return Type.createEmptyInstance( type );
+        return classMap.get(Type.getClassName(type));
     }
 
     public function getInstanceById (id : String) : Dynamic
