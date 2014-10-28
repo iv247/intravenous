@@ -46,14 +46,22 @@ class IVInjectorTest extends BuddySuite {
                 });
 
                 it ("should be mapped to a type based on an id", {
+                     var mock = new MockObject(),
+                         mockNoId = new MockObject();
 
+                     iv.mapValue(MockObject,mock,"mymock");
+                     iv.mapValue(MockObject,mockNoId);
+
+                     mock.should.be( iv.getInstance(MockObject,"mymock") );
+                     mockNoId.should.not.be( iv.getInstance(MockObject,"mymock") );
                 });
             });
 
-            describe ("types", {
+            describe ("dynamic types", {
                 it ("should be mapped to a compatible type");
                 it ("should be mapped to a compatible type based on an id");
-                it ("should have their properties injected");
+                it ("should be instantiated on every request")
+                it ("should have their inject annoted properties injected");
             });
 
             describe ("singleton types", {

@@ -9,9 +9,7 @@ interface IInjector {
 
     function unmap (type:Class<Dynamic>, ?id : String) : Void;
 
-    function getInstance<T> ( object : Class<T>) : T;
-
-    function getInstanceById ( id : String ) : Dynamic;
+    function getInstance<T> ( type : Class<T> , ?id : String ) : T;
 
     function instantiate<T> ( type : Class<T> ) : T;
 
