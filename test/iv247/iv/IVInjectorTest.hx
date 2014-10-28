@@ -60,7 +60,7 @@ class IVInjectorTest extends BuddySuite {
             describe ("dynamic types", {
                 it ("should be mapped to a compatible type");
                 it ("should be mapped to a compatible type based on an id");
-                it ("should be instantiated on every request")
+                it ("should be instantiated on every request");
                 it ("should have their inject annoted properties injected");
             });
 
