@@ -2,7 +2,7 @@ package iv247.iv;
 
 class IVInjector implements IInjector {
 
-    private var classMap : Map<String, Dynamic>;
+    private var classMap : Map<String, Injection>;
 
     public function new () {
         classMap = new Map();
@@ -11,19 +11,21 @@ class IVInjector implements IInjector {
     public function mapValue<T> (whenType : Class<T>,
                                  value : T,
                                  ?id : String = "") : Void {
-        classMap.set( Type.getClassName( whenType ) + id, value );
+        classMap.set( Type.getClassName( whenType ) + id, Value(value) );
     }
 
     public function mapDynamic<T> (whenType : Class<T>,
                                    createType : Class<T>,
-                                   ?id : String) : Void {
+                                   ?id : String = "") : Void {
+        var key =  Type.getClassName( whenType ) + id,
+            value = Injection.DynamicObject(createType);
 
+        classMap.set( key, value );
     }
 
     public function mapSingleton<T> (whenType : Class<T>,
                                      getInstance : Class<T>,
                                      ?id : String) : Void {
-
     }
 
     public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
@@ -35,7 +37,28 @@ class IVInjector implements IInjector {
     }
 
     public function getInstance<T> (type : Class<T>, ?id : String = "") : T {
-        return classMap.get( Type.getClassName( type ) + id );
+        var injection = Type.getClassName( type ) + id,
+            instance;
+
+        instance =
+        switch(classMap.get(injection)) {
+            case Injection.Value(object) :
+                object;
+
+            case Injection.DynamicObject(type) :
+                Type.createEmptyInstance(type);
+
+            case Injection.Singleton(type,object) :
+                if(object != null){
+                   object;
+                }else{
+                   object =Type.createEmptyInstance(type);
+                   mapValue(type,object,id);
+                }
+                object;
+        }
+
+        return instance;
     }
 
     public function instantiate<T> (type : Class<T>) : T {

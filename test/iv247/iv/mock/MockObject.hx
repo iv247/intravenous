@@ -1,6 +1,6 @@
 package iv247.iv.mock;
 
-class MockObject {
+class MockObject implements IMockObject {
 
     public function new () {
 
