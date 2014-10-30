@@ -5,7 +5,7 @@ import iv247.iv.mock.*;
 
 using buddy.Should;
 
-class IVInjectorTest extends BuddySuite {
+class IVMappingTest extends BuddySuite {
     public function new ( )
     {
 
@@ -52,10 +52,6 @@ class IVInjectorTest extends BuddySuite {
                 iv.hasMapping(MockObject).should.be(true);
                 iv.hasMapping(MockObject,id).should.be(false);
             });
-
-            it ("should inject values as arguments for a method");
-
-            it ("should inject values into a constructor");
 
             describe ("values", {
                 it ("should be able to be mapped to a type", {
@@ -117,7 +113,6 @@ class IVInjectorTest extends BuddySuite {
                     foo.should.not.be(foo2);
                 });
 
-                it ("should have their inject annotated properties injected");
             });
 
             describe ("singleton types", {
@@ -157,7 +152,6 @@ class IVInjectorTest extends BuddySuite {
                     foo.should.be(iv.getInstance(Foo));
                 });
 
-                it ("should have their properties injected only once");
             });
 
         });
