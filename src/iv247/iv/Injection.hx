@@ -5,5 +5,5 @@ enum Injection {
 
     DynamicObject (t:Class<Dynamic>);
 
-    Singleton (t:Class<Dynamic>, i:Dynamic);
+    Singleton (t:Class<Dynamic>, it:Class<Dynamic>);
 }
