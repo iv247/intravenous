@@ -25,9 +25,9 @@ class IV implements IInjector {
 
     public function mapSingleton<T> (whenType : Class<T>,
                                      getInstance : Class<T>,
-                                     ?id : String) : Void {
+                                     ?id : String = "") : Void {
         var key =  Type.getClassName( whenType ) + id,
-            value = Injection.Singleton(whenType,getInstance);
+            value = Injection.Singleton(whenType, getInstance);
 
         classMap.set( key, value );
     }
@@ -53,7 +53,8 @@ class IV implements IInjector {
                 Type.createEmptyInstance(type);
 
             case Injection.Singleton(type,instanceType) :
-                   var newInstance = Type.createEmptyInstance(instanceType);
+                   var newInstance = Type.createInstance(instanceType,[]);
+
                    mapValue(type,newInstance,id);
                    newInstance;
         }

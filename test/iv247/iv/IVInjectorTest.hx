@@ -9,7 +9,7 @@ class IVInjectorTest extends BuddySuite {
     public function new ( )
     {
 
-        describe( 'Iv', {
+        describe( 'IV', {
 
             var iv;
 
@@ -79,6 +79,7 @@ class IVInjectorTest extends BuddySuite {
             });
 
             describe ("dynamic types", {
+
                 it ("should be able to be mapped to a compatible type", {
                     var mock;
 
@@ -137,8 +138,25 @@ class IVInjectorTest extends BuddySuite {
                     Std.is(mock,MockObject).should.be(true);
                     Std.is(foo,Foo).should.be(true);
                 });
-                it ("should be lazy loaded");
-                it ("should be the same instance on every request");
+
+                it ("should be lazy loaded", {
+                    var foo;
+
+                    Foo.instantiated = false;
+
+                    iv.mapSingleton(Foo, Foo);
+                    foo = iv.getInstance(Foo);
+                    Foo.instantiated.should.be(true);
+                });
+
+                it ("should be the same instance on every request", {
+                    var foo, foo2;
+
+                    iv.mapSingleton(Foo, Foo);
+                    foo = iv.getInstance(Foo);
+                    foo.should.be(iv.getInstance(Foo));
+                });
+
                 it ("should have their properties injected only once");
             });
 
