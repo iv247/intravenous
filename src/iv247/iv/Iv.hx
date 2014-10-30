@@ -26,6 +26,10 @@ class IV implements IInjector {
     public function mapSingleton<T> (whenType : Class<T>,
                                      getInstance : Class<T>,
                                      ?id : String) : Void {
+        var key =  Type.getClassName( whenType ) + id,
+            value = Injection.Singleton(whenType,getInstance);
+
+        classMap.set( key, value );
     }
 
     public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
@@ -48,14 +52,10 @@ class IV implements IInjector {
             case Injection.DynamicObject(type) :
                 Type.createEmptyInstance(type);
 
-            case Injection.Singleton(type,object) :
-                if(object != null){
-                   object;
-                }else{
-                   object =Type.createEmptyInstance(type);
-                   mapValue(type,object,id);
-                }
-                object;
+            case Injection.Singleton(type,instanceType) :
+                   var newInstance = Type.createEmptyInstance(instanceType);
+                   mapValue(type,newInstance,id);
+                   newInstance;
         }
 
         return instance;

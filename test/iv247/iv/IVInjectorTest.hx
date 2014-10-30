@@ -120,8 +120,23 @@ class IVInjectorTest extends BuddySuite {
             });
 
             describe ("singleton types", {
-                it ("should be able to be mapped to a compatible type");
-                it ("should be able to be mapped to a compatible type based on an id");
+                it ("should map to a compatible type",{
+                     var mock;
+                     iv.mapSingleton(IMockObject, MockObject);
+                     mock = iv.getInstance(IMockObject);
+                     Std.is(mock,IMockObject).should.be(true);
+                });
+
+                it ("should map to a compatible type based on an id", {
+                    var mock, foo;
+                    iv.mapSingleton(IMockObject, MockObject,"mock");
+                    iv.mapSingleton(IMockObject, Foo,"foo");
+                    mock = iv.getInstance(IMockObject,"mock");
+                    foo = iv.getInstance(IMockObject,"foo");
+
+                    Std.is(mock,MockObject).should.be(true);
+                    Std.is(foo,Foo).should.be(true);
+                });
                 it ("should be lazy loaded");
                 it ("should be the same instance on every request");
                 it ("should have their properties injected only once");
