@@ -1,6 +1,6 @@
 package iv247.iv;
 
-class IVInjector implements IInjector {
+class IV implements IInjector {
 
     private var classMap : Map<String, Injection>;
 

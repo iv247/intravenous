@@ -9,12 +9,12 @@ class IVInjectorTest extends BuddySuite {
     public function new ( )
     {
 
-        describe( 'IVInjector', {
+        describe( 'Iv', {
 
             var iv;
 
             before({
-                iv = new IVInjector();
+                iv = new IV();
             });
 
             it ("should be able to tell if a mapping exists", {
