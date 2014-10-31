@@ -42,7 +42,7 @@ class IV implements IInjector {
 
     public function getInstance<T> (type : Class<T>, ?id : String = "") : T {
         var injection = Type.getClassName( type ) + id,
-            instance;
+            instance, newInstance;
 
         instance =
         switch(classMap.get(injection)) {
@@ -53,17 +53,17 @@ class IV implements IInjector {
                 Type.createEmptyInstance(type);
 
             case Injection.Singleton(type,instanceType) :
-                   var newInstance = Type.createInstance(instanceType,[]);
+                newInstance = Type.createInstance(instanceType,[]);
 
-                   mapValue(type,newInstance,id);
-                   newInstance;
+                mapValue(type,newInstance,id);
+                newInstance;
         }
 
         return instance;
     }
 
     public function instantiate<T> (type : Class<T>) : T {
-        return Type.createEmptyInstance( type );
+        return Type.createInstance( type, [] );
     }
 
     public function injectInto (object : Dynamic) : Void {

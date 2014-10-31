@@ -1,6 +1,5 @@
 package iv247.iv;
 import buddy.BuddySuite;
-
 import iv247.iv.mock.*;
 
 using buddy.Should;
