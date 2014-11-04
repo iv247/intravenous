@@ -1,5 +1,8 @@
 package iv247.iv;
 
+#if !macro 
+@:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"])) 
+#end
 class IV implements IInjector {
 
     private var classMap : Map<String, Injection>;
