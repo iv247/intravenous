@@ -43,20 +43,44 @@ class IVMacro {
 			return;
 		}
 
+		if(type.constructor != null && type.constructor.get().meta.has('inject')){
+			addConstructorTypes(type);
+		}
+
 		for(field in type.fields.get()){
 			
-
 			if(field.meta.has('type')){
 				return;
 			}
 
+
+
 			for (name in metaNames) {
 				if(field.meta.has(name)){
-					trace('has inject',field.name);
+					trace('has inject',field.name,type);
 					field.meta.add('types',[macro "String"],type.pos);
 				}
 			}
 		}
+	}
+
+	static function addConstructorTypes(type : ClassType) : Void {
+		var ctor = type.constructor.get();
+		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
+		var metaParams:Array<haxe.macro.Expr> = [];
+
+
+		for (param in ctorParams){
+			var name =  Std.string(param.t.getParameters()[0]);
+			var exp = macro {
+				opt :  $v{untyped param.opt},
+				type : $v{name}
+			};
+
+			metaParams.push(exp);
+		}
+
+		ctor.meta.add('types', metaParams, Context.currentPos());
 	}
 }
 #end

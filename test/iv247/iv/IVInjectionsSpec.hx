@@ -19,7 +19,13 @@ class IVInjectionsTest extends BuddySuite {
             });
 
             it("should instantiate objects with constructor args when constructor is annotated with inject",{
+                var object;
 
+                iv.mapDynamic(MockConstructorArg,MockConstructorArg);
+                
+                object = iv.instantiate(MockConstructorArg);
+
+                object.mock.should.not.be(null);
             });
 
             it("should use injections id's if available for constructor args");

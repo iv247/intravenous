@@ -1,5 +1,7 @@
 package iv247.iv;
 
+import haxe.rtti.Meta;
+
 #if !macro
 @:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
 #end
@@ -67,7 +69,20 @@ class IV implements IInjector {
     }
 
     public function instantiate<T> (type : Class<T>) : T {
-        return Type.createInstance( type, [] );
+        var ctorMeta = Meta.getFields(type)._;
+        var args:Array<Dynamic> = [];
+
+        if(ctorMeta != null){
+            for(type in ctorMeta.types){
+                trace(type.type);
+                Type.resolveClass(type.type);
+                args.push( instantiate(Type.resolveClass(type.type)) );
+            }
+        }
+
+        trace(args);
+
+        return Type.createInstance( type, args );
     }
 
     public function injectInto (object : Dynamic) : Void {
