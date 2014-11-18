@@ -68,8 +68,7 @@ class IVMacro {
 		var ctor = type.constructor.get();
 		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
 		var metaParams:Array<haxe.macro.Expr> = [];
-
-
+		
 		for (param in ctorParams){
 			var name =  Std.string(param.t.getParameters()[0]);
 			var exp = macro {

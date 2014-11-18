@@ -73,11 +73,15 @@ class IV implements IInjector {
 
     public function instantiate<T> (type : Class<T>) : T {
         var ctorMeta = Meta.getFields(type)._,
-            args = [];
+            args = [],
+            injectIds;
 
         if(ctorMeta != null){
+            injectIds = (ctorMeta == null || ctorMeta.inject == null) ? [] : ctorMeta.inject;
+
             for(type in ctorMeta.types){
-                var instance = getInstance( Type.resolveClass(type.type) );
+                var id =  injectIds[args.length];
+                var instance = getInstance( Type.resolveClass(type.type), id );
                 if(instance != null){
                     args.push( instance ); 
                 }

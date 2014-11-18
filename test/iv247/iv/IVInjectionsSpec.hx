@@ -2,6 +2,7 @@ package iv247.iv;
 
 import buddy.BuddySuite;
 import iv247.iv.mock.*;
+import iv247.iv.mock.MockConstructorArg;
 
 using buddy.Should;
 class IVInjectionsTest extends BuddySuite {
@@ -28,7 +29,21 @@ class IVInjectionsTest extends BuddySuite {
                 object.mock.should.not.be(null);
             });
 
-            it("should use injections id's if available for constructor args");
+            it("should use injections id's if available for constructor args", {
+                var mock1, mock2, object;
+
+                iv.mapSingleton(MockObject,MockObject,"mockId");
+                iv.mapSingleton(MockObject,MockObject,"mockId2");
+
+                mock1 = iv.getInstance(iv247.iv.mock.MockObject,"mockId");
+                mock2 = iv.getInstance(iv247.iv.mock.MockObject,"mockId2");
+
+                object = iv.instantiate(WithId);
+
+                object.mockWithId.should.be(mock1);
+                object.mockWithId2.should.be(mock2);
+
+            });
 
             it("should inject properties into classes with properties annotated with inject");
 
