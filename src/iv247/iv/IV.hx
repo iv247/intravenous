@@ -1,7 +1,7 @@
 package iv247.iv;
 
-#if !macro 
-@:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"])) 
+#if !macro
+@:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
 #end
 class IV implements IInjector {
 
@@ -9,6 +9,7 @@ class IV implements IInjector {
 
     public function new () {
         classMap = new Map();
+
     }
 
     public function mapValue<T> (whenType : Class<T>,

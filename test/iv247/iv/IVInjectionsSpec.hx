@@ -18,15 +18,13 @@ class IVInjectionsTest extends BuddySuite {
                 Foo.instantiated.should.be(true);
             });
 
-            it("should instantiate objects with constructor args when
-                constructor is annotated with inject",{
+            it("should instantiate objects with constructor args when constructor is annotated with inject",{
 
             });
 
             it("should use injections id's if available for constructor args");
 
-            it("should inject properties into classes with properties annotated
-                with inject");
+            it("should inject properties into classes with properties annotated with inject");
 
             it("should use inject id on class properties if set");
 
