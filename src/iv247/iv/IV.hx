@@ -50,6 +50,10 @@ class IV implements IInjector {
         var injection = Type.getClassName( type ) + id,
             instance, newInstance;
 
+        if(!classMap.exists(injection)){
+            return null;
+        }
+
         instance =
         switch(classMap.get(injection)) {
             case Injection.Value(object) :
@@ -60,7 +64,6 @@ class IV implements IInjector {
 
             case Injection.Singleton(type,instanceType) :
                 newInstance = Type.createInstance(instanceType,[]);
-
                 mapValue(type,newInstance,id);
                 newInstance;
         }
@@ -69,18 +72,17 @@ class IV implements IInjector {
     }
 
     public function instantiate<T> (type : Class<T>) : T {
-        var ctorMeta = Meta.getFields(type)._;
-        var args:Array<Dynamic> = [];
+        var ctorMeta = Meta.getFields(type)._,
+            args = [];
 
         if(ctorMeta != null){
             for(type in ctorMeta.types){
-                trace(type.type);
-                Type.resolveClass(type.type);
-                args.push( instantiate(Type.resolveClass(type.type)) );
+                var instance = getInstance( Type.resolveClass(type.type) );
+                if(instance != null){
+                    args.push( instance ); 
+                }
             }
         }
-
-        trace(args);
 
         return Type.createInstance( type, args );
     }
