@@ -81,10 +81,9 @@ class IV implements IInjector {
 
             for(type in ctorMeta.types){
                 var id =  injectIds[args.length];
-                var instance = getInstance( Type.resolveClass(type.type), id );
-                if(instance != null){
-                    args.push( instance ); 
-                }
+                var instanceType =  Type.resolveClass(type.type);
+                var instance = getInstance( instanceType, id );
+                args.push( instance ); 
             }
         }
 

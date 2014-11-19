@@ -8,9 +8,10 @@ using buddy.Should;
 class IVInjectionsTest extends BuddySuite {
     public function new() {
         describe("IV", {
-            var iv = new IV();
-            before({
+            var iv;
 
+            before({
+                iv = new IV();
             });
 
             it("should instantiate objects", {
@@ -42,7 +43,7 @@ class IVInjectionsTest extends BuddySuite {
 
                 object.mockWithId.should.be(mock1);
                 object.mockWithId2.should.be(mock2);
-
+                object.noId.should.be(null);
             });
 
             it("should inject properties into classes with properties annotated with inject");
