@@ -3,6 +3,7 @@ package iv247.iv;
 import buddy.BuddySuite;
 import iv247.iv.mock.*;
 import iv247.iv.mock.MockConstructorArg;
+import iv247.iv.mock.InjectionMock;
 
 using buddy.Should;
 class IVInjectionsTest extends BuddySuite {
@@ -46,9 +47,25 @@ class IVInjectionsTest extends BuddySuite {
                 object.noId.should.be(null);
             });
 
-            it("should inject properties into classes with properties annotated with inject");
+            it("should inject 'inject' annotated properties on an object if mapping exists",{
+                var object = new InjectionMock();
 
-            it("should use inject id on class properties if set");
+                iv.mapDynamic(InjectedObject,InjectedObject);
+                iv.injectInto(object);
+
+                object.injectedObject.should.not.be(null);
+                //mapping not created
+                object.injectedObjectWithId.should.be(null);
+            });
+
+            it("should inject 'inject' annotated properties with an id", {
+                var object = new InjectionMock();
+
+                iv.mapDynamic(InjectedObject,InjectedObject,"injectedObjectId");
+                iv.injectInto(object);
+
+                object.injectedObjectWithId.should.not.be(null);
+            });
 
             describe("calling inject annotated methods", {
                 it("should have arguments injected");

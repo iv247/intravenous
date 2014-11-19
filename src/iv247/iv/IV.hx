@@ -50,7 +50,7 @@ class IV implements IInjector {
         var injection = Type.getClassName( type ) + id,
             instance, newInstance;
 
-        if(!classMap.exists(injection)){
+            if(!classMap.exists(injection)){
             return null;
         }
 
@@ -80,8 +80,8 @@ class IV implements IInjector {
             injectIds = (ctorMeta == null || ctorMeta.inject == null) ? [] : ctorMeta.inject;
 
             for(type in ctorMeta.types){
-                var id =  injectIds[args.length];
-                var instanceType =  Type.resolveClass(type.type);
+                var id = injectIds[args.length];
+                var instanceType = Type.resolveClass(type.type);
                 var instance = getInstance( instanceType, id );
                 args.push( instance ); 
             }
@@ -91,10 +91,32 @@ class IV implements IInjector {
     }
 
     public function injectInto (object : Dynamic) : Void {
+        var type = Type.getClass(object),
+            fields = Meta.getFields(type),
+            targetType,
+            metaField,
+            instanceId,
+            instance;
 
+        for(field in Reflect.fields(fields)){
+
+            if(field == "_" || Reflect.isFunction(Reflect.field(object,field)) ){
+                continue;
+            };
+           
+            metaField =  Reflect.field(fields,field);
+            targetType = Type.resolveClass( metaField.types[0] );
+
+            instanceId = metaField.inject != null ? metaField.inject[0] : "";         
+
+            instance = getInstance(targetType, instanceId);
+
+            Reflect.setField(object,field,instance);
+        }
     }
 
     public function call (methodName : String, object : Dynamic) : Dynamic {
+        Reflect.callMethod(object,Reflect.field(object,methodName),[]);
         return null;
     }
 

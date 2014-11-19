@@ -43,29 +43,26 @@ class IVMacro {
 			return;
 		}
 
-		if(type.constructor != null && type.constructor.get().meta.has('inject')){
-			addConstructorTypes(type);
+		if(type.constructor != null && type.constructor.get().meta.has("inject")){
+			addConstructorTypes(type.constructor.get());
 		}
 
 		for(field in type.fields.get()){
 			
-			if(field.meta.has('type')){
+			if(field.meta.has("types")){
 				return;
-			}
-
-
+			}			
 
 			for (name in metaNames) {
 				if(field.meta.has(name)){
-					trace('has inject',field.name,type);
-					field.meta.add('types',[macro "String"],type.pos);
+					var typeName = Std.string( field.type.getParameters()[0] );
+					field.meta.add('types',[macro $v{typeName}],type.pos);
 				}
 			}
 		}
 	}
 
-	static function addConstructorTypes(type : ClassType) : Void {
-		var ctor = type.constructor.get();
+	static function addConstructorTypes(ctor:ClassField) : Void {
 		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
 		var metaParams:Array<haxe.macro.Expr> = [];
 		
@@ -79,7 +76,9 @@ class IVMacro {
 			metaParams.push(exp);
 		}
 
-		ctor.meta.add('types', metaParams, Context.currentPos());
+		if(metaParams.length > 0){
+			ctor.meta.add('types', metaParams, Context.currentPos());
+		}
 	}
 }
 #end
