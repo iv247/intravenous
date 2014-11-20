@@ -12,8 +12,8 @@ class InjectionMock {
 
 	}
 
-	@inject public function injectableMethod():Void{
-
+	@inject public function injectableMethod(injectedObject : InjectedObject) : InjectedObject {
+		return injectedObject;
 	}
 }
 

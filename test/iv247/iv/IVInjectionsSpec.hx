@@ -68,7 +68,19 @@ class IVInjectionsTest extends BuddySuite {
             });
 
             describe("calling inject annotated methods", {
-                it("should have arguments injected");
+                
+                it("should have arguments injected",{
+                    var injectedObject = new InjectedObject(),
+                        object = new InjectionMock(),
+                        result;
+                    
+                    iv.mapValue(InjectedObject,injectedObject);
+
+                    result = iv.call("injectableMethod", object);
+                    
+                    injectedObject.should.be(result);
+                });
+
                 it("should use argument id's if set");
                 it("should support optional arguments");
             });

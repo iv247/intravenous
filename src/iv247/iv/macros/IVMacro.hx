@@ -48,19 +48,28 @@ class IVMacro {
 		}
 
 		for(field in type.fields.get()){
-			
 			if(field.meta.has("types")){
 				return;
 			}			
 
 			for (name in metaNames) {
+
 				if(field.meta.has(name)){
-					var typeName = Std.string( field.type.getParameters()[0] );
-					field.meta.add('types',[macro $v{typeName}],type.pos);
+
+					switch(field.type){
+						case TFun(args,ret) :
+							  addConstructorTypes(field);
+					 	case TInst(t,params) :
+							var typeName = Std.string( field.type.getParameters()[0] );
+								field.meta.add('types',[macro $v{typeName}],type.pos);
+						default:
+					}
+					
 				}
 			}
 		}
 	}
+
 
 	static function addConstructorTypes(ctor:ClassField) : Void {
 		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
