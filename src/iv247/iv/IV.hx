@@ -11,7 +11,6 @@ class IV implements IInjector {
 
     public function new () {
         classMap = new Map();
-
     }
 
     public function mapValue<T> (whenType : Class<T>,
@@ -117,20 +116,28 @@ class IV implements IInjector {
 
     public function call (methodName : String, object: Dynamic) : Dynamic {
         var fields = Meta.getFields( Type.getClass(object)  ),
-            metaList:Array<Dynamic> = Reflect.getProperty(fields,methodName).types,
+            metaList = Reflect.getProperty(fields,methodName),
+            types : Array<Dynamic> = metaList.types,
             args = [],
-            newInstance;
+            newInstance,
+            id;
 
             if(metaList != null){
-                for(meta in metaList){
-                    newInstance = getInstance( Type.resolveClass(meta.type) ,meta.id);
-                    args.push(newInstance);                        
+
+                for(meta in types){
+                    id = metaList.inject != null ? metaList.inject[args.length] : "";
+                    newInstance = getInstance( 
+                        Type.resolveClass(meta.type),
+                        id
+                    );
+
+                    args.push(newInstance);     
                 }
             }
 
         return  Reflect.callMethod( 
                     object, 
-                    Reflect.field( object , methodName ), 
+                    Reflect.getProperty( object , methodName ), 
                     args 
                 );
     }

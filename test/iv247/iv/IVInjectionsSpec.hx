@@ -77,11 +77,25 @@ class IVInjectionsTest extends BuddySuite {
                     iv.mapValue(InjectedObject,injectedObject);
 
                     result = iv.call("injectableMethod", object);
-                    
+
+                    trace("injected object");
+                    trace(injectedObject);
                     injectedObject.should.be(result);
                 });
 
-                it("should use argument id's if set");
+                it("should use argument id's if set",{
+                    var injectedObject = new InjectedObject(),
+                        injectedObjectWithId = new InjectedObject(),
+                        object = new InjectionMock(),
+                        result;
+                    
+                    iv.mapValue(InjectedObject,injectedObjectWithId,"injectedObjectId");
+
+                    result = iv.call("injectableMethodWithId", object); 
+
+                    injectedObjectWithId.should.be(result.injectedObjectWithId);
+                });
+
                 it("should support optional arguments");
             });
 

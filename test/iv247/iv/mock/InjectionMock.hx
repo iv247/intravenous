@@ -12,8 +12,18 @@ class InjectionMock {
 
 	}
 
-	@inject public function injectableMethod(injectedObject : InjectedObject) : InjectedObject {
+	@inject 
+	public function injectableMethod(injectedObject : InjectedObject) : InjectedObject {
 		return injectedObject;
+	}
+
+	@inject(null,"injectedObjectId") 
+	public function injectableMethodWithId(v1:InjectedObject,v2:InjectedObject) : Dynamic {
+		
+		return {
+			injectedObject : v1,
+			injectedObjectWithId : v2
+		}
 	}
 }
 
