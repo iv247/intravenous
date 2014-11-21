@@ -29,12 +29,28 @@ class InjectionMock {
 	@inject("injectedObjectId")
 	public function injectableMethodWithOptionalArg(v1:InjectedObject,?v2:InjectedObject) : Dynamic {
 		
-		trace("optional");
-		trace(v2);
 		return {
 			injectedObjectWithId : v1,
 			injectedObject : v2
 		}
+	}
+}
+
+class SubClassInjectionMock extends InjectionMock {
+	public function new(){
+		super();
+	}
+}
+
+class CtorInjectionMock extends InjectionMock {
+	public var ctorObject : InjectedObject;
+	public var ctorObjectWithId: InjectedObject;
+
+	@inject(null,"injectedObjectId")
+	public function new(io : InjectedObject, ioId : InjectedObject){
+		ctorObject = io;
+		ctorObjectWithId = ioId;
+		super();
 	}
 }
 

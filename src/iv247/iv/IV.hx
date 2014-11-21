@@ -76,7 +76,7 @@ class IV implements IInjector {
             injectIds,
             instance;
 
-        if(ctorMeta != null){
+        if(ctorMeta != null && ctorMeta.types !=null){
             injectIds = (ctorMeta == null || ctorMeta.inject == null) ? [] : ctorMeta.inject;
 
             for(type in ctorMeta.types){
@@ -93,28 +93,36 @@ class IV implements IInjector {
         return instance;
     }
 
+
     public function injectInto (object : Dynamic) : Void {
         var type = Type.getClass(object),
-            fields = Meta.getFields(type),
+            fields,
             targetType,
             metaField,
             instanceId,
             instance;
 
-        for(field in Reflect.fields(fields)){
+        while(type != null){
+         
+            fields = Meta.getFields(type);        
 
-            if(field == "_" || Reflect.isFunction(Reflect.field(object,field)) ){
-                continue;
-            };
+            for(field in Reflect.fields(fields)){
 
-            metaField =  Reflect.field(fields,field);
-            targetType = Type.resolveClass( metaField.types[0] );
+                if(field == "_" || Reflect.isFunction(Reflect.field(object,field)) ){
+                    continue;
+                };
 
-            instanceId = metaField.inject != null ? metaField.inject[0] : "";
+                metaField =  Reflect.field(fields,field);
+                targetType = Type.resolveClass( metaField.types[0] );
 
-            instance = getInstance(targetType, instanceId);
+                instanceId = metaField.inject != null ? metaField.inject[0] : "";
 
-            Reflect.setField(object,field,instance);
+                instance = getInstance(targetType, instanceId);
+
+                Reflect.setField(object,field,instance);
+            }
+
+            type = Type.getSuperClass(type);  
         }
     }
 

@@ -67,6 +67,16 @@ class IVInjectionsTest extends BuddySuite {
                 object.injectedObjectWithId.should.not.be(null);
             });
 
+            it("should inject 'injected' annotated properties defined on a super class", {
+                var subclass = new SubClassInjectionMock();
+
+                iv.mapDynamic(InjectedObject,InjectedObject);
+
+                iv.injectInto(subclass);
+
+                subclass.injectedObject.should.not.be(null);
+            });
+
             describe("calling inject annotated methods", {
                 
                 it("should have arguments injected",{
@@ -111,15 +121,51 @@ class IVInjectionsTest extends BuddySuite {
                 });
             });
 
+            @include
             describe("mapped classes",{
                 it("should have there 'inject' annoted properties injected",{
-                    
+                    var injectionMock;
+
+                    iv.mapDynamic(InjectedObject,InjectedObject);
+                    iv.mapDynamic(InjectionMock,InjectionMock);
+                    iv.getInstance(InjectionMock).injectedObject.should.not.be(null);
+                });
+
+                it("should not inject properties that are not mapped",{
+                    iv.mapDynamic(InjectionMock,InjectionMock);
+                    iv.getInstance(InjectionMock).injectedObject.should.be(null);
+                });
+
+                it("should use the property's inject id if set", {
+                    var injectedObjectWithId = new InjectedObject(),
+                        injectionMock;
+
+                    iv.mapDynamic(InjectionMock,InjectionMock);
+
+                    iv.mapValue(InjectedObject,injectedObjectWithId, "injectedObjectId");
+
+                    injectionMock = iv.getInstance(InjectionMock);
+
+                    injectedObjectWithId.should.be(  injectionMock.injectedObjectWithId );
 
                 });
-                it("should use the property's inject id if set");
-                it("should have constructor args injected when instantiated");
-                it("should use constructor arg id's if set");
-                it("should support optional arguments in the constructor");
+
+                it("should have constructor args injected when instantiated",{
+                    var ctorInjectionMock,
+                        ctorObjectWithId;
+
+                    iv.mapDynamic(CtorInjectionMock,CtorInjectionMock);
+
+                    iv.mapDynamic(InjectedObject,InjectedObject,"injectedObjectId");
+                    iv.mapDynamic(InjectedObject,InjectedObject);
+
+                    ctorInjectionMock = iv.getInstance(CtorInjectionMock);
+
+                    ctorInjectionMock.ctorObject.should.not.be(null);
+                    ctorInjectionMock.ctorObjectWithId.should.not.be(null);
+
+                });
+
             });
         });
     }
