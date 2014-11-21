@@ -8,7 +8,7 @@ class IVMappingTest extends BuddySuite {
     public function new ( )
     {
 
-        describe("IV mapping", {
+        describe("IV (mapping)", {
 
             var iv;
 
