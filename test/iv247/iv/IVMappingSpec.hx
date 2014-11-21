@@ -8,7 +8,7 @@ class IVMappingTest extends BuddySuite {
     public function new ( )
     {
 
-        describe( 'IV', {
+        describe("IV mapping", {
 
             var iv;
 
@@ -16,7 +16,7 @@ class IVMappingTest extends BuddySuite {
                 iv = new IV();
             });
 
-            it ("should be able to tell if a mapping exists", {
+            it ("should tell if a mapping exists", {
                 iv.hasMapping(MockObject).should.be(false);
 
                 iv.mapValue(MockObject, new MockObject());
@@ -24,7 +24,7 @@ class IVMappingTest extends BuddySuite {
                 iv.hasMapping(MockObject).should.be(true);
             });
 
-            it ("should be able to tell if a mapping with an id exists", {
+            it ("should tell if a mapping with an id exists", {
                 var id = "mockId";
 
                 iv.mapValue(MockObject, new MockObject(),id);
@@ -33,14 +33,14 @@ class IVMappingTest extends BuddySuite {
                 iv.hasMapping(MockObject,id).should.be(true);
             });
 
-            it ("should be able to remove mappings", {
+            it ("should remove mappings", {
                 iv.mapValue(MockObject, new MockObject());
                 iv.unmap(MockObject);
 
                 iv.hasMapping(MockObject).should.be(false);
             });
 
-            it ("should be able to remove mappings with an id", {
+            it ("should remove mappings with an id", {
                 var id = "mockId";
 
                 iv.mapValue(MockObject, new MockObject());
@@ -53,7 +53,7 @@ class IVMappingTest extends BuddySuite {
             });
 
             describe ("values", {
-                it ("should be able to be mapped to a type", {
+                it ("should be mapped to a type", {
                     var mock = new MockObject();
 
                     iv.mapValue(MockObject, mock);
@@ -61,7 +61,7 @@ class IVMappingTest extends BuddySuite {
                     iv.getInstance(MockObject).should.be(mock);
                 });
 
-                it ("should be able to be mapped to a type based on an id", {
+                it ("should be mapped to a type based on an id", {
                      var mock = new MockObject(),
                          mockNoId = new MockObject();
 
@@ -75,7 +75,7 @@ class IVMappingTest extends BuddySuite {
 
             describe ("dynamic types", {
 
-                it ("should be able to be mapped to a compatible type", {
+                it ("should be mapped to a compatible type", {
                     var mock;
 
                     iv.mapDynamic(IMockObject,MockObject);
@@ -84,7 +84,7 @@ class IVMappingTest extends BuddySuite {
                     Std.is(mock,IMockObject).should.be( true );
                 });
 
-                it ("should be able to be mapped to a compatible type based on an id", {
+                it ("should be mapped to a compatible type based on an id", {
                     var mock, foo;
 
                     iv.mapDynamic(IMockObject,Foo);
@@ -97,7 +97,7 @@ class IVMappingTest extends BuddySuite {
                     Std.is(foo,Foo).should.be( true );
                 });
 
-                it ("should be able to be instantiated on every request", {
+                it ("should be instantiated on every request", {
                     var mock, mock2, foo, foo2;
 
                     iv.mapDynamic(IMockObject,Foo);
