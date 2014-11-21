@@ -121,7 +121,6 @@ class IVInjectionsTest extends BuddySuite {
                 });
             });
 
-            @include
             describe("mapped classes",{
                 it("should have there 'inject' annoted properties injected",{
                     var injectionMock;
