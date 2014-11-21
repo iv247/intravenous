@@ -59,10 +59,10 @@ class IV implements IInjector {
                 object;
 
             case Injection.DynamicObject(type) :
-                Type.createEmptyInstance(type);
+                instantiate(type);
 
             case Injection.Singleton(type,instanceType) :
-                newInstance = Type.createInstance(instanceType,[]);
+                newInstance = instantiate(instanceType);
                 mapValue(type,newInstance,id);
                 newInstance;
         }
@@ -73,7 +73,8 @@ class IV implements IInjector {
     public function instantiate<T> (type : Class<T>) : T {
         var ctorMeta = Meta.getFields(type)._,
             args = [],
-            injectIds;
+            injectIds,
+            instance;
 
         if(ctorMeta != null){
             injectIds = (ctorMeta == null || ctorMeta.inject == null) ? [] : ctorMeta.inject;
@@ -86,7 +87,10 @@ class IV implements IInjector {
             }
         }
 
-        return Type.createInstance( type, args );
+        instance = Type.createInstance(type,args);
+        injectInto(instance);
+
+        return instance;
     }
 
     public function injectInto (object : Dynamic) : Void {
@@ -137,7 +141,7 @@ class IV implements IInjector {
 
         return  Reflect.callMethod( 
                     object, 
-                    Reflect.getProperty( object , methodName ), 
+                    Reflect.field( object , methodName ), 
                     args 
                 );
     }

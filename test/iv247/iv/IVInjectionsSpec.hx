@@ -78,8 +78,6 @@ class IVInjectionsTest extends BuddySuite {
 
                     result = iv.call("injectableMethod", object);
 
-                    trace("injected object");
-                    trace(injectedObject);
                     injectedObject.should.be(result);
                 });
 
@@ -96,11 +94,28 @@ class IVInjectionsTest extends BuddySuite {
                     injectedObjectWithId.should.be(result.injectedObjectWithId);
                 });
 
-                it("should support optional arguments");
+                it("should support optional arguments",{
+                    var injectedObjectWithId = new InjectedObject(),
+                        object = new InjectionMock(),
+                        result : {
+                                  injectedObjectWithId : InjectedObject,
+                                  injectedObject : InjectedObject
+                              };
+                    
+                    iv.mapValue(InjectedObject,injectedObjectWithId,"injectedObjectId");
+
+                    result = iv.call("injectableMethodWithOptionalArg", object);
+
+                    result.injectedObjectWithId.should.be(injectedObjectWithId);
+                    result.injectedObject.should.be(null);                    
+                });
             });
 
             describe("mapped classes",{
-                it("should have there 'inject' annoted properties injected");
+                it("should have there 'inject' annoted properties injected",{
+                    
+
+                });
                 it("should use the property's inject id if set");
                 it("should have constructor args injected when instantiated");
                 it("should use constructor arg id's if set");

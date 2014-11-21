@@ -25,6 +25,17 @@ class InjectionMock {
 			injectedObjectWithId : v2
 		}
 	}
+
+	@inject("injectedObjectId")
+	public function injectableMethodWithOptionalArg(v1:InjectedObject,?v2:InjectedObject) : Dynamic {
+		
+		trace("optional");
+		trace(v2);
+		return {
+			injectedObjectWithId : v1,
+			injectedObject : v2
+		}
+	}
 }
 
 class InjectedObject {
