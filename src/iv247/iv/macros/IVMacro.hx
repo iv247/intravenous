@@ -73,11 +73,13 @@ class IVMacro {
 
 	static function addConstructorTypes(ctor:ClassField) : Void {
 		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
-		var metaParams:Array<haxe.macro.Expr> = [];
+		var metaParams:Array<haxe.macro.Expr> = [],
+			name,
+			exp;
 		
 		for (param in ctorParams){
-			var name =  Std.string(param.t.getParameters()[0]);
-			var exp = macro {
+			name =  Std.string(param.t.getParameters()[0]);
+			exp = macro {
 				opt :  $v{untyped param.opt},
 				type : $v{name}
 			};
