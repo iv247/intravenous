@@ -1,6 +1,11 @@
 package iv247.iv;
 
 import haxe.rtti.Meta;
+#if macro
+import haxe.macro.Expr;
+import haxe.macro.ExprTools;
+import iv247.iv.macros.IVMacro;
+#end
 
 #if !macro
 @:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
@@ -26,6 +31,7 @@ class IV implements IInjector {
             value = Injection.DynamicObject(createType);
 
         classMap.set( key, value );
+
     }
 
     public function mapSingleton<T> (whenType : Class<T>,
@@ -156,4 +162,10 @@ class IV implements IInjector {
                 );
     }
 
+    macro static public function registerExtension (expr : ExprOf<String>, ?extension : ExprOf<Extension>) : Expr {
+        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
+        return macro '';
+    }
+
 }
+

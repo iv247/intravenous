@@ -12,6 +12,9 @@ class IVMacro {
 	private static var onGenerateAdded : Bool; 
 
 	static public function buildMeta (names : Array<String>) : Array<Field> {
+
+		var fields = Context.getBuildFields().copy(),
+			newField;
 		
 		if(metaNames == null) {
 			metaNames = [];
@@ -24,11 +27,21 @@ class IVMacro {
 			onGenerateAdded = true;
 		}
 
-		return Context.getBuildFields();
+		newField = {
+	    	name: "metanames",
+	      	doc: null,
+	      	meta: [],
+	      	kind: FProp('default','default', macro : Array<String>, macro $v{metaNames}),
+	      	access: [AStatic, APublic],
+		  	pos: Context.currentPos()
+    	};
+
+    	fields.push(newField);
+
+		return fields;
 	}
 
 	static function onGenerate(types : Array<haxe.macro.Type>) : Void {
-		trace(metaNames);
 		for(type in types){
 			switch type {
 				case TInst(ref, params): 

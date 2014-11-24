@@ -13,6 +13,7 @@ class IVInjectionsTest extends BuddySuite {
 
             before({
                 iv = new IV();
+                IV.registerExtension("message",Extension);
             });
 
             it("should instantiate objects", {
