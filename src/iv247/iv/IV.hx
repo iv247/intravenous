@@ -1,6 +1,8 @@
 package iv247.iv;
 
 import haxe.rtti.Meta;
+import iv247.iv.ExtensionDef;
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -13,6 +15,8 @@ import iv247.iv.macros.IVMacro;
 class IV implements IInjector {
 
     private var classMap : Map<String, Injection>;
+    
+    private static var extensionMap : Map<String, ExtensionDef->Void>;
 
     public function new () {
         classMap = new Map();
@@ -96,6 +100,21 @@ class IV implements IInjector {
         }
 
         instance = Type.createInstance(type,args);
+
+        if(ctorMeta != null){
+            for(key in extensionMap.keys()){
+                    if(Reflect.hasField(ctorMeta,key)){
+                        extensionMap.get(key)({
+                            injector : this,
+                            metaname : key,
+                            object : instance,
+                            type : ExtensionType.Constructor
+
+                        });
+                    }
+            }
+        }
+
         injectInto(instance);
 
         return instance;
@@ -128,6 +147,17 @@ class IV implements IInjector {
                 instance = getInstance(targetType, instanceId);
 
                 Reflect.setField(object,field,instance);
+
+                for(key in extensionMap.keys()){
+                    if(Reflect.hasField(metaField,key)){
+                        extensionMap.get(key)({
+                            injector : this,
+                            metaname : key,
+                            object : object,
+                            type : ExtensionType.Property
+                        });
+                    }
+                 }    
             }
 
             type = Type.getSuperClass(type);  
@@ -161,10 +191,22 @@ class IV implements IInjector {
                     args 
                 );
     }
+    
+    public static function addExtension (metaname : String, func : ExtensionDef -> Void){
+        if(extensionMap == null){
+            extensionMap = new Map();
+        }
 
-    macro static public function registerExtension (expr : ExprOf<String>, ?extension : ExprOf<Extension>) : Expr {
+        extensionMap.set(metaname,func);
+    }
+
+    public function removeExtension (metaname : String) : Void {
+        extensionMap.remove(metaname);
+    }
+
+    macro static public function addTypeMetaTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
         iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
-        return macro '';
+        return macro  IV.addExtension(${expr}, ${extension});
     }
 
 }

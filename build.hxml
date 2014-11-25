@@ -2,4 +2,12 @@
 -cp test
 -cp src
 -main TestMain
+-js build/TestMain.js
+
+
+--next 
+-lib buddy
+-cp test
+-cp src
+-main TestMain
 --interp

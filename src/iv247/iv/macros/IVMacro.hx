@@ -27,18 +27,7 @@ class IVMacro {
 			onGenerateAdded = true;
 		}
 
-		newField = {
-	    	name: "metanames",
-	      	doc: null,
-	      	meta: [],
-	      	kind: FProp('default','default', macro : Array<String>, macro $v{metaNames}),
-	      	access: [AStatic, APublic],
-		  	pos: Context.currentPos()
-    	};
-
-    	fields.push(newField);
-
-		return fields;
+		return null;
 	}
 
 	static function onGenerate(types : Array<haxe.macro.Type>) : Void {
@@ -66,7 +55,6 @@ class IVMacro {
 			}			
 
 			for (name in metaNames) {
-
 				if(field.meta.has(name)){
 
 					switch(field.type){
