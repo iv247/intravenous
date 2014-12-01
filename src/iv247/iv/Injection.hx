@@ -6,4 +6,6 @@ enum Injection {
     DynamicObject (t:Class<Dynamic>);
 
     Singleton (t:Class<Dynamic>, it:Class<Dynamic>);
+
+    //Enum(t:Enum<Dynamic>, i:Enum<Dynamic>);
 }

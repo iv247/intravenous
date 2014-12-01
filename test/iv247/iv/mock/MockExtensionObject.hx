@@ -3,7 +3,11 @@ package iv247.iv.mock;
 class MockExtensionObject 
 {
 
+	@inject
+	public var extension3 : iv247.iv.ExtensionDef.ExtensionType;
+
 	@extension
+	@inject
 	public var extension : iv247.iv.mock.InjectionMock.InjectedObject;
 
 	@extension

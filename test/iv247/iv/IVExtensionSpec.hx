@@ -7,7 +7,7 @@ using buddy.Should;
 
 class IVExtensionSpec extends buddy.BuddySuite {
 	public function new(){
-		describe("IV Extensions",{
+		describe("IV extension functionality",{
 			var iv,
 				def,
 				callCount = 0,
@@ -16,14 +16,18 @@ class IVExtensionSpec extends buddy.BuddySuite {
 					def = extDef;
 				}; 
 
-			IV.addTypeMetaTo("extension",extFn);
+			IV.extendIocTo("extension",extFn);
+			
+			iv = new IV();
+			// iv.test(iv247.iv.mock.InjectionMock,new iv247.iv.mock.InjectionMock());	
+			// iv.test(ExtensionType,ExtensionType.Property);
 
 			before({
 				callCount = 0;
 				iv = new IV();
 			});
 
-			it("should call the extensions method for each annotated property of an instance",{
+			it("should call the extension's method for each annotated property of an instance",{
 				var mock = new MockExtensionObject();
 
 				iv.injectInto(mock);

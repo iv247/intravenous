@@ -38,6 +38,17 @@ class IV implements IInjector {
 
     }
 
+    @:overload(function <T>(when : Enum<T>, type: T):Void {})
+    public function test <T> (when : Class<T>, type : T) : Void {
+       if(Std.is(when,Enum)){
+        trace("isEnum",when);
+       }
+       if(Std.is(when,Class)){
+        trace("isClass",when);
+
+       }
+    }
+
     public function mapSingleton<T> (whenType : Class<T>,
                                      getInstance : Class<T>,
                                      ?id : String = "") : Void {
@@ -192,6 +203,7 @@ class IV implements IInjector {
                 );
     }
     
+    #if !display
     public static function addExtension (metaname : String, func : ExtensionDef -> Void){
         if(extensionMap == null){
             extensionMap = new Map();
@@ -199,12 +211,13 @@ class IV implements IInjector {
 
         extensionMap.set(metaname,func);
     }
+    #end
 
     public function removeExtension (metaname : String) : Void {
         extensionMap.remove(metaname);
     }
 
-    macro static public function addTypeMetaTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
+    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
         iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
         return macro  IV.addExtension(${expr}, ${extension});
     }

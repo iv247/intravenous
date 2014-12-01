@@ -49,20 +49,35 @@ class IVMacro {
 			addConstructorTypes(type.constructor.get());
 		}
 
-		for(field in type.fields.get()){
-			if(field.meta.has("types")){
-				return;
-			}			
+		for(field in type.fields.get()){	
 
 			for (name in metaNames) {
+				
+				if(field.meta.has("types")){
+					continue;
+				}	
+
 				if(field.meta.has(name)){
 
 					switch(field.type){
+						
 						case TFun(args,ret) :
 							  addConstructorTypes(field);
+					 	
 					 	case TInst(t,params) :
 							var typeName = Std.string( field.type.getParameters()[0] );
 								field.meta.add('types',[macro $v{typeName}],type.pos);
+						
+						case TAnonymous(a) : 
+								field.meta.add('types',[macro "Dynamic"],type.pos);
+
+						case TDynamic(t) :
+								field.meta.add('types',[macro "Dynamic"],type.pos);
+
+						case TEnum(t,params) :
+								var typeName = Std.string( field.type.getParameters()[0] );
+								field.meta.add('types',[macro $v{typeName}],type.pos);
+
 						default:
 					}
 					
