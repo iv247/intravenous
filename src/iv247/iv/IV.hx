@@ -181,7 +181,8 @@ class IV implements IInjector {
             types : Array<Dynamic> = metaList.types,
             args = [],
             newInstance,
-            id;
+            id,
+            result;
 
             if(metaList != null){
 
@@ -196,11 +197,24 @@ class IV implements IInjector {
                 }
             }
 
-        return  Reflect.callMethod( 
+        result = Reflect.callMethod( 
                     object, 
                     Reflect.field( object , methodName ), 
                     args 
                 );
+
+        for(key in extensionMap.keys()){
+            if(Reflect.hasField(metaList,key)){
+                    extensionMap.get(key)({
+                        injector : this,
+                        metaname : key,
+                        object : object,
+                        type : ExtensionType.Method
+                    });
+            }
+        }    
+
+        return  result;
     }
     
     #if !display
