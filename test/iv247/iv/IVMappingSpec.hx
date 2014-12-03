@@ -52,6 +52,13 @@ class IVMappingTest extends BuddySuite {
                 iv.hasMapping(MockObject,id).should.be(false);
             });
 
+            describe("enums", {
+                it("should map enum types",{
+                   iv.mapEnum(MockEnum, MockEnum.MockEnumValue);
+                   iv.hasMapping(MockEnum).should.be(true);
+                });
+            });
+
             describe ("values", {
                 it ("should be mapped to a type", {
                     var mock = new MockObject();

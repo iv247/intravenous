@@ -25,7 +25,22 @@ class IV implements IInjector {
     public function mapValue<T> (whenType : Class<T>,
                                  value : T,
                                  ?id : String = "") : Void {
-        classMap.set( Type.getClassName( whenType ) + id, Value(value) );
+
+        var className = Type.getClassName(whenType);
+
+        classMap.set( className + id, Value(value) );
+        
+    } 
+
+    public function mapEnum<T> (whenType : Enum<T>,
+                                 value : T,
+                                 ?id : String = "") : Void {
+
+        var enumName = Type.getEnumName(whenType);
+
+      
+        classMap.set( enumName + id, Enumeration(cast value)  );
+    
     }
 
     public function mapDynamic<T> (whenType : Class<T>,
@@ -38,15 +53,8 @@ class IV implements IInjector {
 
     }
 
-    @:overload(function <T>(when : Enum<T>, type: T):Void {})
     public function test <T> (when : Class<T>, type : T) : Void {
-       if(Std.is(when,Enum)){
-        trace("isEnum",when);
-       }
-       if(Std.is(when,Class)){
-        trace("isClass",when);
-
-       }
+       
     }
 
     public function mapSingleton<T> (whenType : Class<T>,
@@ -58,17 +66,29 @@ class IV implements IInjector {
         classMap.set( key, value );
     }
 
+    @:overload(function <T>(type : Enum<T>,?id:String):Bool {})
     public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
+        
+        if(Std.is(type,Enum)){
+            return classMap.exists( Type.getEnumName( cast type ) + id );
+        }
+        
         return classMap.exists( Type.getClassName( type ) + id );
+        
     }
 
     public function unmap (type : Class<Dynamic>, ?id : String = "") : Void {
         classMap.remove( Type.getClassName( type ) + id );
     }
 
+
     public function getInstance<T> (type : Class<T>, ?id : String = "") : T {
         var injection = Type.getClassName( type ) + id,
             instance, newInstance;
+
+        // if(injection == null){
+        //     injection = Type.getEnumName(type) +id;
+        // }
 
         if(!classMap.exists(injection)){
             return null;
@@ -86,6 +106,9 @@ class IV implements IInjector {
                 newInstance = instantiate(instanceType);
                 mapValue(type,newInstance,id);
                 newInstance;
+
+            case Enumeration(i) :
+                null;
         }
 
         return instance;
