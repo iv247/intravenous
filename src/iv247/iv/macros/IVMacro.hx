@@ -34,10 +34,64 @@ class IVMacro {
 		for(type in types){
 			switch type {
 				case TInst(ref, params): 
-					addTypeMetaToClass ( ref.get() );	
+					addTypeMetaToClass ( ref.get() );
+				case TEnum (ref, params):
+					addTypeMetaToEnum(ref.get());
 				default:
 			}
 		}
+	}
+
+	static private function addTFunArgs(args:Array<{t:Type,opt : Bool, name : String}>) : Array<haxe.macro.Expr> {
+		var typeInfo = [],
+			typeName; 
+		for(arg in args){
+			
+			typeName = 
+			switch (arg.t) {
+				
+				case TInst (t,parrms) :
+					Std.string( arg.t.getParameters()[0] );
+
+				case TEnum(t,params):
+					Std.string( arg.t.getParameters()[0] );
+
+				default :
+					"Dynamic";
+
+			};	
+
+			var exp = macro {
+					opt :  $v{untyped arg.opt},
+					type : $v{typeName}
+			};
+
+			typeInfo.push(exp);
+		}
+
+		return typeInfo;
+	}
+
+	static function addTypeMetaToEnum(type : EnumType) : Void {
+			
+		for(field in type.constructs){
+			if(field.meta.has('inject')){
+
+				if(field.meta.has('types')){
+					continue;
+				}
+
+				switch(field.type){
+					case TFun(args,_): 						
+						var types = addTFunArgs(args);
+
+						field.meta.add('types',types,type.pos);
+
+					default:
+				}
+			}
+		}
+	
 	}
 
 	static function	addTypeMetaToClass ( type : ClassType ) : Void {
@@ -85,7 +139,6 @@ class IVMacro {
 			}
 		}
 	}
-
 
 	static function addConstructorTypes(ctor:ClassField) : Void {
 		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];

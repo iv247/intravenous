@@ -3,7 +3,10 @@ package iv247.iv.mock;
 enum MockEnum 
 {
 
+	//@inject
 	MockEnumValue;
-	MockEnumCtro(i:MockObject,i2:MockObject);
+	
+	@inject
+	MockEnumCtor(i:MockObject,i2:MockObject,?i3:MockEnum);
 
 }
