@@ -7,6 +7,6 @@ enum Injection {
 
     Singleton (t:Class<Dynamic>, it:Class<Dynamic>);
 
-    Enumeration(i:Enum<Dynamic>);
+    Enumeration(i:EnumValue);
 
 }

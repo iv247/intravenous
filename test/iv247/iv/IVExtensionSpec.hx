@@ -42,7 +42,6 @@ class IVExtensionSpec extends buddy.BuddySuite {
 
 				var method = function (extDef:iv247.iv.ExtensionDef){
 					methodDef = extDef;
-					trace(extDef);
 				};
 
 				IV.extendIocTo("extensionMethod",method);
