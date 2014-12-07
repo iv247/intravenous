@@ -19,6 +19,8 @@ class IVExtensionSpec extends buddy.BuddySuite {
 			IV.extendIocTo("extension",extFn);
 			
 			iv = new IV();
+			// iv.test(iv247.iv.mock.InjectionMock,new iv247.iv.mock.InjectionMock());	
+			// iv.test(ExtensionType,ExtensionType.Property);
 
 			before({
 				callCount = 0;
@@ -32,25 +34,14 @@ class IVExtensionSpec extends buddy.BuddySuite {
 
 				iv.injectInto(mock);
 				callCount.should.be(2);
-				iv.hasMapping(ExtensionType);
 			});
 
 			it("should call the extension's method if method being called is annotated", {
-				var obj = new iv247.iv.mock.InjectionMock.InjectedObject();
 				var mock = new MockExtensionObject();
 				var methodDef;
 
-				var method = function (extDef:iv247.iv.ExtensionDef){
-					methodDef = extDef;
-				};
-
-				IV.extendIocTo("extensionMethod",method);
-
-				iv.injectInto(mock);
-				iv.mapValue( iv247.iv.mock.InjectionMock.InjectedObject , obj );
 				iv.call("mockMethod",mock);
-				
-			 	methodDef.type.should.be(ExtensionType.Method);
+			 	def.type.should.be(ExtensionType.Method);
 
 			});
 
