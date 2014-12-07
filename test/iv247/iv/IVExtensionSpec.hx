@@ -9,30 +9,32 @@ class IVExtensionSpec extends buddy.BuddySuite {
 	public function new(){
 		describe("IV extension functionality",{
 			var iv,
-				def,
+				extensionDef,
 				callCount = 0,
 				extFn = function (extDef:iv247.iv.ExtensionDef){
 					callCount++;
-					def = extDef;
+					extensionDef = extDef;
 				};
 
 			IV.extendIocTo("extension",extFn);
-			
+			IV.extendIocTo("extensionMethod",extFn);
+		
 			iv = new IV();
 			// iv.test(iv247.iv.mock.InjectionMock,new iv247.iv.mock.InjectionMock());	
 			// iv.test(ExtensionType,ExtensionType.Property);
 
 			before({
 				callCount = 0;
+				extensionDef = null;
 				iv = new IV();
 			});
 
 			it("should call the extension's method for each annotated property of an instance",{
-			 IV.extendIocTo("extensionMethod",extFn);
-
 				var mock = new MockExtensionObject();
 
 				iv.injectInto(mock);
+				extensionDef.metaname.should.be("extension");
+				extensionDef.type.should.be(ExtensionType.Property);
 				callCount.should.be(2);
 			});
 
@@ -41,13 +43,14 @@ class IVExtensionSpec extends buddy.BuddySuite {
 				var methodDef;
 
 				iv.call("mockMethod",mock);
-			 	def.type.should.be(ExtensionType.Method);
-
+				extensionDef.metaname.should.be("extensionMethod");
+			 	extensionDef.type.should.be(ExtensionType.Method);
 			});
 
 			it("should call the extensions's method if the constructor is annotated",{
 				iv.instantiate(MockCtorExtensionObject);
-				def.type.should.be(ExtensionType.Constructor);
+				extensionDef.metaname.should.be("extension");
+				extensionDef.type.should.be(ExtensionType.Constructor);
 			});
 
 		});
