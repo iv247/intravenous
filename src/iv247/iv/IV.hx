@@ -151,6 +151,7 @@ class IV implements IInjector {
                 };
 
                 metaField =  Reflect.field(fields,field);
+
                 targetType = Type.resolveClass( metaField.types[0] );
 
                 instanceId = metaField.inject != null ? metaField.inject[0] : "";
@@ -176,8 +177,10 @@ class IV implements IInjector {
     }
 
     public function call (methodName : String, object: Dynamic) : Dynamic {
+        trace('object');
+        trace(object);
         var fields = Meta.getFields( Type.getClass(object)  ),
-            metaList = Reflect.getProperty(fields,methodName),
+            metaList = Reflect.field(fields,methodName),
             types : Array<Dynamic> = metaList.types,
             args = [],
             newInstance,
