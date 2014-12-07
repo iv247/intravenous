@@ -10,4 +10,12 @@
 -cp test
 -cp src
 -main TestMain
+-swf build/TestMain.swf
+
+
+--next 
+-lib buddy
+-cp test
+-cp src
+-main TestMain
 --interp

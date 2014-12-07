@@ -22,44 +22,41 @@ class IV implements IInjector {
         classMap = new Map();
     }
 
+    @:overload(function<T>(whenType: Enum<T>, value : T, ?id:String):Void{})
     public function mapValue<T> (whenType : Class<T>,
                                  value : T,
                                  ?id : String = "") : Void {
-
-        var className = Type.getClassName(whenType);
-
-        classMap.set( className + id, Value(value) );
         
+        classMap.set( getTypeName(whenType) + id, Value(value) );       
     } 
 
-    public function mapEnum<T> (whenType : Enum<T>,
-                                value : T,
-                                ?id : String = "") : Void {
-
-        var enumName = Type.getEnumName(whenType);
-
-      
-        classMap.set( enumName + id, Enumeration(cast value)  );
-    
-    }
-
+    @:overload(function<T>(whenType: Enum<T>, createType : T, ?id:String):Void{})
     public function mapDynamic<T> (whenType : Class<T>,
                                    createType : Class<T>,
                                    ?id : String = "") : Void {
-        var key =  Type.getClassName( whenType ) + id,
+        var key =  getTypeName( whenType ) + id,
             value = Injection.DynamicObject(createType);
 
         classMap.set( key, value );
 
     }
 
+    @:overload(function<T>(whenType: Enum<T>, getInstance : T, ?id:String):Void{})
     public function mapSingleton<T> (whenType : Class<T>,
                                      getInstance : Class<T>,
                                      ?id : String = "") : Void {
-        var key =  Type.getClassName( whenType ) + id,
+        var key =  getTypeName( whenType ) + id,
             value = Injection.Singleton(whenType, getInstance);
 
         classMap.set( key, value );
+    }
+
+    private function getTypeName (type:Dynamic) : String {
+        if(Std.is(type,Class)){
+            return Type.getClassName(type);
+        }else{
+            return Type.getEnumName(cast type);
+        }
     }
 
     @:overload(function <T>(type : Enum<T>,?id:String):Bool {})

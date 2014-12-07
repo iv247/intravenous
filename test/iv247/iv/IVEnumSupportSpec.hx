@@ -16,12 +16,12 @@ class IVEnumSupportSpec extends BuddySuite
 
 		describe("IV Enums",{
 			it("should be mapped by type",{
-	           iv.mapEnum(MockEnum, MockEnum.MockEnumValue);
+	           iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	           iv.hasMapping(MockEnum).should.be(true);
 	        });
 
 	        it("should umap enums", {
-	        	iv.mapEnum(MockEnum, MockEnum.MockEnumValue);
+	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	        	iv.unmap(MockEnum);
 	            iv.hasMapping(MockEnum).should.be(false);
 	        });
@@ -52,7 +52,7 @@ class IVEnumSupportSpec extends BuddySuite
 	        it("should be injected into objects that have enum anotated with inject",{
 	        	var mockEnum;
 
-	        	iv.mapEnum(MockEnum, MockEnum.MockEnumValue);
+	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 
 	        	mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
 
