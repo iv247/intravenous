@@ -14,12 +14,12 @@ import iv247.iv.macros.IVMacro;
 #end
 class IV implements IInjector {
 
-    private var classMap : Map<String, Injection>;
+    private var injectionMap : Map<String, Injection>;
     
     private static var extensionMap : Map<String, ExtensionDef->Void>;
 
     public function new () {
-        classMap = new Map();
+        injectionMap = new Map();
     }
 
     @:overload(function<T>(whenType: Enum<T>, value : T, ?id:String):Void{})
@@ -27,7 +27,7 @@ class IV implements IInjector {
                                  value : T,
                                  ?id : String = "") : Void {
         
-        classMap.set( getTypeName(whenType) + id, Value(value) );       
+        injectionMap.set( getTypeName(whenType) + id, Value(value) );       
     } 
 
     @:overload(function<T>(whenType: Enum<T>, createType : T, ?id:String):Void{})
@@ -37,7 +37,7 @@ class IV implements IInjector {
         var key =  getTypeName( whenType ) + id,
             value = Injection.DynamicObject(createType);
 
-        classMap.set( key, value );
+        injectionMap.set( key, value );
 
     }
 
@@ -48,7 +48,7 @@ class IV implements IInjector {
         var key =  getTypeName( whenType ) + id,
             value = Injection.Singleton(whenType, getInstance);
 
-        classMap.set( key, value );
+        injectionMap.set( key, value );
     }
 
     private function getTypeName (type:Dynamic) : String {
@@ -63,19 +63,19 @@ class IV implements IInjector {
     public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
         
         if(Std.is(type,Enum)){
-            return classMap.exists( Type.getEnumName( cast type ) + id );
+            return injectionMap.exists( Type.getEnumName( cast type ) + id );
         }
         
-        return classMap.exists( Type.getClassName( type ) + id );
+        return injectionMap.exists( Type.getClassName( type ) + id );
         
     }
 
     @:overload(function(type : Enum<Dynamic>, ?id : String = "") : Void{})
     public function unmap (type : Class<Dynamic>, ?id : String = "") : Void {
         if(Std.is(type,Class)){
-            classMap.remove( Type.getClassName( type ) + id );
+            injectionMap.remove( Type.getClassName( type ) + id );
         }else{
-            classMap.remove( Type.getEnumName( cast type ) + id );
+            injectionMap.remove( Type.getEnumName( cast type ) + id );
         }
     }
 
@@ -87,12 +87,12 @@ class IV implements IInjector {
             injection = getNameFn(  type ) + id,
             instance, newInstance;
 
-        if(!classMap.exists(injection)){
+        if(!injectionMap.exists(injection)){
             return null;
         }
 
         instance =
-        switch(classMap.get(injection)) {
+        switch(injectionMap.get(injection)) {
             case Injection.Value(object) :
                 object;
 
@@ -115,12 +115,12 @@ class IV implements IInjector {
         var injection = Type.getEnumName(type) + id,
             instance;
 
-        if(!classMap.exists(injection)){
+        if(!injectionMap.exists(injection)){
             return null;
         }
 
         instance = 
-        switch(classMap.get(injection)) {
+        switch(injectionMap.get(injection)) {
             case Enumeration(v) :
             v;
             default :
