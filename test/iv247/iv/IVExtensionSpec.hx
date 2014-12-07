@@ -7,7 +7,6 @@ using buddy.Should;
 
 class IVExtensionSpec extends buddy.BuddySuite {
 	public function new(){
-		@include
 		describe("IV extension functionality",{
 			var iv,
 				extensionDefinition,
