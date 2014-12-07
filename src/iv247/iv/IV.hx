@@ -73,8 +73,13 @@ class IV implements IInjector {
         
     }
 
+    @:overload(function(type : Enum<Dynamic>, ?id : String = "") : Void{})
     public function unmap (type : Class<Dynamic>, ?id : String = "") : Void {
-        classMap.remove( Type.getClassName( type ) + id );
+        if(Std.is(type,Class)){
+            classMap.remove( Type.getClassName( type ) + id );
+        }else{
+            classMap.remove( Type.getEnumName( cast type ) + id );
+        }
     }
 
 
@@ -181,6 +186,7 @@ class IV implements IInjector {
             injectIds,
             instance,
             instanceType,
+            enumInstanceType,
             id;
 
         if(ctorMeta != null && ctorMeta.types !=null){
@@ -214,7 +220,6 @@ class IV implements IInjector {
 
         return instance;
     }
-
 
     public function injectInto (object : Dynamic) : Void {
         var type = Type.getClass(object),

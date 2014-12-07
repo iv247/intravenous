@@ -20,6 +20,12 @@ class IVEnumSupportSpec extends BuddySuite
 	           iv.hasMapping(MockEnum).should.be(true);
 	        });
 
+	        it("should umap enums", {
+	        	iv.mapEnum(MockEnum, MockEnum.MockEnumValue);
+	        	iv.unmap(MockEnum);
+	            iv.hasMapping(MockEnum).should.be(false);
+	        });
+
 	        it("should create an enum value without constructor", {
 	        	var mockEnum = iv.instantateEnum(MockEnum,"MockEnumValue");
 	        	mockEnum.should.be( MockEnum.MockEnumValue );
