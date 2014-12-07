@@ -207,7 +207,6 @@ class IV implements IInjector {
                         metaname : key,
                         object : instance,
                         type : ExtensionType.Constructor
-
                     });
                 }
             }
@@ -264,8 +263,6 @@ class IV implements IInjector {
 
 
     public function call (methodName : String, object: Dynamic) : Dynamic {
-        trace('object');
-        trace(object);
         var fields = Meta.getFields( Type.getClass(object)  ),
             metaList = Reflect.field(fields,methodName),
             types : Array<Dynamic> = metaList.types,

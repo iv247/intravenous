@@ -9,7 +9,7 @@ class MockExtension {
 	}
 
 	public function onInjection(extensionDef : iv247.iv.ExtensionDef) : Void {
-		trace(this);
+		
 	}
 
 }
