@@ -2,6 +2,7 @@ package iv247.iv;
 
 import haxe.rtti.Meta;
 import iv247.iv.ExtensionDef;
+import iv247.iv.Injection;
 
 #if macro
 import haxe.macro.Expr;
@@ -12,6 +13,7 @@ import iv247.iv.macros.IVMacro;
 #if !macro
 @:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
 #end
+
 class IV implements IInjector {
 
     private var injectionMap : Map<String, Injection>;
@@ -20,71 +22,51 @@ class IV implements IInjector {
 
     public function new () {
         injectionMap = new Map();
+        test(Injection);
     }
 
-    @:overload(function<T>(whenType: Enum<T>, value : T, ?id:String):Void{})
-    public function mapValue<T> (whenType : Class<T>,
+
+    public function test<T>( inj:Injectable<Enum<T>,Class<T>> ):Void {
+        trace(inj.isEnum());
+    }
+
+    public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
                                  value : T,
                                  ?id : String = "") : Void {
         
-        injectionMap.set( getTypeName(whenType) + id, Value(value) );       
+        injectionMap.set( whenType.getName() + id, Value(value) );       
     } 
 
-    @:overload(function<T>(whenType: Enum<T>, createType : T, ?id:String):Void{})
-    public function mapDynamic<T> (whenType : Class<T>,
-                                   createType : Class<T>,
+    public function mapDynamic<T> (whenType :  Injectable< Enum<T>,Class<T>>,
+                                   createType : Injectable< Enum<T>,Class<T>>,
                                    ?id : String = "") : Void {
-        var key =  getTypeName( whenType ) + id,
+        var key =  whenType.getName() + id,
             value = Injection.DynamicObject(createType);
 
         injectionMap.set( key, value );
 
     }
 
-    @:overload(function<T>(whenType: Enum<T>, getInstance : T, ?id:String):Void{})
-    public function mapSingleton<T> (whenType : Class<T>,
-                                     getInstance : Class<T>,
+    public function mapSingleton<T> (whenType : Injectable<Enum<T>,Class<T>>,
+                                     getInstance : Injectable<Enum<T>,Class<T>>,
                                      ?id : String = "") : Void {
-        var key =  getTypeName( whenType ) + id,
+        var key =  whenType.getName() + id,
             value = Injection.Singleton(whenType, getInstance);
 
         injectionMap.set( key, value );
     }
 
-    private function getTypeName (type:Dynamic) : String {
-        if(Std.is(type,Class)){
-            return Type.getClassName(type);
-        }else{
-            return Type.getEnumName(cast type);
-        }
+    public function hasMapping<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : Bool {        
+        return injectionMap.exists( type.getName() + id );       
     }
 
-    @:overload(function <T>(type : Enum<T>,?id:String):Bool {})
-    public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
-        
-        if(Std.is(type,Enum)){
-            return injectionMap.exists( Type.getEnumName( cast type ) + id );
-        }
-        
-        return injectionMap.exists( Type.getClassName( type ) + id );
-        
+    public function unmap (type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") : Void {
+        injectionMap.remove( type.getName() + id );
     }
 
-    @:overload(function(type : Enum<Dynamic>, ?id : String = "") : Void{})
-    public function unmap (type : Class<Dynamic>, ?id : String = "") : Void {
-        if(Std.is(type,Class)){
-            injectionMap.remove( Type.getClassName( type ) + id );
-        }else{
-            injectionMap.remove( Type.getEnumName( cast type ) + id );
-        }
-    }
+    public function getInstance<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : T {
 
-
-    @:overload(function <T>(type:Enum<T>,?id:String = ""):T{})
-    public function getInstance<T> (type : Class<T>, ?id : String = "") : T {
-
-        var getNameFn: Dynamic =  Std.is(type,Enum) ? Type.getEnumName : Type.getClassName,
-            injection = getNameFn(  type ) + id,
+        var injection = type.getName() + id,
             instance, newInstance;
 
         if(!injectionMap.exists(injection)){
@@ -111,24 +93,24 @@ class IV implements IInjector {
         return cast instance;
     }
 
-    public function getEnumInstance<T> (type : Enum<T>,?id:String = "") : EnumValue {
-        var injection = Type.getEnumName(type) + id,
-            instance;
+    // public function getEnumInstance<T> (type : Enum<T>,?id:String = "") : EnumValue {
+    //     var injection = Type.getEnumName(type) + id,
+    //         instance;
 
-        if(!injectionMap.exists(injection)){
-            return null;
-        }
+    //     if(!injectionMap.exists(injection)){
+    //         return null;
+    //     }
 
-        instance = 
-        switch(injectionMap.get(injection)) {
-            case Enumeration(v) :
-            v;
-            default :
-            null;
-        }
+    //     instance = 
+    //     switch(injectionMap.get(injection)) {
+    //         case Enumeration(v) :
+    //         v;
+    //         default :
+    //         null;
+    //     }
 
-        return instance;
-    }
+    //     return instance;
+    // }
 
     public function instantateEnum<T> (type : Enum<T>, ctor : String) : T {
 
