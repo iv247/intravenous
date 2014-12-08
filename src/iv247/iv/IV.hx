@@ -22,12 +22,6 @@ class IV implements IInjector {
 
     public function new () {
         injectionMap = new Map();
-        test(Injection);
-    }
-
-
-    public function test<T>( inj:Injectable<Enum<T>,Class<T>> ):Void {
-        trace(inj.isEnum());
     }
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
@@ -86,8 +80,7 @@ class IV implements IInjector {
                 mapValue(type,newInstance,id);
                 newInstance;
 
-            case Enumeration(i) :
-                i;
+            default : null;
         }
 
         return cast instance;
