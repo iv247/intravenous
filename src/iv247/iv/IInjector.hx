@@ -1,7 +1,7 @@
 package iv247.iv;
 interface IInjector {
 
-    function mapDynamic<T> (whenType:Class<T>, typeToCreate:Class<T>, ?id:String, ?enumCtor:String ):Void;
+    function mapDynamic<T> ( whenType:Class<T>, typeToCreate:Class<T>, ?id:String, ?enumCtor:String ):Void;
 
     function mapSingleton<T> (whenType:Class<T>, instanceType:Class<T>, ?id:String, ?enumCtor:String):Void;
 
@@ -11,9 +11,9 @@ interface IInjector {
 
     function getInstance<T>(type:Class<T>,?id:String):T;
 
-    function instantiate<T>(type:Class<T>):T;
+    function instantiate<T>(type:Class<T>,?constr:String):T;
 
     function injectInto (object:Dynamic):Void;
 
-    function call (methodName:String, object:Dynamic):Dynamic;
+    function call (methodName:String, object:Dynamic): Dynamic;
 }

@@ -13,7 +13,6 @@ import iv247.iv.macros.IVMacro;
 #if !macro
 @:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
 #end
-
 class IV implements IInjector {
 
     private var injectionMap : Map<String, Injection>;
@@ -23,6 +22,8 @@ class IV implements IInjector {
     public function new () {
         injectionMap = new Map();
     }
+
+ @:access(iv247.iv.Injectable)
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
                                  value : T,
@@ -36,7 +37,7 @@ class IV implements IInjector {
                                    ?id : String = "",
                                    ?constr : String) : Void {
         var key =  whenType.getName() + id,
-            value = Injection.DynamicObject(createType);
+            value = Injection.DynamicObject(createType,constr);
 
         injectionMap.set( key, value );
     }
@@ -46,7 +47,7 @@ class IV implements IInjector {
                                      ?id : String = "",
                                      ?constr : String) : Void {
         var key =  whenType.getName() + id,
-            value = Injection.Singleton(whenType, getInstance);
+            value = Injection.Singleton(whenType, getInstance,constr);
 
         injectionMap.set( key, value );
     }
@@ -60,7 +61,6 @@ class IV implements IInjector {
     }
 
     public function getInstance<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : T {
-
         var injection = type.getName() + id,
             instance, newInstance;
 
@@ -74,45 +74,66 @@ class IV implements IInjector {
                 object;
 
             case Injection.DynamicObject(type,ctor) :
-                instantiate(type);
+                instantiate(type,ctor);
 
             case Injection.Singleton(type,instanceType,ctor) :
-                newInstance = instantiate(instanceType);
+                newInstance = instantiate(instanceType,ctor);   
                 mapValue(type,newInstance,id);
                 newInstance;
-
-            default : null;
         }
 
-        return cast instance;
+        return instance;
     }
 
     private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
         return  Reflect.field(meta,fieldName);
     }
 
-
-    public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>) : T {
-        var ctorMeta = Meta.getFields(type)._,
+   
+    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
+        var id,ids,
             args = [],
+            instanceType : iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>,
+            instance;
+
+        if(meta != null && meta.types != null){
+            ids = (meta.inject == null) ? [] : meta.inject;
+            for(type in meta.types){
+                id = ids[args.length];
+                instanceType = Std.string( type.type );
+                instance = getInstance( instanceType, id );
+                args.push( instance ); 
+            }
+        }
+
+        return args;
+    }
+
+
+    public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>,?constr : String) : T {
+        var meta = Meta.getFields(type),
+            ctorMeta = null,
+            args,
             injectIds,
             instance,
             instanceType,
             enumInstanceType,
             id;
 
-        if(ctorMeta != null && ctorMeta.types !=null){
-            injectIds = (ctorMeta.inject == null) ? [] : ctorMeta.inject;
-
-            for(type in ctorMeta.types){
-                id = injectIds[args.length];
-                instanceType = Type.resolveClass(type.type);
-                instance = getInstance( instanceType, id );
-                args.push( instance ); 
-            }
+        if(type.isClass()){
+            ctorMeta = meta._;
+        }else {
+           for(fieldName in Reflect.fields(type)){
+                if(fieldName == constr){
+                    ctorMeta = getFieldMeta(meta, fieldName);
+                    break;
+                }
+            } 
         }
 
-        instance = Type.createInstance(type,args);
+        args = getMethodArgInstances(ctorMeta);
+
+        instance = type.instantiate(args,constr);
 
         if(ctorMeta != null){
             for(key in extensionMap.keys()){
@@ -127,56 +148,17 @@ class IV implements IInjector {
             }
         }
 
-        injectInto(instance);
+        if(!type.isEnum()){
+           injectInto(instance); 
+        }
 
         return instance;
-    }
-
-    public function instantateEnum<T> (type : Enum<T>, ctor : String) : T {
-
-        var meta = Meta.getFields(type),
-            ctorMeta = null,
-            metaField,
-            injectIds,
-            args = [],
-            typeName,
-            instanceType,
-            enumInstanceType,
-            instance,
-            id;
-
-            for(fieldName in Reflect.fields(type)){
-                if(fieldName == ctor){
-                    ctorMeta = getFieldMeta(meta, fieldName);
-                    break;
-                }
-            }
-
-            if(ctorMeta != null && ctorMeta.types !=null){
-                injectIds = (ctorMeta.inject == null) ? [] : ctorMeta.inject;
-
-                for(type in ctorMeta.types){
-                    id = injectIds[args.length] != null ? injectIds[args.length] : "";
-                    
-                    instanceType = Type.resolveClass(type.type);
-                    if(instanceType == null){
-                        enumInstanceType = Type.resolveEnum(type.type);
-                        instance = cast getInstance( enumInstanceType,id);
-                    }else{
-                        instance = getInstance( instanceType, id );
-                    }
-                   
-                    args.push( instance ); 
-                }
-            }
-
-        return Type.createEnum(type,ctor,args);
     }
 
     public function injectInto (object : Dynamic) : Void {
         var type = Type.getClass(object),
             fields,
-            targetType,
+            targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             metaField,
             instanceId,
             instance;
@@ -193,7 +175,7 @@ class IV implements IInjector {
 
                 metaField =  Reflect.field(fields,field);
 
-                targetType = Type.resolveClass( metaField.types[0] );
+                targetType =  Std.string( metaField.types[0] ) ;
 
                 instanceId = metaField.inject != null ? metaField.inject[0] : "";
 
@@ -222,24 +204,13 @@ class IV implements IInjector {
         var fields = Meta.getFields( Type.getClass(object)  ),
             metaList = Reflect.field(fields,methodName),
             types : Array<Dynamic> = metaList.types,
-            args = [],
+            args,
             newInstance,
             id,
             result;
 
-            if(metaList != null){
-
-                for(meta in types){
-                    id = metaList.inject != null ? metaList.inject[args.length] : "";
-                    newInstance = getInstance( 
-                        Type.resolveClass(meta.type),
-                        id
-                    );
-
-                    args.push(newInstance);     
-                }
-            }
-
+        args = getMethodArgInstances(metaList);
+            
         result = Reflect.callMethod( 
                     object, 
                     Reflect.field( object , methodName ), 
@@ -278,6 +249,4 @@ class IV implements IInjector {
         iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
         return macro  IV.addExtension(${expr}, ${extension});
     }
-
 }
-

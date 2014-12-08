@@ -20,6 +20,7 @@ class IVMacro {
 			metaNames = [];
 		}
 
+
 		metaNames = metaNames.concat(names);
 
 		if(!onGenerateAdded){

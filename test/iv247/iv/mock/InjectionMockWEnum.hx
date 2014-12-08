@@ -17,7 +17,8 @@ class InjectionMockWEnum
 	
 	@inject("injectEnumCtorId")
 	public function new(enumCtor:MockEnum,enumValue:MockEnum) : Void {
-
+		this.enumCtor = enumCtor;
+		this.enumValue = enumValue;
 	}
 
 }

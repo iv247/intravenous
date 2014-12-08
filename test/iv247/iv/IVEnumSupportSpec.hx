@@ -3,6 +3,7 @@ package iv247.iv;
 import buddy.BuddySuite;
 import iv247.iv.mock.MockEnum;
 import iv247.iv.mock.InjectionMock;
+import iv247.iv.mock.InjectionMockWEnum;
 
 using buddy.Should;
 class IVEnumSupportSpec extends BuddySuite
@@ -20,6 +21,7 @@ class IVEnumSupportSpec extends BuddySuite
 	           iv.hasMapping(MockEnum).should.be(true);
 	        });
 
+
 	        it("should umap enums", {
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	        	iv.unmap(MockEnum);
@@ -27,8 +29,9 @@ class IVEnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should create an enum value without constructor", {
-	        	var mockEnum = iv.instantateEnum(MockEnum,"MockEnumValue");
+	        	var mockEnum = iv.instantiate(MockEnum,"MockEnumValue");
 	        	mockEnum.should.be( MockEnum.MockEnumValue );
+
 	        });
 
 	        it("should create enum and inject constructor values",{
@@ -38,7 +41,7 @@ class IVEnumSupportSpec extends BuddySuite
 	        	iv.mapValue(InjectedObject,obj1,"injectedObjectId");
 	        	iv.mapDynamic(InjectedObject,InjectedObject);
 
-	        	mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
+	        	mockEnum = iv.instantiate(MockEnum,"MockEnumCtor");
 
 	        	switch(mockEnum){
 	        		case MockEnum.MockEnumCtor(i1,i2,i3):
@@ -50,9 +53,20 @@ class IVEnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should be injected into objects that have enum anotated with inject",{
-	        	var mockEnum;
+	        	var mockEnum, injectionMockWithEnum;
 
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
+	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
+	        	iv.mapValue(InjectedObject,new InjectedObject());
+
+	        	iv.mapDynamic(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
+	        	
+	        	var test: Injectable<Enum<Dynamic>,Class<Dynamic>>;
+	        	
+	        	test = "iv247.iv.mock.MockEnum";
+
+	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
+
 	        	// iv.mapDynamic(MockEnum,null,"",MockEnum.MockEnumCtor);
 	        	// mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
 
