@@ -53,18 +53,15 @@ class IVEnumSupportSpec extends BuddySuite
 	        	var mockEnum;
 
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
+	        	// iv.mapDynamic(MockEnum,null,"",MockEnum.MockEnumCtor);
+	        	// mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
 
-	        	mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
-
-	        	switch(mockEnum){
-	        		case MockEnum.MockEnumCtor(_,_,i3):
-	   	    			i3.should.be(MockEnum.MockEnumValue);
-	        		default:
-	        	}
+	        	// switch(mockEnum){
+	        	// 	case MockEnum.MockEnumCtor(_,_,i3):
+	   	    	// 		i3.should.be(MockEnum.MockEnumValue);
+	        	// 	default:
+	        	// }
 	        });
-
-	       
-	        
 
 		});
 

@@ -3,14 +3,16 @@ enum Injection {
 
     Value (v:Dynamic);
 
-    DynamicObject (t:Injectable<Enum<Dynamic>,Class<Dynamic>>);
+    DynamicObject (
+    	t:Injectable<Enum<Dynamic>,Class<Dynamic>>,
+    	?ctor:String
+    );
 
     Singleton (
     	t:Injectable<Enum<Dynamic>,Class<Dynamic>>, 
-    	it:Injectable<Enum<Dynamic>,Class<Dynamic>>
+    	it:Injectable<Enum<Dynamic>,Class<Dynamic>>,
+    	?ctor:String
     );
-
-    Enumeration(i:EnumValue);
 
 }
 

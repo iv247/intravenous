@@ -33,17 +33,18 @@ class IV implements IInjector {
 
     public function mapDynamic<T> (whenType :  Injectable< Enum<T>,Class<T>>,
                                    createType : Injectable< Enum<T>,Class<T>>,
-                                   ?id : String = "") : Void {
+                                   ?id : String = "",
+                                   ?constr : String) : Void {
         var key =  whenType.getName() + id,
             value = Injection.DynamicObject(createType);
 
         injectionMap.set( key, value );
-
     }
 
     public function mapSingleton<T> (whenType : Injectable<Enum<T>,Class<T>>,
                                      getInstance : Injectable<Enum<T>,Class<T>>,
-                                     ?id : String = "") : Void {
+                                     ?id : String = "",
+                                     ?constr : String) : Void {
         var key =  whenType.getName() + id,
             value = Injection.Singleton(whenType, getInstance);
 
@@ -72,10 +73,10 @@ class IV implements IInjector {
             case Injection.Value(object) :
                 object;
 
-            case Injection.DynamicObject(type) :
+            case Injection.DynamicObject(type,ctor) :
                 instantiate(type);
 
-            case Injection.Singleton(type,instanceType) :
+            case Injection.Singleton(type,instanceType,ctor) :
                 newInstance = instantiate(instanceType);
                 mapValue(type,newInstance,id);
                 newInstance;
@@ -86,73 +87,12 @@ class IV implements IInjector {
         return cast instance;
     }
 
-    // public function getEnumInstance<T> (type : Enum<T>,?id:String = "") : EnumValue {
-    //     var injection = Type.getEnumName(type) + id,
-    //         instance;
-
-    //     if(!injectionMap.exists(injection)){
-    //         return null;
-    //     }
-
-    //     instance = 
-    //     switch(injectionMap.get(injection)) {
-    //         case Enumeration(v) :
-    //         v;
-    //         default :
-    //         null;
-    //     }
-
-    //     return instance;
-    // }
-
-    public function instantateEnum<T> (type : Enum<T>, ctor : String) : T {
-
-         var meta = Meta.getFields(type),
-             ctorMeta = null,
-             metaField,
-             injectIds,
-             args = [],
-             typeName,
-             instanceType,
-             enumInstanceType,
-             instance,
-             id;
-
-            for(fieldName in Reflect.fields(type)){
-                if(fieldName == ctor){
-                    ctorMeta = getFieldMeta(meta, fieldName);
-                    break;
-                }
-            }
-
-           if(ctorMeta != null && ctorMeta.types !=null){
-                injectIds = (ctorMeta.inject == null) ? [] : ctorMeta.inject;
-
-                for(type in ctorMeta.types){
-                    id = injectIds[args.length] != null ? injectIds[args.length] : "";
-                    
-                    instanceType = Type.resolveClass(type.type);
-                    if(instanceType == null){
-                        enumInstanceType = Type.resolveEnum(type.type);
-                        instance = cast getInstance( enumInstanceType,id);
-                    }else{
-                        instance = getInstance( instanceType, id );
-                    }
-                   
-                    args.push( instance ); 
-                }
-            }
-
-         return Type.createEnum(type,ctor,args);
-    }
-
-
     private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
         return  Reflect.field(meta,fieldName);
     }
 
 
-    public function instantiate<T> (type : Class<T>) : T {
+    public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>) : T {
         var ctorMeta = Meta.getFields(type)._,
             args = [],
             injectIds,
@@ -190,6 +130,47 @@ class IV implements IInjector {
         injectInto(instance);
 
         return instance;
+    }
+
+    public function instantateEnum<T> (type : Enum<T>, ctor : String) : T {
+
+        var meta = Meta.getFields(type),
+            ctorMeta = null,
+            metaField,
+            injectIds,
+            args = [],
+            typeName,
+            instanceType,
+            enumInstanceType,
+            instance,
+            id;
+
+            for(fieldName in Reflect.fields(type)){
+                if(fieldName == ctor){
+                    ctorMeta = getFieldMeta(meta, fieldName);
+                    break;
+                }
+            }
+
+            if(ctorMeta != null && ctorMeta.types !=null){
+                injectIds = (ctorMeta.inject == null) ? [] : ctorMeta.inject;
+
+                for(type in ctorMeta.types){
+                    id = injectIds[args.length] != null ? injectIds[args.length] : "";
+                    
+                    instanceType = Type.resolveClass(type.type);
+                    if(instanceType == null){
+                        enumInstanceType = Type.resolveEnum(type.type);
+                        instance = cast getInstance( enumInstanceType,id);
+                    }else{
+                        instance = getInstance( instanceType, id );
+                    }
+                   
+                    args.push( instance ); 
+                }
+            }
+
+        return Type.createEnum(type,ctor,args);
     }
 
     public function injectInto (object : Dynamic) : Void {
