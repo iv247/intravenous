@@ -123,16 +123,12 @@ class IV implements IInjector {
         if(type.isClass()){
             ctorMeta = meta._;
         }else {
-           for(fieldName in Reflect.fields(type)){
-                if(fieldName == constr){
-                    ctorMeta = getFieldMeta(meta, fieldName);
-                    break;
-                }
-            } 
+            ctorMeta = getFieldMeta(meta, constr);
         }
 
         args = getMethodArgInstances(ctorMeta);
 
+        
         instance = type.instantiate(args,constr);
 
         if(ctorMeta != null){
@@ -148,7 +144,7 @@ class IV implements IInjector {
             }
         }
 
-        if(!type.isEnum()){
+        if(type.isClass()){
            injectInto(instance); 
         }
 

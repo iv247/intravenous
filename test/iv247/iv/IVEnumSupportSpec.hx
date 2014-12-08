@@ -15,6 +15,7 @@ class IVEnumSupportSpec extends BuddySuite
 			iv = new IV();
 		});
 
+		
 		describe("IV Enums",{
 			it("should be mapped by type",{
 	           iv.mapValue(MockEnum, MockEnum.MockEnumValue);
@@ -31,7 +32,6 @@ class IVEnumSupportSpec extends BuddySuite
 	        it("should create an enum value without constructor", {
 	        	var mockEnum = iv.instantiate(MockEnum,"MockEnumValue");
 	        	mockEnum.should.be( MockEnum.MockEnumValue );
-
 	        });
 
 	        it("should create enum and inject constructor values",{
