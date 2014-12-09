@@ -1,7 +1,8 @@
 package iv247.iv;
 
+import iv247.iv.internal.Injectable;
 
- enum Injection {
+enum Injection {
 
     Value (v:Dynamic);
 

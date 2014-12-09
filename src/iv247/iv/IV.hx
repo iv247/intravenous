@@ -3,7 +3,7 @@ package iv247.iv;
 import haxe.rtti.Meta;
 import iv247.iv.ExtensionDef;
 import iv247.iv.Injection;
-
+import iv247.iv.internal.Injectable;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -95,7 +95,7 @@ class IV implements IInjector {
     private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
         var id,ids,
             args = [],
-            instanceType : iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>,
+            instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             instance;
 
         if(meta != null && meta.types != null){

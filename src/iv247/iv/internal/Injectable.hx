@@ -1,11 +1,11 @@
-package iv247.iv;
+package iv247.iv.internal;
 
 abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T1 from T2  to T1 to T2 {
                 
     @:from 
     public static function fromString(path:String){
         var classType = Type.resolveClass(path);
-        var type : iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>;
+        var type : Injectable<Enum<Dynamic>,Class<Dynamic>>;
         
         if(classType != null){
             type = classType;
