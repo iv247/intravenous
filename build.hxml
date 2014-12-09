@@ -2,7 +2,6 @@
 -cp test
 -cp src
 -main TestMain
--debug
 -js build/TestMain.js
 
 
