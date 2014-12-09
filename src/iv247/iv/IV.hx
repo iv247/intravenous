@@ -21,9 +21,11 @@ class IV implements IInjector {
 
     public function new () {
         injectionMap = new Map();
+        // var test:Dynamic = 1;
+        //         var inj:iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>;
+        //         inj = test;
+        //         trace('isNull $inj');
     }
-
- @:access(iv247.iv.Injectable)
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
                                  value : T,

@@ -61,10 +61,10 @@ class IVEnumSupportSpec extends BuddySuite
 
 	        	iv.mapDynamic(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
 	        	
-	        	var test: Injectable<Enum<Dynamic>,Class<Dynamic>>;
+	        	//var test: Injectable<Enum<Dynamic>,Class<Dynamic>>;
 	        	
-	        	test = "iv247.iv.mock.MockEnum";
-
+	        	//test = "iv247.iv.mock.MockEnum";
+	        	var test:iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>;
 	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
 
 	        	// iv.mapDynamic(MockEnum,null,"",MockEnum.MockEnumCtor);

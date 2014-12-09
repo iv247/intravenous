@@ -1,13 +1,12 @@
 package iv247.iv;
 
 
-@:access(iv247.iv.Injectable)
-enum Injection {
+ enum Injection {
 
     Value (v:Dynamic);
 
     DynamicObject (
-    	t:iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>,
+    	t:Injectable<Enum<Dynamic>,Class<Dynamic>>,
     	?ctor:Null<String>
     );
 
@@ -18,4 +17,3 @@ enum Injection {
     );
 
 }
- 
