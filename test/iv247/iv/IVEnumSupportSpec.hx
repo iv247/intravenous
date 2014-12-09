@@ -14,14 +14,12 @@ class IVEnumSupportSpec extends BuddySuite
 		before({
 			iv = new IV();
 		});
-
 		
 		describe("IV Enums",{
 			it("should be mapped by type",{
 	           iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	           iv.hasMapping(MockEnum).should.be(true);
 	        });
-
 
 	        it("should umap enums", {
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
@@ -53,28 +51,31 @@ class IVEnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should be injected into objects that have enum anotated with inject",{
-	        	var mockEnum, injectionMockWithEnum;
+	        	var mockEnum, injectionMockWithEnum, mockEnumWCtor;
 
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
-	        	iv.mapValue(InjectedObject,new InjectedObject());
 
-	        	iv.mapDynamic(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
+	        	iv.mapSingleton(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
 	        	
-	        	//var test: Injectable<Enum<Dynamic>,Class<Dynamic>>;
-	        	
-	        	//test = "iv247.iv.mock.MockEnum";
-	        	var test:iv247.iv.internal.Injectable<Enum<Dynamic>,Class<Dynamic>>;
 	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
 
-	        	// iv.mapDynamic(MockEnum,null,"",MockEnum.MockEnumCtor);
-	        	// mockEnum = iv.instantateEnum(MockEnum,"MockEnumCtor");
+	        	mockEnumWCtor = iv.getInstance(MockEnum,"injectEnumCtorId");
 
-	        	// switch(mockEnum){
-	        	// 	case MockEnum.MockEnumCtor(_,_,i3):
-	   	    	// 		i3.should.be(MockEnum.MockEnumValue);
-	        	// 	default:
-	        	// }
+	        	injectionMockWithEnum.enumCtor.should.be(mockEnumWCtor);
+	        	Std.is(injectionMockWithEnum.enumValue,MockEnum).should.be(true);
+	        });
+
+	        it("should inject enums into class constructors",{
+	        	var injectionMockWithEnum, mockEnumWCtor;
+
+	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
+	        	iv.mapSingleton(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
+
+	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
+	        	mockEnumWCtor = iv.getInstance(MockEnum,"injectEnumCtorId");
+
+	        	injectionMockWithEnum.enumCtor.should.be(mockEnumWCtor);
 	        });
 
 		});

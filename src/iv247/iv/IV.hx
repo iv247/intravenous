@@ -21,16 +21,11 @@ class IV implements IInjector {
 
     public function new () {
         injectionMap = new Map();
-        // var test:Dynamic = 1;
-        //         var inj:iv247.iv.Injectable<Enum<Dynamic>,Class<Dynamic>>;
-        //         inj = test;
-        //         trace('isNull $inj');
     }
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
                                  value : T,
                                  ?id : String = "") : Void {
-        
         injectionMap.set( whenType.getName() + id, Value(value) );       
     } 
 
@@ -229,7 +224,7 @@ class IV implements IInjector {
         return  result;
     }
     
-    #if !display
+    @:noCompletion
     public static function addExtension (metaname : String, func : ExtensionDef -> Void){
         if(extensionMap == null){
             extensionMap = new Map();
@@ -237,7 +232,6 @@ class IV implements IInjector {
 
         extensionMap.set(metaname,func);
     }
-    #end
 
     public function removeExtension (metaname : String) : Void {
         extensionMap.remove(metaname);
