@@ -1,10 +1,11 @@
 package iv247;
 
 import haxe.rtti.Meta;
-import iv247.iv.ExtensionDef;
+import iv247.iv.*;
 import iv247.iv.Injection;
 import iv247.iv.internal.Injectable;
 import iv247.iv.IInjector;
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -22,6 +23,24 @@ class IV implements IInjector {
 
     public function new () {
         injectionMap = new Map();
+    }
+
+    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
+        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
+        return macro  IV.addExtension(${expr}, ${extension});
+    }
+
+    @:noCompletion
+    public static function addExtension (metaname : String, func : ExtensionDef -> Void){
+        if(extensionMap == null){
+            extensionMap = new Map();
+        }
+
+        extensionMap.set(metaname,func);
+    }
+
+    public function removeExtension (metaname : String) : Void {
+        extensionMap.remove(metaname);
     }
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
@@ -83,31 +102,6 @@ class IV implements IInjector {
         return instance;
     }
 
-    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
-        return  Reflect.field(meta,fieldName);
-    }
-
-   
-    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
-        var id,ids,
-            args = [],
-            instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
-            instance;
-
-        if(meta != null && meta.types != null){
-            ids = (meta.inject == null) ? [] : meta.inject;
-            for(type in meta.types){
-                id = ids[args.length];
-                instanceType = Std.string( type.type );
-                instance = getInstance( instanceType, id );
-                args.push( instance ); 
-            }
-        }
-
-        return args;
-    }
-
-
     public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>,?constr : String) : T {
         var meta = Meta.getFields(type),
             ctorMeta = null,
@@ -125,22 +119,10 @@ class IV implements IInjector {
         }
 
         args = getMethodArgInstances(ctorMeta);
-
-        
+       
         instance = type.instantiate(args,constr);
 
-        if(ctorMeta != null){
-            for(key in extensionMap.keys()){
-                if(Reflect.hasField(ctorMeta,key)){
-                    extensionMap.get(key)({
-                        injector : this,
-                        metaname : key,
-                        object : instance,
-                        type : ExtensionType.Constructor
-                    });
-                }
-            }
-        }
+        callExtensions(ctorMeta,instance,ExtensionType.Constructor); 
 
         if(type.isClass()){
            injectInto(instance); 
@@ -150,9 +132,9 @@ class IV implements IInjector {
     }
 
     public function injectInto (object : Dynamic) : Void {
-        var type = Type.getClass(object),
+        var targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
+            type = Type.getClass(object),
             fields,
-            targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             metaField,
             instanceId,
             instance;
@@ -167,26 +149,14 @@ class IV implements IInjector {
                     continue;
                 };
 
-                metaField =  Reflect.field(fields,field);
-
-                targetType =  Std.string( metaField.types[0] ) ;
-
+                metaField = Reflect.field(fields,field);
+                targetType = Std.string( metaField.types[0] ) ;
                 instanceId = metaField.inject != null ? metaField.inject[0] : "";
-
                 instance = getInstance(targetType, instanceId);
 
                 Reflect.setField(object,field,instance);
 
-                for(key in extensionMap.keys()){
-                    if(Reflect.hasField(metaField,key)){
-                        extensionMap.get(key)({
-                            injector : this,
-                            metaname : key,
-                            object : object,
-                            type : ExtensionType.Property
-                        });
-                    }
-                 }    
+                callExtensions(metaField,object,ExtensionType.Property); 
             }
 
             type = Type.getSuperClass(type);  
@@ -211,35 +181,45 @@ class IV implements IInjector {
                     args 
                 );
 
-        for(key in extensionMap.keys()){
-            if(Reflect.hasField(metaList,key)){
-                    extensionMap.get(key)({
-                        injector : this,
-                        metaname : key,
-                        object : object,
-                        type : ExtensionType.Method
-                    });
-            }
-        }    
+        callExtensions(metaList,object,ExtensionType.Method);
 
         return  result;
     }
-    
-    @:noCompletion
-    public static function addExtension (metaname : String, func : ExtensionDef -> Void){
-        if(extensionMap == null){
-            extensionMap = new Map();
+
+    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
+        return  Reflect.field(meta,fieldName);
+    }
+
+   
+    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
+        var id,ids,
+            args = [],
+            instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
+            instance;
+
+        if(meta != null && meta.types != null){
+            ids = (meta.inject == null) ? [] : meta.inject;
+            for(type in meta.types){
+                id = ids[args.length];
+                instanceType = Std.string( type.type );
+                instance = getInstance( instanceType, id );
+                args.push( instance ); 
+            }
         }
 
-        extensionMap.set(metaname,func);
+        return args;
     }
 
-    public function removeExtension (metaname : String) : Void {
-        extensionMap.remove(metaname);
-    }
-
-    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
-        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
-        return macro  IV.addExtension(${expr}, ${extension});
-    }
+    private function callExtensions(metaList:Dynamic, object:Dynamic, extensionType:ExtensionType) : Void {
+        for(key in extensionMap.keys()){
+            if(Reflect.hasField(metaList,key)){
+                extensionMap.get(key)({
+                    injector : this,
+                    metaname : key,
+                    object : object,
+                    type : extensionType
+                });
+            }
+        }  
+    }   
 }

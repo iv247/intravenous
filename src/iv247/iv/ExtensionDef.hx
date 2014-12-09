@@ -6,9 +6,3 @@ typedef ExtensionDef = {
 	var injector : IInjector;
 	var type : ExtensionType;
 }
-
-enum ExtensionType {
-	Constructor;
-	Method;
-	Property;
-}
