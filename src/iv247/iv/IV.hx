@@ -2,7 +2,8 @@ package iv247.iv;
 
 import haxe.rtti.Meta;
 import iv247.iv.ExtensionDef;
-
+import iv247.iv.Injection;
+import iv247.iv.internal.Injectable;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -14,76 +15,66 @@ import iv247.iv.macros.IVMacro;
 #end
 class IV implements IInjector {
 
-    private var classMap : Map<String, Injection>;
+    private var injectionMap : Map<String, Injection>;
     
     private static var extensionMap : Map<String, ExtensionDef->Void>;
 
     public function new () {
-        classMap = new Map();
+        injectionMap = new Map();
     }
 
-    public function mapValue<T> (whenType : Class<T>,
+    public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
                                  value : T,
                                  ?id : String = "") : Void {
-        classMap.set( Type.getClassName( whenType ) + id, Value(value) );
+        injectionMap.set( whenType.getName() + id, Value(value) );       
+    } 
+
+    public function mapDynamic<T> (whenType :  Injectable< Enum<T>,Class<T>>,
+                                   createType : Injectable< Enum<T>,Class<T>>,
+                                   ?id : String = "",
+                                   ?constr : String) : Void {
+        var key =  whenType.getName() + id,
+            value = Injection.DynamicObject(createType,constr);
+
+        injectionMap.set( key, value );
     }
 
-    public function mapDynamic<T> (whenType : Class<T>,
-                                   createType : Class<T>,
-                                   ?id : String = "") : Void {
-        var key =  Type.getClassName( whenType ) + id,
-            value = Injection.DynamicObject(createType);
+    public function mapSingleton<T> (whenType : Injectable<Enum<T>,Class<T>>,
+                                     getInstance : Injectable<Enum<T>,Class<T>>,
+                                     ?id : String = "",
+                                     ?constr : String) : Void {
+        var key =  whenType.getName() + id,
+            value = Injection.Singleton(whenType, getInstance,constr);
 
-        classMap.set( key, value );
-
+        injectionMap.set( key, value );
     }
 
-    @:overload(function <T>(when : Enum<T>, type: T):Void {})
-    public function test <T> (when : Class<T>, type : T) : Void {
-       if(Std.is(when,Enum)){
-        trace("isEnum",when);
-       }
-       if(Std.is(when,Class)){
-        trace("isClass",when);
-
-       }
+    public function hasMapping<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : Bool {        
+        return injectionMap.exists( type.getName() + id );       
     }
 
-    public function mapSingleton<T> (whenType : Class<T>,
-                                     getInstance : Class<T>,
-                                     ?id : String = "") : Void {
-        var key =  Type.getClassName( whenType ) + id,
-            value = Injection.Singleton(whenType, getInstance);
-
-        classMap.set( key, value );
+    public function unmap (type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") : Void {
+        injectionMap.remove( type.getName() + id );
     }
 
-    public function hasMapping<T> (type : Class<T>, ?id : String = "") : Bool {
-        return classMap.exists( Type.getClassName( type ) + id );
-    }
-
-    public function unmap (type : Class<Dynamic>, ?id : String = "") : Void {
-        classMap.remove( Type.getClassName( type ) + id );
-    }
-
-    public function getInstance<T> (type : Class<T>, ?id : String = "") : T {
-        var injection = Type.getClassName( type ) + id,
+    public function getInstance<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : T {
+        var injection = type.getName() + id,
             instance, newInstance;
 
-        if(!classMap.exists(injection)){
+        if(!injectionMap.exists(injection)){
             return null;
         }
 
         instance =
-        switch(classMap.get(injection)) {
+        switch(injectionMap.get(injection)) {
             case Injection.Value(object) :
                 object;
 
-            case Injection.DynamicObject(type) :
-                instantiate(type);
+            case Injection.DynamicObject(type,ctor) :
+                instantiate(type,ctor);
 
-            case Injection.Singleton(type,instanceType) :
-                newInstance = instantiate(instanceType);
+            case Injection.Singleton(type,instanceType,ctor) :
+                newInstance = instantiate(instanceType,ctor);   
                 mapValue(type,newInstance,id);
                 newInstance;
         }
@@ -91,51 +82,76 @@ class IV implements IInjector {
         return instance;
     }
 
-    public function instantiate<T> (type : Class<T>) : T {
-        var ctorMeta = Meta.getFields(type)._,
+    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
+        return  Reflect.field(meta,fieldName);
+    }
+
+   
+    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
+        var id,ids,
             args = [],
-            injectIds,
-            instance,
-            instanceType,
-            id;
+            instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
+            instance;
 
-        if(ctorMeta != null && ctorMeta.types !=null){
-            injectIds = (ctorMeta == null || ctorMeta.inject == null) ? [] : ctorMeta.inject;
-
-            for(type in ctorMeta.types){
-                id = injectIds[args.length];
-                instanceType = Type.resolveClass(type.type);
+        if(meta != null && meta.types != null){
+            ids = (meta.inject == null) ? [] : meta.inject;
+            for(type in meta.types){
+                id = ids[args.length];
+                instanceType = Std.string( type.type );
                 instance = getInstance( instanceType, id );
                 args.push( instance ); 
             }
         }
 
-        instance = Type.createInstance(type,args);
+        return args;
+    }
+
+
+    public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>,?constr : String) : T {
+        var meta = Meta.getFields(type),
+            ctorMeta = null,
+            args,
+            injectIds,
+            instance,
+            instanceType,
+            enumInstanceType,
+            id;
+
+        if(type.isClass()){
+            ctorMeta = meta._;
+        }else {
+            ctorMeta = getFieldMeta(meta, constr);
+        }
+
+        args = getMethodArgInstances(ctorMeta);
+
+        
+        instance = type.instantiate(args,constr);
 
         if(ctorMeta != null){
             for(key in extensionMap.keys()){
-                    if(Reflect.hasField(ctorMeta,key)){
-                        extensionMap.get(key)({
-                            injector : this,
-                            metaname : key,
-                            object : instance,
-                            type : ExtensionType.Constructor
-
-                        });
-                    }
+                if(Reflect.hasField(ctorMeta,key)){
+                    extensionMap.get(key)({
+                        injector : this,
+                        metaname : key,
+                        object : instance,
+                        type : ExtensionType.Constructor
+                    });
+                }
             }
         }
 
-        injectInto(instance);
+        if(type.isClass()){
+           injectInto(instance); 
+        }
 
         return instance;
     }
 
-
     public function injectInto (object : Dynamic) : Void {
         var type = Type.getClass(object),
             fields,
-            targetType,
+            targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             metaField,
             instanceId,
             instance;
@@ -152,7 +168,7 @@ class IV implements IInjector {
 
                 metaField =  Reflect.field(fields,field);
 
-                targetType = Type.resolveClass( metaField.types[0] );
+                targetType =  Std.string( metaField.types[0] ) ;
 
                 instanceId = metaField.inject != null ? metaField.inject[0] : "";
 
@@ -176,30 +192,18 @@ class IV implements IInjector {
         }
     }
 
+
     public function call (methodName : String, object: Dynamic) : Dynamic {
-        trace('object');
-        trace(object);
         var fields = Meta.getFields( Type.getClass(object)  ),
             metaList = Reflect.field(fields,methodName),
             types : Array<Dynamic> = metaList.types,
-            args = [],
+            args,
             newInstance,
             id,
             result;
 
-            if(metaList != null){
-
-                for(meta in types){
-                    id = metaList.inject != null ? metaList.inject[args.length] : "";
-                    newInstance = getInstance( 
-                        Type.resolveClass(meta.type),
-                        id
-                    );
-
-                    args.push(newInstance);     
-                }
-            }
-
+        args = getMethodArgInstances(metaList);
+            
         result = Reflect.callMethod( 
                     object, 
                     Reflect.field( object , methodName ), 
@@ -220,7 +224,7 @@ class IV implements IInjector {
         return  result;
     }
     
-    #if !display
+    @:noCompletion
     public static function addExtension (metaname : String, func : ExtensionDef -> Void){
         if(extensionMap == null){
             extensionMap = new Map();
@@ -228,7 +232,6 @@ class IV implements IInjector {
 
         extensionMap.set(metaname,func);
     }
-    #end
 
     public function removeExtension (metaname : String) : Void {
         extensionMap.remove(metaname);
@@ -238,6 +241,4 @@ class IV implements IInjector {
         iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
         return macro  IV.addExtension(${expr}, ${extension});
     }
-
 }
-

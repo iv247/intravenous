@@ -2,8 +2,16 @@
 -cp test
 -cp src
 -main TestMain
--debug
 -js build/TestMain.js
+
+
+--next 
+-lib buddy
+-cp test
+-cp src
+-main TestMain
+-swf build/TestMain.swf
+
 
 --next 
 -lib buddy

@@ -6,7 +6,7 @@ import iv247.iv.mock.MockConstructorArg;
 import iv247.iv.mock.InjectionMock;
 
 using buddy.Should;
-class IVInjectionsTest extends BuddySuite {
+class IVInjectionsSpec extends BuddySuite {
     public function new() {
         describe("IV", {
             var iv;
@@ -117,22 +117,24 @@ class IVInjectionsTest extends BuddySuite {
                     result = iv.call("injectableMethodWithOptionalArg", object);
 
                     result.injectedObjectWithId.should.be(injectedObjectWithId);
-                    result.injectedObject.should.be(null);                    
                 });
             });
 
             describe("mapped classes",{
-                it("should have there 'inject' annoted properties injected",{
+                it("should have their 'inject' annoted properties injected",{
                     var injectionMock;
 
                     iv.mapDynamic(InjectedObject,InjectedObject);
                     iv.mapDynamic(InjectionMock,InjectionMock);
+                    trace('one');
+                    var test = iv.getInstance(InjectionMock);
                     iv.getInstance(InjectionMock).injectedObject.should.not.be(null);
                 });
 
                 it("should not inject properties that are not mapped",{
                     iv.mapDynamic(InjectionMock,InjectionMock);
                     iv.getInstance(InjectionMock).injectedObject.should.be(null);
+
                 });
 
                 it("should use the property's inject id if set", {

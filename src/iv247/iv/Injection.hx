@@ -1,11 +1,20 @@
 package iv247.iv;
+
+import iv247.iv.internal.Injectable;
+
 enum Injection {
 
     Value (v:Dynamic);
 
-    DynamicObject (t:Class<Dynamic>);
+    DynamicObject (
+    	t:Injectable<Enum<Dynamic>,Class<Dynamic>>,
+    	?ctor:Null<String>
+    );
 
-    Singleton (t:Class<Dynamic>, it:Class<Dynamic>);
+    Singleton (
+    	t:Injectable<Enum<Dynamic>,Class<Dynamic>>, 
+    	it:Injectable<Enum<Dynamic>,Class<Dynamic>>,
+    	?ctor:Null<String> 
+    );
 
-    //Enum(t:Enum<Dynamic>, i:Enum<Dynamic>);
 }

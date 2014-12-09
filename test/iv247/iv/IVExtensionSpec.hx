@@ -20,9 +20,7 @@ class IVExtensionSpec extends buddy.BuddySuite {
 			IV.extendIocTo("extensionMethod",extFn);
 		
 			iv = new IV();
-			// iv.test(iv247.iv.mock.InjectionMock,new iv247.iv.mock.InjectionMock());	
-			// iv.test(ExtensionType,ExtensionType.Property);
-
+		
 			before({
 				callCount = 0;
 				extensionDef = null;
