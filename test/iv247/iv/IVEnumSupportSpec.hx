@@ -4,6 +4,7 @@ import buddy.BuddySuite;
 import iv247.iv.mock.MockEnum;
 import iv247.iv.mock.InjectionMock;
 import iv247.iv.mock.InjectionMockWEnum;
+import iv247.IV;
 
 using buddy.Should;
 class IVEnumSupportSpec extends BuddySuite

@@ -1,9 +1,10 @@
-package iv247.iv;
+package iv247;
 
 import haxe.rtti.Meta;
 import iv247.iv.ExtensionDef;
 import iv247.iv.Injection;
 import iv247.iv.internal.Injectable;
+import iv247.iv.IInjector;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;

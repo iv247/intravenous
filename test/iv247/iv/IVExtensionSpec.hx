@@ -2,6 +2,8 @@ package iv247.iv;
 
 import iv247.iv.mock.MockExtensionObject;
 import iv247.iv.ExtensionDef;
+import iv247.IV;
+
 
 using buddy.Should;
 

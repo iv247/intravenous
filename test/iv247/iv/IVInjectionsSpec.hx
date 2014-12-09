@@ -4,6 +4,7 @@ import buddy.BuddySuite;
 import iv247.iv.mock.*;
 import iv247.iv.mock.MockConstructorArg;
 import iv247.iv.mock.InjectionMock;
+import iv247.IV;
 
 using buddy.Should;
 class IVInjectionsSpec extends BuddySuite {
