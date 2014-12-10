@@ -122,7 +122,9 @@ class IV implements IInjector {
        
         instance = type.instantiate(args,constr);
 
-        callExtensions(ctorMeta,instance,ExtensionType.Constructor); 
+        if(ctorMeta != null){
+            callExtensions(ctorMeta,instance,ExtensionType.Constructor);  
+        }
 
         if(type.isClass()){
            injectInto(instance); 
@@ -135,7 +137,7 @@ class IV implements IInjector {
         var targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             type = Type.getClass(object),
             fields,
-            metaField,
+            metaField : Dynamic<Array<Dynamic>>,
             instanceId,
             instance;
 
@@ -166,14 +168,14 @@ class IV implements IInjector {
 
     public function call (methodName : String, object: Dynamic) : Dynamic {
         var fields = Meta.getFields( Type.getClass(object)  ),
-            metaList = Reflect.field(fields,methodName),
+            metaList:Dynamic<Array<Dynamic>> = Reflect.field(fields,methodName),
             types : Array<Dynamic> = metaList.types,
             args,
             newInstance,
             id,
             result;
 
-        args = getMethodArgInstances(metaList);
+        args = getMethodArgInstances( metaList);
             
         result = Reflect.callMethod( 
                     object, 
@@ -210,7 +212,7 @@ class IV implements IInjector {
         return args;
     }
 
-    private function callExtensions(metaList:Dynamic, object:Dynamic, extensionType:ExtensionType) : Void {
+    private function callExtensions(metaList:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType) : Void {
         for(key in extensionMap.keys()){
             if(Reflect.hasField(metaList,key)){
                 extensionMap.get(key)({
