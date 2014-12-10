@@ -7,6 +7,7 @@ class InjectionMock {
 	@inject("injectedObjectId") public var injectedObjectWithId : InjectedObject;
 
 	public var nonInjectedObject : InjectedObject;
+	public var postInjectedObject : InjectedObject;
 
 	@inject public function new(){
 
@@ -33,6 +34,12 @@ class InjectionMock {
 			injectedObjectWithId : v1,
 			injectedObject : v2
 		}
+	}
+
+	@post
+	@inject("postInjectId")
+	public function postInjectMethod(post:InjectedObject):Void {
+		postInjectedObject = post;
 	}
 }
 
