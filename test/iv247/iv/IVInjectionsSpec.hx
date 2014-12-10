@@ -59,8 +59,14 @@ class IVInjectionsSpec extends BuddySuite {
                 object.injectedObjectWithId.should.be(null);
             });
 
-            it("should call methods annoted with 'post' after property injection", {
+            it("should call methods annotated with 'post' after property injection", {
+                var object = new InjectionMock(),
+                    injectedObject = new InjectedObject();
 
+                iv.mapValue(InjectedObject,injectedObject,"postInjectId");
+                iv.injectInto(object);
+
+                object.postInjectedObject.should.be(injectedObject);
             });
 
             it("should inject 'inject' annotated properties with an id", {

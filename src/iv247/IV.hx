@@ -154,7 +154,7 @@ class IV implements IInjector {
                 };
 
                 isFunction = Reflect.isFunction(Reflect.field(object,field));
-                metaField = Reflect.field(fields,field);
+                metaField = getFieldMeta(fields,field);
                 targetType = Std.string( metaField.types[0] ) ;
                 
                 if(isFunction)
@@ -180,12 +180,16 @@ class IV implements IInjector {
         }
 
         for(postMethod in postMethods){
-           // callMethod(cast postMethod.metaList, cast postMethod.methodName,object,postMethod.ids);
+            callMethod(  postMethod.metaList,  postMethod.methodName,object,  postMethod.ids);
         }
 
     }
 
-    private function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<String>) : Dynamic {
+    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
+        return  Reflect.field(meta,fieldName);
+    }
+
+    private function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<Dynamic>) : Dynamic {
         var types : Array<Dynamic> = metaList.types,
             args,
             newInstance,
@@ -218,11 +222,6 @@ class IV implements IInjector {
 
         return  result;
     }
-
-    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
-        return  Reflect.field(meta,fieldName);
-    }
-
    
     private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>,?ids:Array<Dynamic>):Array<Dynamic> {
         var id,
@@ -237,7 +236,7 @@ class IV implements IInjector {
             
             for(type in meta.types){
                 id = ids[args.length];
-                instanceType = Std.string( type.type );
+                instanceType = type.type;
                 instance = getInstance( instanceType, id );
                 args.push( instance ); 
             }

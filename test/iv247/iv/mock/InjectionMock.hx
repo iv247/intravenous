@@ -36,8 +36,7 @@ class InjectionMock {
 		}
 	}
 
-	@post
-	@inject("postInjectId")
+	@post("postInjectId")
 	public function postInjectMethod(post:InjectedObject):Void {
 		postInjectedObject = post;
 	}
