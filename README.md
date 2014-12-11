@@ -1,6 +1,5 @@
-#IV - An extensible IOC container for projects written in Haxe. 
 
-##OVERVIEW
+#OVERVIEW
 
 Originally started as a learning exercise for Haxe development. The API, structure, and license of this project is subject to change. Look into the more mature [minject](/massiveinteractive/minject) by Massive Interactive if you are looking for a more stable library.
 
