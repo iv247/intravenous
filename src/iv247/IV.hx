@@ -139,7 +139,9 @@ class IV implements IInjector {
             fields,
             metaField : Dynamic<Array<Dynamic>>,
             instanceId,
-            instance;
+            instance,
+            isFunction,
+            postMethods = new Map<String,Dynamic>();
 
         while(type != null){
          
@@ -147,36 +149,56 @@ class IV implements IInjector {
 
             for(field in Reflect.fields(fields)){
 
-                if(field == "_" || Reflect.isFunction(Reflect.field(object,field)) ){
+                if(field == "_"){
                     continue;
                 };
 
-                metaField = Reflect.field(fields,field);
+                isFunction = Reflect.isFunction(Reflect.field(object,field));
+                metaField = getFieldMeta(fields,field);
                 targetType = Std.string( metaField.types[0] ) ;
+                
+                if(isFunction) {
+                    if( Reflect.hasField(metaField,'post') 
+                        && !postMethods.exists(field) ) 
+                    {
+                                postMethods.set( field, {
+                                    methodName : field,
+                                    metaList : metaField,
+                                    ids : metaField.post
+                                });
+                    }
+                    continue;
+                }
+
                 instanceId = metaField.inject != null ? metaField.inject[0] : "";
                 instance = getInstance(targetType, instanceId);
 
                 Reflect.setField(object,field,instance);
-
                 callExtensions(metaField,object,ExtensionType.Property); 
             }
 
-            type = Type.getSuperClass(type);  
+            type = Type.getSuperClass(type); 
         }
+
+        for(postMethod in postMethods){
+            callMethod(  postMethod.metaList,  postMethod.methodName,object,  postMethod.ids);
+        }
+
     }
 
+    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
+        return  Reflect.field(meta,fieldName);
+    }
 
-    public function call (methodName : String, object: Dynamic) : Dynamic {
-        var fields = Meta.getFields( Type.getClass(object)  ),
-            metaList:Dynamic<Array<Dynamic>> = Reflect.field(fields,methodName),
-            types : Array<Dynamic> = metaList.types,
+    private function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<Dynamic>) : Dynamic {
+        var types : Array<Dynamic> = metaList.types,
             args,
             newInstance,
             id,
             result;
 
-        args = getMethodArgInstances( metaList);
-            
+        args = getMethodArgInstances(metaList,ids);
+        
         result = Reflect.callMethod( 
                     object, 
                     Reflect.field( object , methodName ), 
@@ -188,22 +210,34 @@ class IV implements IInjector {
         return  result;
     }
 
-    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
-        return  Reflect.field(meta,fieldName);
-    }
+    public function call (methodName : String, object: Dynamic) : Dynamic {
+        var fields = Meta.getFields( Type.getClass(object)  ),
+            metaList = Reflect.field(fields,methodName),
+            types : Array<Dynamic> = metaList.types,
+            result;
 
+            
+        result = callMethod(metaList,methodName,object);
+
+        callExtensions(metaList,object,ExtensionType.Method);
+
+        return  result;
+    }
    
-    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>):Array<Dynamic> {
-        var id,ids,
+    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>,?ids:Array<Dynamic>):Array<Dynamic> {
+        var id,
             args = [],
             instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             instance;
 
         if(meta != null && meta.types != null){
-            ids = (meta.inject == null) ? [] : meta.inject;
+            if(ids == null){
+                ids = (meta.inject == null) ? [] : meta.inject;
+            }
+            
             for(type in meta.types){
                 id = ids[args.length];
-                instanceType = Std.string( type.type );
+                instanceType = type.type;
                 instance = getInstance( instanceType, id );
                 args.push( instance ); 
             }
