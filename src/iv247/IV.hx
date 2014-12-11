@@ -141,7 +141,7 @@ class IV implements IInjector {
             instanceId,
             instance,
             isFunction,
-            postMethods = [];
+            postMethods = new Map<String,Dynamic>();
 
         while(type != null){
          
@@ -157,14 +157,15 @@ class IV implements IInjector {
                 metaField = getFieldMeta(fields,field);
                 targetType = Std.string( metaField.types[0] ) ;
                 
-                if(isFunction)
-                {
-                    if( Reflect.hasField(metaField,'post')) {
-                        postMethods.push({
-                            methodName : field,
-                            metaList : metaField,
-                            ids : metaField.post
-                        });
+                if(isFunction) {
+                    if( Reflect.hasField(metaField,'post') 
+                        && !postMethods.exists(field) ) 
+                    {
+                                postMethods.set( field, {
+                                    methodName : field,
+                                    metaList : metaField,
+                                    ids : metaField.post
+                                });
                     }
                     continue;
                 }

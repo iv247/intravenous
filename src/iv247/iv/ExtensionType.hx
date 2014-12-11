@@ -1,4 +1,3 @@
-
 package iv247.iv;
 
 enum ExtensionType {

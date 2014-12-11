@@ -8,6 +8,7 @@ class InjectionMock {
 
 	public var nonInjectedObject : InjectedObject;
 	public var postInjectedObject : InjectedObject;
+	public var postInjectedObjectNoId : InjectedObject;
 
 	@inject public function new(){
 
@@ -40,11 +41,26 @@ class InjectionMock {
 	public function postInjectMethod(post:InjectedObject):Void {
 		postInjectedObject = post;
 	}
+
+	@post
+	public function anotherPostInjectMethod(post:InjectedObject):Void {
+		postInjectedObjectNoId = post;
+	}
 }
 
 class SubClassInjectionMock extends InjectionMock {
+
+	public var subPostInjectedObject : InjectedObject;
+	public var postCount : Int = 0;
+
 	public function new(){
 		super();
+	}
+
+	@post("postInjectId")
+	override public function postInjectMethod(post:InjectedObject):Void {
+		subPostInjectedObject = post;
+		postCount++;
 	}
 }
 
