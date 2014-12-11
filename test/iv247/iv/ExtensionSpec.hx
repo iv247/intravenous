@@ -7,9 +7,9 @@ import iv247.IV;
 
 using buddy.Should;
 
-class IVExtensionSpec extends buddy.BuddySuite {
+class ExtensionSpec extends buddy.BuddySuite {
 	public function new(){
-		describe("IV extension functionality",{
+		describe("Extension functionality",{
 			var iv,
 				extensionDef,
 				callCount = 0,

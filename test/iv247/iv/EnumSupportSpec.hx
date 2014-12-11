@@ -7,7 +7,7 @@ import iv247.iv.mock.InjectionMockWEnum;
 import iv247.IV;
 
 using buddy.Should;
-class IVEnumSupportSpec extends BuddySuite
+class EnumSupportSpec extends BuddySuite
 {
 	public function new(){
 		var iv;
@@ -16,7 +16,7 @@ class IVEnumSupportSpec extends BuddySuite
 			iv = new IV();
 		});
 		
-		describe("IV Enums",{
+		describe("Enums",{
 			it("should be mapped by type",{
 	           iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	           iv.hasMapping(MockEnum).should.be(true);

@@ -7,9 +7,9 @@ import iv247.iv.mock.InjectionMock;
 import iv247.IV;
 
 using buddy.Should;
-class IVInjectionsSpec extends BuddySuite {
+class InjectionsSpec extends BuddySuite {
     public function new() {
-        describe("IV", {
+        describe("IInjector implementation", {
             var iv;
 
             before({
@@ -122,13 +122,11 @@ class IVInjectionsSpec extends BuddySuite {
             });
 
             describe("mapped classes",{
-                it("should have their 'inject' annoted properties injected",{
+                it("should have their 'inject' annotated properties injected",{
                     var injectionMock;
 
                     iv.mapDynamic(InjectedObject,InjectedObject);
                     iv.mapDynamic(InjectionMock,InjectionMock);
-                    trace('one');
-                    var test = iv.getInstance(InjectionMock);
                     iv.getInstance(InjectionMock).injectedObject.should.not.be(null);
                 });
 
