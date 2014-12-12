@@ -3,6 +3,7 @@ package iv247.iv;
 import iv247.iv.internal.Injectable;
 
 interface IInjector {
+    var parent (default,set) : IInjector;
 
     function mapDynamic<T> ( 
     	whenType:Injectable<Enum<T>, Class<T>>, 
@@ -30,5 +31,4 @@ interface IInjector {
 
     function call ( methodName:String, object:Dynamic ): Dynamic;
 
-    var parent (default,set) : IInjector;
 }
