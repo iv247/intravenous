@@ -4,7 +4,7 @@ import iv247.iv.mock.InjectionMock;
 
 using buddy.Should;
 
-class NestedInjectionSpec extends buddy.BuddySuite
+class ChildInjectorSpec extends buddy.BuddySuite
 {	
 	public var iv:IInjector;
 
