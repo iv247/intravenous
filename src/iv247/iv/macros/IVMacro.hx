@@ -114,6 +114,8 @@ class IVMacro {
 
 				if(field.meta.has(name)){
 
+					field.meta.add(":keep",[],type.pos);
+
 					switch(field.type){
 						
 						case TFun(args,ret) :
