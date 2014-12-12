@@ -29,4 +29,6 @@ interface IInjector {
     function injectInto ( object:Dynamic ):Void;
 
     function call ( methodName:String, object:Dynamic ): Dynamic;
+
+    var parent (default,set) : IInjector;
 }

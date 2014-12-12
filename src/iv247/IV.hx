@@ -18,11 +18,26 @@ import iv247.iv.macros.IVMacro;
 class IV implements IInjector {
 
     private var injectionMap : Map<String, Injection>;
+
+    public var parent(default,set) : IInjector;
     
     private static var extensionMap : Map<String, ExtensionDef->Void>;
 
-    public function new () {
+    public function new (?parentInjector : IInjector) {
         injectionMap = new Map();
+        parent = parentInjector;
+    }
+
+    public function set_parent(value:IInjector):IInjector{
+        if(value == null){
+            parent = value;
+        }
+        else if(value.parent == this || this == value){
+            throw("Circular reference");
+        }else{
+            parent = value;
+        }
+        return value;
     }
 
     macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
@@ -81,8 +96,8 @@ class IV implements IInjector {
         var injection = type.getName() + id,
             instance, newInstance;
 
-        if(!injectionMap.exists(injection)){
-            return null;
+        if(!injectionMap.exists(injection)){            
+           return parent != null ? parent.getInstance(type,id) : null;
         }
 
         instance =
