@@ -18,7 +18,7 @@ interface IInjector {
     	?enumCtor : String
     ):Void;
 
-    function mapValue<T> ( whenType:Class<T>, value:T, ?id:String ):Void;
+    function mapValue<T> ( whenType:Injectable<Enum<T>, Class<T>>, value:T, ?id:String ):Void;
 
     function unmap<T> ( type : Injectable<Enum<T>, Class<T>>, ?id:String ):Void;
 
