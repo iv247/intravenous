@@ -1,4 +1,5 @@
 build
+doc
 *.glue
 
 test/iv247/iv/*Test.hx

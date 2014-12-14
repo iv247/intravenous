@@ -17,17 +17,27 @@ import iv247.iv.macros.IVMacro;
 #end
 class IV implements IInjector {
 
+    private static var extensionMap : Map<String, ExtensionDef->Void>;
+
     private var injectionMap : Map<String, Injection>;
+
+
 
     public var parent(default,set) : IInjector;
     
-    private static var extensionMap : Map<String, ExtensionDef->Void>;
-
+    /**
+        Create a new IV instance
+        optionally assign a parentInjector
+    **/
     public function new (?parentInjector : IInjector) {
         injectionMap = new Map();
         parent = parentInjector;
     }
 
+    /**
+        Setter for parent injector will throw an error for
+        injectors with circular references to a parent injector
+    **/
     public function set_parent(value:IInjector):IInjector{
         if(value == null){
             parent = value;
@@ -38,24 +48,6 @@ class IV implements IInjector {
             parent = value;
         }
         return value;
-    }
-
-    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
-        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
-        return macro  IV.addExtension(${expr}, ${extension});
-    }
-
-    @:noCompletion
-    public static function addExtension (metaname : String, func : ExtensionDef -> Void){
-        if(extensionMap == null){
-            extensionMap = new Map();
-        }
-
-        extensionMap.set(metaname,func);
-    }
-
-    public function removeExtension (metaname : String) : Void {
-        extensionMap.remove(metaname);
     }
 
     public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
@@ -117,6 +109,11 @@ class IV implements IInjector {
         return instance;
     }
 
+    /**
+        The given Class or Enum will be instantiated with any previously mapped contructor arguments.
+        The resulting instance will have its properties injected using injectInto.
+        Any applicable extensions with be called directly after instantiation and before property injection; 
+    **/
     public function instantiate<T> (type : Injectable<Enum<T>,Class<T>>,?constr : String) : T {
         var meta = Meta.getFields(type),
             ctorMeta = null,
@@ -148,6 +145,11 @@ class IV implements IInjector {
         return instance;
     }
 
+    /**
+        Extensions will be called after injection.
+        Any method annotated with @post, including in herited will be called after 
+        property injection and extensions are called.
+    **/
     public function injectInto (object : Dynamic) : Void {
         var targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             type = Type.getClass(object),
@@ -205,6 +207,24 @@ class IV implements IInjector {
         return  Reflect.field(meta,fieldName);
     }
 
+    /**
+        Any applicable extensions will be called after method is called but
+        before the result of the method is returned.
+    **/
+    public function call (methodName : String, object: Dynamic) : Dynamic {
+        var fields = Meta.getFields( Type.getClass(object)  ),
+            metaList = Reflect.field(fields,methodName),
+            types : Array<Dynamic> = metaList.types,
+            result;
+
+            
+        result = callMethod(metaList,methodName,object);
+
+        callExtensions(metaList,object,ExtensionType.Method);
+
+        return  result;
+    }
+
     private function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<Dynamic>) : Dynamic {
         var types : Array<Dynamic> = metaList.types,
             args,
@@ -219,20 +239,6 @@ class IV implements IInjector {
                     Reflect.field( object , methodName ), 
                     args 
                 );
-
-        callExtensions(metaList,object,ExtensionType.Method);
-
-        return  result;
-    }
-
-    public function call (methodName : String, object: Dynamic) : Dynamic {
-        var fields = Meta.getFields( Type.getClass(object)  ),
-            metaList = Reflect.field(fields,methodName),
-            types : Array<Dynamic> = metaList.types,
-            result;
-
-            
-        result = callMethod(metaList,methodName,object);
 
         callExtensions(metaList,object,ExtensionType.Method);
 
@@ -259,6 +265,35 @@ class IV implements IInjector {
         }
 
         return args;
+    }
+
+    /**
+        Extend the IOC Container to add type information to other annotations used in your project.
+        Returns an expression calling IV.addExtension with the meta name to look for.
+    **/
+    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
+        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
+        return macro  IV.addExtension(${expr}, ${extension});
+    }
+
+    /**
+        Adds metadata that should be processed by the Injector.
+    **/
+    @:noCompletion
+    @:noDoc
+    public static function addExtension (metaname : String, func : ExtensionDef -> Void){
+        if(extensionMap == null){
+            extensionMap = new Map();
+        }
+
+        extensionMap.set(metaname,func);
+    }
+
+    /**
+       Removes an extension from being processed for all IV instances
+    **/
+    public static function removeExtension (metaname : String) : Void {
+        extensionMap.remove(metaname);
     }
 
     private function callExtensions(metaList:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType) : Void {

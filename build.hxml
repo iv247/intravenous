@@ -16,4 +16,14 @@
 -cp test
 -cp src
 -main TestMain
+-xml build/output.xml
 --interp
+
+--next 
+
+-cp src
+--macro include('iv247')
+-xml build/doc.xml
+-D doc-gen
+# -cmd mkdir -p doc && haxelib run dox -i build/output.xml -o doc -in iv247 && open doc/index.html
+
