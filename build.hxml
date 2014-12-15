@@ -1,29 +1,29 @@
--lib buddy
--cp test
--cp src
--main TestMain
--js build/TestMain.js
+# -lib buddy
+# -cp test
+# -cp src
+# -main TestMain
+# -js build/TestMain.js
 
---next 
--lib buddy
--cp test
--cp src
--main TestMain
--swf build/TestMain.swf
+# --next 
+# -lib buddy
+# -cp test
+# -cp src
+# -main TestMain
+# -swf build/TestMain.swf
 
---next 
--lib buddy
--cp test
--cp src
--main TestMain
--xml build/output.xml
---interp
+# --next 
+# -lib buddy
+# -cp test
+# -cp src
+# -main TestMain
+# -xml build/output.xml
+# --interp
 
---next 
+# --next 
 
 -cp src
 --macro include('iv247')
 -xml build/doc.xml
 -D doc-gen
-# -cmd mkdir -p doc && haxelib run dox -i build/output.xml -o doc -in iv247 && open doc/index.html
+-cmd mkdir -p doc && haxelib run dox -i build/output.xml -o doc -in iv247 && open doc/index.html
 
