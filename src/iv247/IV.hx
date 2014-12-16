@@ -5,6 +5,7 @@ import iv247.iv.*;
 import iv247.iv.Injection;
 import iv247.iv.internal.Injectable;
 import iv247.iv.IInjector;
+import iv247.iv.ExtensionDef;
 
 #if macro
 import haxe.macro.Expr;
@@ -21,8 +22,6 @@ class IV implements IInjector {
 
     private var injectionMap : Map<String, Injection>;
 
-
-
     public var parent(default,set) : IInjector;
     
     /**
@@ -34,17 +33,15 @@ class IV implements IInjector {
         parent = parentInjector;
     }
 
-    /**
-        Setter for parent injector will throw an error for
-        injectors with circular references to a parent injector
-    **/
-    public function set_parent(value:IInjector):IInjector{
+ 
+    private function set_parent(value:IInjector):IInjector{
         if(value == null){
             parent = value;
         }
         else if(value.parent == this || this == value){
             throw("Circular reference");
-        }else{
+        }
+        else{
             parent = value;
         }
         return value;
@@ -191,7 +188,7 @@ class IV implements IInjector {
                 instance = getInstance(targetType, instanceId);
 
                 Reflect.setField(object,field,instance);
-                callExtensions(metaField,object,ExtensionType.Property); 
+                callExtensions(metaField,object,ExtensionType.Property,field); 
             }
 
             type = Type.getSuperClass(type); 
@@ -220,7 +217,7 @@ class IV implements IInjector {
             
         result = callMethod(metaList,methodName,object);
 
-        callExtensions(metaList,object,ExtensionType.Method);
+        callExtensions(metaList,object,ExtensionType.Method,methodName);
 
         return  result;
     }
@@ -271,8 +268,13 @@ class IV implements IInjector {
         Extend the IOC Container to add type information to other annotations used in your project.
         Returns an expression calling IV.addExtension with the meta name to look for.
     **/
-    macro static public function extendIocTo (expr : ExprOf<String>, ?extension : Expr) : Expr {
-        iv247.iv.macros.IVMacro.metaNames.push(ExprTools.getValue(expr));
+    macro static public function extendIocTo ( expr : ExprOf<String>, 
+                                               ?extension : ExprOf<ExtensionDef->Void>) : Expr 
+    {
+        var name = ExprTools.getValue(expr);
+
+        iv247.iv.macros.IVMacro.metaNames.push(name);
+
         return macro  IV.addExtension(${expr}, ${extension});
     }
 
@@ -280,7 +282,6 @@ class IV implements IInjector {
         Adds metadata that should be processed by the Injector.
     **/
     @:noCompletion
-    @:noDoc
     public static function addExtension (metaname : String, func : ExtensionDef -> Void){
         if(extensionMap == null){
             extensionMap = new Map();
@@ -296,14 +297,15 @@ class IV implements IInjector {
         extensionMap.remove(metaname);
     }
 
-    private function callExtensions(metaList:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType) : Void {
+    private function callExtensions(metaList:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType,?fieldName:String) : Void {
         for(key in extensionMap.keys()){
             if(Reflect.hasField(metaList,key)){
                 extensionMap.get(key)({
                     injector : this,
                     metaname : key,
                     object : object,
-                    type : extensionType
+                    type : extensionType,
+                    field : fieldName
                 });
             }
         }  

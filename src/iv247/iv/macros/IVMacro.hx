@@ -4,10 +4,12 @@ package iv247.iv.macros;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
+import iv247.util.macro.TypeInfo;
 using haxe.macro.Tools;
 class IVMacro {
 	
 	public static var metaNames : Array<String>;
+	public static var extensionFns : Map<String, Void->Void>;
 
 	private static var onGenerateAdded : Bool; 
 
@@ -15,11 +17,12 @@ class IVMacro {
 
 		var fields = Context.getBuildFields().copy(),
 			newField;
+
+		extensionFns = new Map();
 		
 		if(metaNames == null) {
 			metaNames = [];
 		}
-
 
 		metaNames = metaNames.concat(names);
 
@@ -43,36 +46,6 @@ class IVMacro {
 		}
 	}
 
-	static private function addTFunArgs(args:Array<{t:Type,opt : Bool, name : String}>) : Array<haxe.macro.Expr> {
-		var typeInfo = [],
-			typeName; 
-		for(arg in args){
-			
-			typeName = 
-			switch (arg.t) {
-				
-				case TInst (t,parrms) :
-					Std.string( arg.t.getParameters()[0] );
-
-				case TEnum(t,params):
-					Std.string( arg.t.getParameters()[0] );
-
-				default :
-					"Dynamic";
-
-			};	
-
-			var exp = macro {
-					opt :  $v{untyped arg.opt},
-					type : $v{typeName}
-			};
-
-			typeInfo.push(exp);
-		}
-
-		return typeInfo;
-	}
-
 	static function addTypeMetaToEnum(type : EnumType) : Void {
 			
 		for(field in type.constructs){
@@ -84,10 +57,7 @@ class IVMacro {
 
 				switch(field.type){
 					case TFun(args,_): 						
-						var types = addTFunArgs(args);
-
-						field.meta.add('types',types,type.pos);
-
+						field.meta.add('types',TypeInfo.getTFunArgs(args),type.pos);
 					default:
 				}
 			}
@@ -96,19 +66,36 @@ class IVMacro {
 	}
 
 	static function	addTypeMetaToClass ( type : ClassType ) : Void {
+		var ctor;
+
 		if(type.isInterface){			
 			return;
 		}
 
-		if(type.constructor != null && type.constructor.get().meta.has("inject")){
-			addConstructorTypes(type.constructor.get());
+		if(type.constructor != null){
+			ctor = type.constructor.get();
+			if(!ctor.meta.has('types')){
+
+				for(name in metaNames){
+				
+					if(ctor.meta.has(name)){
+						
+						switch(ctor.type) {
+							case TFun(args,ret) :
+									 ctor.meta.add('types',TypeInfo.getTFunArgs(args),Context.currentPos());
+							default : 
+						}
+						break;
+					}
+				}
+			}		
 		}
 
 		for(field in type.fields.get()){	
 
 			for (name in metaNames) {
 				
-				if(field.meta.has("types")){
+				if(field.meta.has("types") ){
 					continue;
 				}	
 
@@ -119,10 +106,10 @@ class IVMacro {
 					switch(field.type){
 						
 						case TFun(args,ret) :
-							  addConstructorTypes(field);
+							  	field.meta.add('types',TypeInfo.getTFunArgs(args),type.pos);
 					 	
 					 	case TInst(t,params) :
-							var typeName = Std.string( field.type.getParameters()[0] );
+								var typeName = Std.string( field.type.getParameters()[0] );
 								field.meta.add('types',[macro $v{typeName}],type.pos);
 						
 						case TAnonymous(a) : 
@@ -139,28 +126,11 @@ class IVMacro {
 					}
 					
 				}
+
+				if(extensionFns.exists(name)){
+					extensionFns.get(name)();
+				}
 			}
-		}
-	}
-
-	static function addConstructorTypes(ctor:ClassField) : Void {
-		var ctorParams : Array<TFunc> = ctor.type.getParameters()[0];
-		var metaParams:Array<haxe.macro.Expr> = [],
-			name,
-			exp;
-		
-		for (param in ctorParams){
-			name =  Std.string(param.t.getParameters()[0]);
-			exp = macro {
-				opt :  $v{untyped param.opt},
-				type : $v{name}
-			};
-
-			metaParams.push(exp);
-		}
-
-		if(metaParams.length > 0){
-			ctor.meta.add('types', metaParams, Context.currentPos());
 		}
 	}
 }

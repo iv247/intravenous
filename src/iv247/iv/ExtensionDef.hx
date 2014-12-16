@@ -5,4 +5,5 @@ typedef ExtensionDef = {
 	var object : Dynamic;
 	var injector : IInjector;
 	var type : ExtensionType;
+    var field : String;
 }
