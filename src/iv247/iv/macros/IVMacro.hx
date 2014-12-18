@@ -9,7 +9,7 @@ using haxe.macro.Tools;
 class IVMacro {
 	
 	public static var metaNames : Array<String>;
-	public static var extensionFns : Map<String, Void->Void>;
+	// public static var extensionFns : Map<String, Void->Void>;
 
 	private static var onGenerateAdded : Bool; 
 
@@ -18,7 +18,7 @@ class IVMacro {
 		var fields = Context.getBuildFields().copy(),
 			newField;
 
-		extensionFns = new Map();
+		// extensionFns = new Map();
 		
 		if(metaNames == null) {
 			metaNames = [];
@@ -106,30 +106,30 @@ class IVMacro {
 					switch(field.type){
 						
 						case TFun(args,ret) :
-							  	field.meta.add('types',TypeInfo.getTFunArgs(args),type.pos);
+							  	field.meta.add('types',TypeInfo.getTFunArgs(args),field.pos);
 					 	
 					 	case TInst(t,params) :
 								var typeName = Std.string( field.type.getParameters()[0] );
-								field.meta.add('types',[macro $v{typeName}],type.pos);
+								field.meta.add('types',[macro $v{typeName}],field.pos);
 						
 						case TAnonymous(a) : 
-								field.meta.add('types',[macro "Dynamic"],type.pos);
+								field.meta.add('types',[macro "Dynamic"],field.pos);
 
 						case TDynamic(t) :
-								field.meta.add('types',[macro "Dynamic"],type.pos);
+								field.meta.add('types',[macro "Dynamic"],field.pos);
 
 						case TEnum(t,params) :
 								var typeName = Std.string( field.type.getParameters()[0] );
-								field.meta.add('types',[macro $v{typeName}],type.pos);
+								field.meta.add('types',[macro $v{typeName}],field.pos);
 
 						default:
 					}
 					
 				}
 
-				if(extensionFns.exists(name)){
-					extensionFns.get(name)();
-				}
+				// if(extensionFns.exists(name)){
+				// 	extensionFns.get(name)();
+				// }
 			}
 		}
 	}
