@@ -169,8 +169,7 @@ class IV implements IInjector {
 
                 isFunction = Reflect.isFunction(Reflect.field(object,field));
                 metaField = getFieldMeta(fields,field);
-                targetType = Std.string( metaField.types[0] ) ;
-                
+
                 if(isFunction) {
                     if( Reflect.hasField(metaField,'post') 
                         && !postMethods.exists(field) ) 
@@ -181,13 +180,15 @@ class IV implements IInjector {
                                     ids : metaField.post
                                 });
                     }
-                    continue;
+                }else{
+                    targetType = Std.string( metaField.types[0] ) ;
+
+                    instanceId = metaField.inject != null ? metaField.inject[0] : "";
+                    instance = getInstance(targetType, instanceId);
+
+                    Reflect.setField(object,field,instance);
                 }
-
-                instanceId = metaField.inject != null ? metaField.inject[0] : "";
-                instance = getInstance(targetType, instanceId);
-
-                Reflect.setField(object,field,instance);
+       
                 callExtensions(metaField,object,ExtensionType.Property,field); 
             }
 
@@ -297,10 +298,12 @@ class IV implements IInjector {
         extensionMap.remove(metaname);
     }
 
-    private function callExtensions(metaList:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType,?fieldName:String) : Void {
+    private function callExtensions(meta:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType,?fieldName:String) : Void {
+
         for(key in extensionMap.keys()){
-            if(Reflect.hasField(metaList,key)){
+            if(Reflect.hasField(meta,key)){
                 extensionMap.get(key)({
+                    meta : meta,
                     injector : this,
                     metaname : key,
                     object : object,

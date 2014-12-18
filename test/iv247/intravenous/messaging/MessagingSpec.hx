@@ -5,6 +5,7 @@ import iv247.intravenous.messaging.MessageProcessor;
 import iv247.IV;
 import iv247.iv.IInjector;
 import iv247.intravenous.messaging.mock.MockCommand;
+import iv247.intravenous.messaging.mock.Message;
 
 using buddy.Should;
 class MessagingSpec extends buddy.BuddySuite
@@ -16,19 +17,42 @@ class MessagingSpec extends buddy.BuddySuite
 	public function new(){
 		describe("Messaging", {
 			
-
 			before({
 				injector = new IV();
 				processor = new MessageProcessor(injector);
+				MockCommand.count = 0;
+				IV.extendIocTo('command',processor.processMeta);
+				IV.extendIocTo('commandResult',processor.processMeta);
 			});
 
 			describe("command classes",{
-				it("should be instantiated for each request",{
+				it("should be instantiated on each dispatch",{
+					var message = new Message();
 					processor.mapCommand(MockCommand);
+					processor.dispatch(message);
+					processor.dispatch(message);
+					MockCommand.count.should.be(2);
 				});
 
-				it("should the method annotated with @execute");	
-				it("should be asynchonous if execute method returns a promise");	
+				it("should call the execute method",{
+					var message = new Message();
+					processor.mapCommand(MockCommand);
+					processor.dispatch(message);
+					MockCommand.message.should.be(message);
+				});
+
+				it("should call methods annotated with command", {
+					var message = new Message();
+					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
+					var mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
+
+					processor.dispatch(message);
+					message.commandCalled.should.be(true);
+				});
+
+				it("should remove objects waiting for messages");
+
+ 				it("should be asynchonous if execute method returns a promise");	
 				it("should be asynchonous if execute method returns a value");	
 			});
 

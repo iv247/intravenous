@@ -4,6 +4,7 @@ import iv247.iv.IInjector;
 import iv247.iv.ExtensionDef;
 import iv247.IV;
 import haxe.rtti.Meta;
+import iv247.intravenous.messaging.CommandDef;
 
 #if !macro
 @:build(iv247.intravenous.messaging.MessagingMacro.buildCommand())
@@ -16,10 +17,12 @@ class MessageProcessor
 	private var commandMap : Map<String, Array<CommandDef>>;
 	private var interceptMap : Map<String, Array<CommandDef>>;
 	private var resultMap : Map<String, Array<CommandDef>>;
-	private var dynamicCommandMap : Map<String, Class<Dynamic>>;
 
 	public function new(injector : IInjector) {
 		this.injector = injector;
+		commandMap = new Map();
+		interceptMap = new Map();
+		resultMap = new Map();
 	}
 
 	/**
@@ -28,9 +31,24 @@ class MessageProcessor
 	**/
 	public function processMeta(def : ExtensionDef):Void {
 		switch(def.type){
-			case iv247.iv.ExtensionType.Constructor :
-				trace('command handler injected');
-			default: 
+			case iv247.iv.ExtensionType.Constructor : return;
+
+			case iv247.iv.ExtensionType.Property : 
+
+				var order = Reflect.field(def.meta,def.metaname),
+					map = Reflect.hasField(def.meta,'intercept') ? interceptMap : 
+						  Reflect.hasField(def.meta,'commandResult') ? resultMap : commandMap,
+					messageType =  Reflect.field(def.meta,'types')[0].type,
+					ref : CommandDef;
+					
+					if(order == null){
+						order = 0;
+					}
+
+					ref = {o:def.object, f: def.field, i:order, t:Type.typeof(def.object)}
+
+				insertCommandRef(map,messageType,ref);
+			default:  return;
 		}
 	}
 
@@ -41,10 +59,13 @@ class MessageProcessor
 	public function mapCommand(commandClass:Class<Dynamic>):Void {
 		var className = Type.getClassName(commandClass),
 			classMeta = Meta.getType(commandClass),
-			message = classMeta.messageType,
-			order = classMeta.command == null ? -1 : classMeta.command[0];
+			messageType = classMeta.messageTypes[0].type,
+			order = classMeta.command == null ? -1 : classMeta.command[0],
+			isInterceptor = Reflect.hasField(classMeta,"intercept"),
+			map = (isInterceptor) ? interceptMap : commandMap,
+			ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
 
-		//processCommandMeta(metaParams,commandClass, 'execute');
+		insertCommandRef(map,messageType,ref);	
 	}
 
 	private function processCommandMeta(m:haxe.rtti.CType.MetaData,o:Dynamic,f:String):Void{
@@ -57,9 +78,9 @@ class MessageProcessor
 		insertCommandRef(map,messageType,ref);			
 	}
 
-	private function insertCommandRef(map,messageType:String,def:CommandDef):Void{
+	private function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
 		var mapArray = map.get(messageType);
-
+	
 		if(mapArray == null){
 			mapArray = new Array<CommandDef>();
 			map.set(messageType,mapArray);
@@ -104,7 +125,7 @@ class MessageProcessor
 			switch(ref.t){
 				case TObject:
                     //ref.o is a class in this case
-                    instance = (injector != null) ? injector.getInstance(ref.o) : Type.createInstance(ref.o ,[]);
+                    instance = (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
                     Reflect.callMethod( instance , Reflect.field(instance,ref.f), args);
 				case TClass(c):
 					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), args);

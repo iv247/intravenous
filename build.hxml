@@ -8,6 +8,7 @@
 # -lib buddy
 # -cp test
 # -cp src
+# -D use-doc-rtti
 # -main TestMain
 # -swf build/TestMain.swf
 

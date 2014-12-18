@@ -12,20 +12,25 @@ class ExtensionSpec extends buddy.BuddySuite {
 		describe("Extension functionality",{
 			var iv,
 				extensionDef,
+				extensionMethodDef,
 				callCount = 0,
 				extFn = function (extDef:iv247.iv.ExtensionDef){
 					callCount++;
 					extensionDef = extDef;
-				};
+				},
+				extFn2 = function (extDef:iv247.iv.ExtensionDef){
+					extensionMethodDef = extDef;
+				}
 
 			IV.extendIocTo("extension",extFn);
-			IV.extendIocTo("extensionMethod",extFn);
+			IV.extendIocTo("extensionMethod",extFn2);
 		
 			iv = new IV();
 		
 			before({
 				callCount = 0;
 				extensionDef = null;
+				extensionMethodDef = null;
 				iv = new IV();
 			});
 
@@ -35,6 +40,8 @@ class ExtensionSpec extends buddy.BuddySuite {
 				iv.injectInto(mock);
 				extensionDef.metaname.should.be("extension");
 				extensionDef.type.should.be(ExtensionType.Property);
+				extensionMethodDef.metaname.should.be("extensionMethod");
+				extensionMethodDef.type.should.be(ExtensionType.Property);
 				callCount.should.be(2);
 			});
 
@@ -43,8 +50,8 @@ class ExtensionSpec extends buddy.BuddySuite {
 				var methodDef;
 
 				iv.call("mockMethod",mock);
-				extensionDef.metaname.should.be("extensionMethod");
-			 	extensionDef.type.should.be(ExtensionType.Method);
+				extensionMethodDef.metaname.should.be("extensionMethod");
+			 	extensionMethodDef.type.should.be(ExtensionType.Method);
 			});
 
 			it("should call the extensions's method if the constructor is annotated",{
