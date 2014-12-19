@@ -16,19 +16,19 @@
 
 
 
-# -xml build/.xml
-# -cp src
-# -D doc
-# --macro include('iv247')
-# -cmd rm -r doc && mkdir -p doc && haxelib run dox -i build/.xml -o doc && open doc/index.html
+-xml build/.xml
+-cp src
+-D doc
+--macro include('iv247')
+-cmd rm -r doc && mkdir -p doc && haxelib run dox -i build/.xml -in iv247 -o doc && open doc/index.html
 
 # --next 
 
--lib buddy
--cp test
--cp src
--D use-doc-rtti
--main TestMain
--xml build/output.xml
---interp
+# -lib buddy
+# -cp test
+# -cp src
+# -D use-doc-rtti
+# -main TestMain
+# -xml build/output.xml
+# --interp
 

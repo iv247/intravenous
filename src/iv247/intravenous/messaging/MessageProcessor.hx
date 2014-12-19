@@ -41,9 +41,9 @@ class MessageProcessor
 					messageType =  Reflect.field(def.meta,'types')[0].type,
 					ref : CommandDef;
 					
-					if(order == null){
-						order = 0;
-					}
+					// if(order ){
+					// 	order = 0;
+					// }
 
 					ref = {o:def.object, f: def.field, i:order, t:Type.typeof(def.object)}
 

@@ -25,6 +25,28 @@ class MessagingSpec extends buddy.BuddySuite
 				IV.extendIocTo('commandResult',processor.processMeta);
 			});
 
+			describe("objects with command methods", {
+				it("should call methods annotated with command", {
+					var message = new Message();
+					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
+					var mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
+					processor.dispatch(message);
+					message.commandCalled.should.be(true);
+				});
+
+				it("should remove objects waiting for dispatched objects",{
+					var message = new Message(),
+						mock; 
+
+					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
+					mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );					
+					processor.deregister(mock);
+					processor.dispatch(message);
+
+					message.commandCalled.should.not.be(true);
+				});
+			});
+
 			describe("command classes",{
 				it("should be instantiated on each dispatch",{
 					var message = new Message();
@@ -48,27 +70,7 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.dispatch(message);
 					MockCommand.count.should.be(0);
 					MockCommand.message.should.not.be(message);
-				});
-
-				it("should call methods annotated with command", {
-					var message = new Message();
-					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
-					var mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
-					processor.dispatch(message);
-					message.commandCalled.should.be(true);
-				});
-
-				it("should remove objects waiting for dispatched objects",{
-					var message = new Message(),
-						mock; 
-
-					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
-					mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );					
-					processor.deregister(mock);
-					processor.dispatch(message);
-
-					message.commandCalled.should.not.be(true);
-				});
+				});				
 
  				it("should be asynchonous if execute method returns a promise");	
 				it("should be asynchonous if execute method returns a value");	
@@ -85,6 +87,7 @@ class MessagingSpec extends buddy.BuddySuite
 			describe("asynchronous commands",{
 
 			});
+			
 			describe("command results",{
 			});
 		});
