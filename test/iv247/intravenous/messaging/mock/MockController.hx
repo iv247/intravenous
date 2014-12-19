@@ -17,7 +17,7 @@ class MockController
 	}
 
 	@command
-	public function commandHandlerTest(object:Message) : Void {
+	public function commandHandler(object:Message) : Void {
 		object.commandCalled = true;
 	}
 
@@ -25,5 +25,6 @@ class MockController
 	public function commandResult(object:Message) : Void {
 		object.commandResultCalled = true;
 	}	
+
 
 }

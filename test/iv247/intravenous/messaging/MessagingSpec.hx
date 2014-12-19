@@ -41,16 +41,34 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.message.should.be(message);
 				});
 
+				it("should remove command class",{
+					var message = new Message();
+					processor.mapCommand(MockCommand);
+					processor.removeCommand(MockCommand);
+					processor.dispatch(message);
+					MockCommand.count.should.be(0);
+					MockCommand.message.should.not.be(message);
+				});
+
 				it("should call methods annotated with command", {
 					var message = new Message();
 					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
 					var mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
-
 					processor.dispatch(message);
 					message.commandCalled.should.be(true);
 				});
 
-				it("should remove objects waiting for messages");
+				it("should remove objects waiting for dispatched objects",{
+					var message = new Message(),
+						mock; 
+
+					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
+					mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );					
+					processor.deregister(mock);
+					processor.dispatch(message);
+
+					message.commandCalled.should.not.be(true);
+				});
 
  				it("should be asynchonous if execute method returns a promise");	
 				it("should be asynchonous if execute method returns a value");	
@@ -58,7 +76,7 @@ class MessagingSpec extends buddy.BuddySuite
 
 			describe("intercepts", {
 				it("should be executed before commands");
-				it("should be executed before messages");
+				it("should be executed before commandResults");
 				it("should be able to be asynchronous");
 				it("should be able to stop notification flow");
 			});

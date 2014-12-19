@@ -9,7 +9,6 @@ using haxe.macro.Tools;
 class IVMacro {
 	
 	public static var metaNames : Array<String>;
-	// public static var extensionFns : Map<String, Void->Void>;
 
 	private static var onGenerateAdded : Bool; 
 
@@ -17,8 +16,6 @@ class IVMacro {
 
 		var fields = Context.getBuildFields().copy(),
 			newField;
-
-		// extensionFns = new Map();
 		
 		if(metaNames == null) {
 			metaNames = [];
@@ -127,9 +124,6 @@ class IVMacro {
 					
 				}
 
-				// if(extensionFns.exists(name)){
-				// 	extensionFns.get(name)();
-				// }
 			}
 		}
 	}

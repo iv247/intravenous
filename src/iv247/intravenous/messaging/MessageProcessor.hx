@@ -48,9 +48,63 @@ class MessageProcessor
 					ref = {o:def.object, f: def.field, i:order, t:Type.typeof(def.object)}
 
 				insertCommandRef(map,messageType,ref);
+
 			default:  return;
 		}
 	}
+
+	/**
+		Deregister an object with registered command, commandResult, or intercept methods.
+		Calling this method is necessary for any objects that need to be removed from memory
+		(ie. Prestionation Models/View Controllers)
+	**/
+	public function deregister(o:Dynamic):Void{
+		var type = Type.getClass(o),
+			fields = Type.getClassFields(type),
+			meta = Meta.getFields(type),
+			fields = Reflect.fields(meta),
+			fieldMeta,
+			map,
+			interceptorsRemoved = false,
+			commandsRemoved = false,
+			commandResultsRemoved = false;
+
+		for(field in fields){
+
+			fieldMeta = Reflect.field(meta,field);
+			
+			if(Reflect.hasField(fieldMeta,"intercept") && !interceptorsRemoved){
+				map = interceptMap;
+				interceptorsRemoved = true;
+			}else if( Reflect.hasField(fieldMeta,"command") && !commandsRemoved){
+				map = commandMap;
+				commandsRemoved = true;
+			}else if(Reflect.hasField(fieldMeta,"commandResult") && !commandResultsRemoved){
+				map = resultMap;
+				commandResultsRemoved = true;
+			}else{
+				map = null;
+			}
+
+			if(map != null){
+				removeFromMap(o,type,map);		
+			}
+		}
+	}
+
+	/**
+		Removed all references to object from map
+	**/
+	private function removeFromMap(object: Dynamic, type : Class<Dynamic>, map : Map<String,Array<CommandDef>>):Void {
+		for(defArray in map){
+			for(def in defArray){
+				if(def.o == object){
+					defArray.remove(def);
+				}
+			}
+		}
+	}
+
 
 	/**
 		Maps a class to instantiate when an object respective of the class execute method
@@ -66,6 +120,22 @@ class MessageProcessor
 			ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
 
 		insertCommandRef(map,messageType,ref);	
+	}
+
+	/**
+		Removes a mapped class from list of commands to be instansiated and executed
+		when the associated dispatch object is dispatched
+	**/
+	public function removeCommand(commandClass:Class<Dynamic>):Void {
+		var className = Type.getClassName(commandClass),
+			classMeta = Meta.getType(commandClass),
+			messageType = classMeta.messageTypes[0].type,
+			order = classMeta.command == null ? -1 : classMeta.command[0],
+			isInterceptor = Reflect.hasField(classMeta,"intercept"),
+			map = (isInterceptor) ? interceptMap : commandMap,
+			ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
+
+		removeCommandRef(map,messageType,ref);	
 	}
 
 	private function processCommandMeta(m:haxe.rtti.CType.MetaData,o:Dynamic,f:String):Void{
@@ -90,6 +160,18 @@ class MessageProcessor
         mapArray.sort(function(ref,ref2):Int{
             return (ref == ref2) ? 0 : (ref.i < ref2.i) ? -1 : 1;
         });
+	}
+
+	private function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef):Void{
+		var mapArray = map.get(messageType);
+
+		if(mapArray != null){
+			for(commandDef in mapArray){
+				if(commandDef.o == def.o){
+					mapArray.remove(commandDef);
+				}
+			}
+		}
 	}
 
 
