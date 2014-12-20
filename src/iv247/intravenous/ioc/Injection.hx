@@ -1,6 +1,6 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
-import iv247.iv.internal.Injectable;
+import iv247.intravenous.ioc.internal.Injectable;
 
 enum Injection {
 

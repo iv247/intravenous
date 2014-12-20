@@ -1,4 +1,4 @@
-package iv247.iv.macros;
+package iv247.intravenous.ioc.macros;
 #if macro
 
 import haxe.macro.Context;

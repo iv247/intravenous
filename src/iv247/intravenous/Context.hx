@@ -1,7 +1,7 @@
 
 package iv247.intravenous;
 
-import iv247.IV;
+import iv247.intravenous.ioc.IV;
 import iv247.intravenous.messaging.MessageProcessor;
 
 @:access(iv247.intravenous.messaging.MessageProcessor)

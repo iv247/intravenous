@@ -2,8 +2,8 @@
 package iv247.intravenous.messaging;
 
 import iv247.intravenous.messaging.MessageProcessor;
-import iv247.IV;
-import iv247.iv.IInjector;
+import iv247.intravenous.ioc.IV;
+import iv247.intravenous.ioc.IInjector;
 import iv247.intravenous.messaging.mock.MockCommand;
 import iv247.intravenous.messaging.mock.Message;
 

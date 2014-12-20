@@ -1,8 +1,8 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
-import iv247.iv.mock.MockExtensionObject;
-import iv247.iv.ExtensionDef;
-import iv247.IV;
+import iv247.intravenous.ioc.mock.MockExtensionObject;
+import iv247.intravenous.ioc.ExtensionDef;
+import iv247.intravenous.ioc.IV;
 
 
 using buddy.Should;
@@ -14,11 +14,11 @@ class ExtensionSpec extends buddy.BuddySuite {
 				extensionDef,
 				extensionMethodDef,
 				callCount = 0,
-				extFn = function (extDef:iv247.iv.ExtensionDef){
+				extFn = function (extDef:iv247.intravenous.ioc.ExtensionDef){
 					callCount++;
 					extensionDef = extDef;
 				},
-				extFn2 = function (extDef:iv247.iv.ExtensionDef){
+				extFn2 = function (extDef:iv247.intravenous.ioc.ExtensionDef){
 					extensionMethodDef = extDef;
 				}
 

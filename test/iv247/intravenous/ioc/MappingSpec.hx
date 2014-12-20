@@ -1,7 +1,7 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 import buddy.BuddySuite;
-import iv247.iv.mock.*;
-import iv247.IV;
+import iv247.intravenous.ioc.mock.*;
+import iv247.intravenous.ioc.IV;
 
 
 using buddy.Should;

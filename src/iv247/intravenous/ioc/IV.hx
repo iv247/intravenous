@@ -1,20 +1,16 @@
-package iv247;
+package iv247.intravenous.ioc;
 
 import haxe.rtti.Meta;
-import iv247.iv.*;
-import iv247.iv.Injection;
-import iv247.iv.internal.Injectable;
-import iv247.iv.IInjector;
-import iv247.iv.ExtensionDef;
+import iv247.intravenous.ioc.internal.Injectable;
 
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
-import iv247.iv.macros.IVMacro;
+import iv247.intravenous.ioc.macros.IVMacro;
 #end
 
 #if !macro
-@:build(iv247.iv.macros.IVMacro.buildMeta(["inject","post"]))
+@:build(iv247.intravenous.ioc.macros.IVMacro.buildMeta(["inject","post"]))
 #end
 class IV implements IInjector {
 
@@ -274,7 +270,7 @@ class IV implements IInjector {
     {
         var name = ExprTools.getValue(expr);
 
-        iv247.iv.macros.IVMacro.metaNames.push(name);
+        iv247.intravenous.ioc.macros.IVMacro.metaNames.push(name);
 
         return macro  IV.addExtension(${expr}, ${extension});
     }

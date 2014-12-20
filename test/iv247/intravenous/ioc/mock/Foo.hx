@@ -1,4 +1,4 @@
-package iv247.iv.mock;
+package iv247.intravenous.ioc.mock;
 
 class Foo implements IMockObject {
 

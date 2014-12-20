@@ -1,8 +1,8 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
 using buddy.Should;
 
-import iv247.iv.mock.InjectionMock;
+import iv247.intravenous.ioc.mock.InjectionMock;
 
 class PostInjectionSpec extends buddy.BuddySuite {
 	public function new() {

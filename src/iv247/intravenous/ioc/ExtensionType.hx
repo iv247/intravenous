@@ -1,4 +1,4 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
 enum ExtensionType {
 	Constructor;

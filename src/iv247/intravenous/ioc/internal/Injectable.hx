@@ -1,4 +1,4 @@
-package iv247.iv.internal;
+package iv247.intravenous.ioc.internal;
 
 abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T1 from T2  to T1 to T2 {
                 

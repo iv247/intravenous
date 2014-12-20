@@ -1,10 +1,10 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
 import buddy.BuddySuite;
-import iv247.iv.mock.*;
-import iv247.iv.mock.MockConstructorArg;
-import iv247.iv.mock.InjectionMock;
-import iv247.IV;
+import iv247.intravenous.ioc.mock.*;
+import iv247.intravenous.ioc.mock.MockConstructorArg;
+import iv247.intravenous.ioc.mock.InjectionMock;
+import iv247.intravenous.ioc.IV;
 
 using buddy.Should;
 class InjectionsSpec extends BuddySuite {
@@ -38,8 +38,8 @@ class InjectionsSpec extends BuddySuite {
                 iv.mapSingleton(MockObject,MockObject,"mockId");
                 iv.mapSingleton(MockObject,MockObject,"mockId2");
 
-                mock1 = iv.getInstance(iv247.iv.mock.MockObject,"mockId");
-                mock2 = iv.getInstance(iv247.iv.mock.MockObject,"mockId2");
+                mock1 = iv.getInstance(iv247.intravenous.ioc.mock.MockObject,"mockId");
+                mock2 = iv.getInstance(iv247.intravenous.ioc.mock.MockObject,"mockId2");
 
                 object = iv.instantiate(WithId);
 

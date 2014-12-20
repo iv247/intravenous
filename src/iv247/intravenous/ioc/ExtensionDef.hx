@@ -1,4 +1,4 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
 typedef ExtensionDef = {	
 	var meta : Dynamic<Array<Dynamic>>;

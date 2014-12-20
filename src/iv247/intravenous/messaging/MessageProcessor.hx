@@ -1,8 +1,8 @@
 package iv247.intravenous.messaging;
 
-import iv247.iv.IInjector;
-import iv247.iv.ExtensionDef;
-import iv247.IV;
+import iv247.intravenous.ioc.IInjector;
+import iv247.intravenous.ioc.ExtensionDef;
+import iv247.intravenous.ioc.IV;
 import haxe.rtti.Meta;
 import iv247.intravenous.messaging.CommandDef;
 
@@ -31,20 +31,19 @@ class MessageProcessor
 	**/
 	public function processMeta(def : ExtensionDef):Void {
 		switch(def.type){
-			case iv247.iv.ExtensionType.Constructor : return;
+			case iv247.intravenous.ioc.ExtensionType.Constructor : return;
 
-			case iv247.iv.ExtensionType.Property : 
+			case iv247.intravenous.ioc.ExtensionType.Property : 
 
 				var order = Reflect.field(def.meta,def.metaname),
 					map = Reflect.hasField(def.meta,'intercept') ? interceptMap : 
 						  Reflect.hasField(def.meta,'commandResult') ? resultMap : commandMap,
 					messageType =  Reflect.field(def.meta,'types')[0].type,
 					ref : CommandDef;
-					
-					// if(order ){
-					// 	order = 0;
-					// }
-
+					 
+					if(!Std.is(order,Int)){
+						order = 0;
+					}
 					ref = {o:def.object, f: def.field, i:order, t:Type.typeof(def.object)}
 
 				insertCommandRef(map,messageType,ref);

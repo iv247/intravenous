@@ -1,6 +1,6 @@
-package iv247.iv.mock;
+package iv247.intravenous.ioc.mock;
 
-import iv247.iv.mock.InjectionMock;
+import iv247.intravenous.ioc.mock.InjectionMock;
 
 enum MockEnum 
 {

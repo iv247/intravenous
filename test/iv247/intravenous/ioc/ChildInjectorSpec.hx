@@ -1,6 +1,6 @@
-package iv247.iv;
+package iv247.intravenous.ioc;
 
-import iv247.iv.mock.InjectionMock;
+import iv247.intravenous.ioc.mock.InjectionMock;
 
 using buddy.Should;
 
