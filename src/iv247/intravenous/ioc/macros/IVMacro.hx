@@ -12,6 +12,14 @@ class IVMacro {
 
 	private static var onGenerateAdded : Bool; 
 
+	public static inline var ivmacroMeta = "ivmacro";
+
+
+	static public function run (expr:Expr) : Expr {
+		trace('macro async');
+			return macro trace('XXXXXXXXXXXX');
+	}
+
 	static public function buildMeta (names : Array<String>) : Array<Field> {
 
 		var fields = Context.getBuildFields().copy(),

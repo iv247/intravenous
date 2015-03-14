@@ -2,6 +2,7 @@
 package iv247.intravenous;
 
 import iv247.intravenous.ioc.IV;
+import iv247.intravenous.view.View;
 import iv247.intravenous.messaging.MessageProcessor;
 
 @:access(iv247.intravenous.messaging.MessageProcessor)
@@ -10,11 +11,14 @@ class Context
 	public var injector(default,null) : IV;
 	public var initialized(default,null) : Bool;
 	public var messageProcessor(default,null):MessageProcessor;
+	public var app(default,null):View;
 
 	/**
 		Creates a new context, optionally initializing on instantiation.
 	**/
-	public function new (?autostart : Bool = true) {
+	public function new (?mainView : View, ?autostart : Bool = true) {
+		app = mainView;
+		
 		if(autostart){
 			initialize();
 		}
@@ -48,6 +52,11 @@ class Context
 	**/
 	public function mapCommand(commandClass : Class<Dynamic>) : Void {
 		messageProcessor.mapCommand(commandClass);
+
+	}
+
+	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {
+		
 	}
 
 

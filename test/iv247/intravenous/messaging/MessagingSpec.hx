@@ -6,12 +6,14 @@ import iv247.intravenous.ioc.IV;
 import iv247.intravenous.ioc.IInjector;
 import iv247.intravenous.messaging.mock.MockCommand;
 import iv247.intravenous.messaging.mock.Message;
+import iv247.intravenous.messaging.mock.*;
 
 using buddy.Should;
+@:access(iv247.intravenous.messaging.MessageProcessor)
 class MessagingSpec extends buddy.BuddySuite
 {
 
-	public var processor:MessageProcessor;
+	public var processor: MessageProcessor;
 	public var injector : IInjector;
 
 	public function new(){
@@ -48,24 +50,25 @@ class MessagingSpec extends buddy.BuddySuite
 			});
 
 			describe("command classes",{
-				it("should be instantiated on each dispatch",{
-					var message = new Message();
+				var message;
+
+				before({
+					message = new Message();
 					processor.mapCommand(MockCommand);
+				});
+
+				it("should be instantiated on each dispatch",{
 					processor.dispatch(message);
 					processor.dispatch(message);
 					MockCommand.count.should.be(2);
 				});
 
 				it("should call the execute method",{
-					var message = new Message();
-					processor.mapCommand(MockCommand);
 					processor.dispatch(message);
 					MockCommand.message.should.be(message);
 				});
 
 				it("should remove command class",{
-					var message = new Message();
-					processor.mapCommand(MockCommand);
 					processor.removeCommand(MockCommand);
 					processor.dispatch(message);
 					MockCommand.count.should.be(0);
@@ -76,11 +79,26 @@ class MessagingSpec extends buddy.BuddySuite
 				it("should be asynchonous if execute method returns a value");	
 			});
 
-			describe("intercepts", {
+			describe("interceptor", {
 				it("should be executed before commands");
 				it("should be executed before commandResults");
 				it("should be able to be asynchronous");
-				it("should be able to stop notification flow");
+				it("should be able to stop notification flow", {
+					var message = new Message();
+					processor.mapCommand(CommandInterceptor);
+					processor.mapCommand(MockCommand);
+					processor.dispatch(message);
+					MockCommand.message.should.not.be(message);
+				});
+				it("should be able to resume notification flow", {
+					var message = new Message();
+					processor.mapCommand(CommandInterceptor);
+					processor.mapCommand(MockCommand);
+					processor.dispatch(message);
+					MockCommand.message.should.not.be(message);
+					processor.openSequencers[0].continueSequence();
+					MockCommand.message.should.be(message);
+				});
 			});
 			
 			
@@ -88,7 +106,9 @@ class MessagingSpec extends buddy.BuddySuite
 
 			});
 			
-			describe("command results",{
+			describe("result command",{
+				it("should be executed after commands");
+				it("should be executed after interceptors");
 			});
 		});
 	}

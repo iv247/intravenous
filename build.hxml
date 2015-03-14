@@ -1,14 +1,13 @@
-# -lib buddy
-# -cp test
-# -cp src
-# -main TestMain
-# -js build/TestMain.js
+-lib buddy
+-cp test
+-cp src
+-main TestMain
+-js build/TestMain.js
 
-# --next 
+--next 
 # -lib buddy
 # -cp test
 # -cp src
-# -D use-doc-rtti
 # -main TestMain
 # -swf build/TestMain.swf
 
@@ -18,7 +17,9 @@
 
 # -xml build/.xml
 # -cp src
-# -D doc
+# -dce no
+# --gen-hx-classes
+
 # --macro include('iv247')
 # -cmd rm -r doc && mkdir -p doc && haxelib run dox -i build/.xml -in iv247 -o doc && open doc/index.html
 
@@ -27,8 +28,8 @@
 -lib buddy
 -cp test
 -cp src
--D use-doc-rtti
 -main TestMain
+
 -xml build/output.xml
 --interp
 

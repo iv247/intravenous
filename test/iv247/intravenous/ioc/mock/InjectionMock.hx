@@ -1,4 +1,5 @@
 package iv247.intravenous.ioc.mock;
+import iv247.intravenous.ioc.macros.IVMacro;
 
 class InjectionMock {
 	
@@ -21,7 +22,8 @@ class InjectionMock {
 
 	@inject(null,"injectedObjectId") 
 	public function injectableMethodWithId(v1:InjectedObject,v2:InjectedObject) : Dynamic {
-		
+		var t = @ivmacro {"whatever";};
+		trace(t);
 		return {
 			injectedObject : v1,
 			injectedObjectWithId : v2

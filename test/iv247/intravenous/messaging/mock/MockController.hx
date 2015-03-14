@@ -6,9 +6,7 @@ import iv247.intravenous.messaging.MessageProcessor;
 class MockController 
 {
 
-
 	public function new(){
-
 	}
 
 	@command
@@ -19,6 +17,7 @@ class MockController
 	@command
 	public function commandHandler(object:Message) : Void {
 		object.commandCalled = true;
+
 	}
 
 	@commandResult

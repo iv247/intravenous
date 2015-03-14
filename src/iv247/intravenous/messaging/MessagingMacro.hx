@@ -37,8 +37,6 @@ class MessagingMacro
 		
 		if(type.meta.has('command')){
 			addCommandClassTypes(type);
-		}else{
-			addInterceptToClassFields(type);
 		}
 
 	}
@@ -47,19 +45,32 @@ class MessagingMacro
 		var types;
 		for(field in type.fields.get()){
 			if(field.name == 'execute'){
-
 				switch(field.type){
 					case TFun(args,_): 						
 						types = iv247.util.macro.TypeInfo.getTFunArgs(args);
-						if(types.length > 1){
-							type.meta.add("intercept",null,type.pos);
+						if(isAsync(args)){
+							type.meta.add('async',[],type.pos);
 						}
+
+						if(isIntercept(args)){
+							type.meta.add("intercept",types,type.pos);
+						}
+
 						type.meta.add('messageTypes', types, type.pos );
 						return;
 					default:
 				}
 			}
 		}
+	}
+
+	static function isAsync(args) : Bool {
+		return false;//iv247.util.macro.TypeInfo.hasType(args);
+	}
+
+	static function isIntercept(args) : Bool {
+		var typeName = Type.getClassName(iv247.intravenous.messaging.CommandSequencer);
+		return iv247.util.macro.TypeInfo.hasType(args,typeName);
 	}
 
 	static function addInterceptToClassFields(type : haxe.macro.Type.ClassType) : Void {

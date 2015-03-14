@@ -17,6 +17,7 @@ class MessageProcessor
 	private var commandMap : Map<String, Array<CommandDef>>;
 	private var interceptMap : Map<String, Array<CommandDef>>;
 	private var resultMap : Map<String, Array<CommandDef>>;
+	private var openSequencers : Array<CommandSequencer>;
 
 	public function new(injector : IInjector) {
 		this.injector = injector;
@@ -178,44 +179,36 @@ class MessageProcessor
 		Method used to dispatch an object as a message to be handled by commands
 		This method can be injected into class property of type Dynamic->Void annotated
 		with @dispatcher
+
 	**/
+	//Consider returning the sequencer
 	public function dispatch(o:Dynamic):Void{
 		var messageType = Type.getClassName(Type.getClass(o)),
 			interceptors = interceptMap.get(messageType),
 			commands = commandMap.get(messageType),
-			resultCommands = resultMap.get(messageType);
+			resultCommands = resultMap.get(messageType),
+			sequencer = new CommandSequencer({
+				interceptors : interceptors,
+				commands : commands,
+				resultCommands : resultCommands,
+				message: o,
+				processor : this
+			},
+			injector);
 
-		if(interceptors != null){
-			callCommands(interceptors,[o,this]);
+		if(openSequencers == null){
+			openSequencers = new Array<CommandSequencer>();
 		}
+		openSequencers.push(sequencer);
+		sequencer.start();
+	}
 
-		if(commands != null){
-			callCommands(commands,[o]);
-		}
-
-		if(resultCommands != null){
-			callCommands(resultCommands,[o]);
+	private function removeSequence(sequencer:CommandSequencer){
+		if(openSequencers != null){
+			openSequencers.remove(sequencer);
 		}
 	}
 
-	private function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
-		var ref,
-            instance;
-		for(i in 0...commandDefs.length){
-			ref = commandDefs[i];
-			switch(ref.t){
-				case TObject:
-                    //ref.o is a class in this case
-                    instance = (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
-                    Reflect.callMethod( instance , Reflect.field(instance,ref.f), args);
-				case TClass(c):
-					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), args);
-				case _: //todo: throw error
-						//errorHandler('callCommands',ref);
-						null;
-			}
-		}
-	}
 
 	private static function getDispatcher(ext : ExtensionDef) : Void {
 		var processor = ext.injector.getInstance(MessageProcessor);

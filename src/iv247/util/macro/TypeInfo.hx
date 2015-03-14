@@ -38,6 +38,15 @@ class TypeInfo
 
 		return typeInfo;
 	}
+
+	static public function hasType(args:Array<{t:Type,opt : Bool, name : String}>, typeName:String) : Bool {
+		
+		return Lambda.exists(args, function(item) : Bool{
+			var paramTypeName = Std.string(item.t.getParameters()[0]);
+			return (paramTypeName == typeName);
+
+		});		
+	}
 	#end
 
 }
