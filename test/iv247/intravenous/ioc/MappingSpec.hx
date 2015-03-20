@@ -60,7 +60,7 @@ class IVMappingTest extends BuddySuite {
 
                     iv.mapValue(MockObject, mock);
 
-                    iv.getInstance(MockObject).should.be(mock);
+                    mock.should.be(iv.getInstance(MockObject));
                 });
 
                 it ("should be mapped to a type based on an id", {
@@ -110,8 +110,8 @@ class IVMappingTest extends BuddySuite {
                     foo = iv.getInstance(IMockObject);
                     foo2 = iv.getInstance(IMockObject);
 
-                    mock.should.not.be(mock2);
-                    foo.should.not.be(foo2);
+                    (mock == mock2).should.not.be(true);
+                    (foo == foo2).should.be(false);
                 });
 
             });
@@ -146,11 +146,11 @@ class IVMappingTest extends BuddySuite {
                 });
 
                 it ("should be the same instance on every request", {
-                    var foo, foo2;
+                    var foo;
 
                     iv.mapSingleton(Foo, Foo);
                     foo = iv.getInstance(Foo);
-                    foo.should.be(iv.getInstance(Foo));
+                    foo.should.be(iv.getInstance(Foo)); 
                 });
 
             });

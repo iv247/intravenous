@@ -37,6 +37,7 @@ class MessageProcessor
 			case iv247.intravenous.ioc.ExtensionType.Property : 
 
 				var order = Reflect.field(def.meta,def.metaname),
+					isAsync =  Reflect.hasField(def.meta,'async'),
 					map = Reflect.hasField(def.meta,'intercept') ? interceptMap : 
 						  Reflect.hasField(def.meta,'commandResult') ? resultMap : commandMap,
 					messageType =  Reflect.field(def.meta,'types')[0].type,
@@ -45,7 +46,13 @@ class MessageProcessor
 					if(!Std.is(order,Int)){
 						order = 0;
 					}
-					ref = {o:def.object, f: def.field, i:order, t:Type.typeof(def.object)}
+					ref = { 
+						o:def.object, 
+						f: def.field, 
+						i:order, 
+						t:Type.typeof(def.object), 
+						async : isAsync
+					};
 
 				insertCommandRef(map,messageType,ref);
 
@@ -116,8 +123,15 @@ class MessageProcessor
 			messageType = classMeta.messageTypes[0].type,
 			order = classMeta.command == null ? -1 : classMeta.command[0],
 			isInterceptor = Reflect.hasField(classMeta,"intercept"),
+			isAsync = Reflect.hasField(classMeta,"async"),
 			map = (isInterceptor) ? interceptMap : commandMap,
-			ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
+			ref = {
+				o:commandClass, 
+				f:'execute', 
+				i:order, 
+				t:Type.typeof(commandClass),
+				async: isAsync
+			};
 
 		insertCommandRef(map,messageType,ref);	
 	}
@@ -138,15 +152,18 @@ class MessageProcessor
 		removeCommandRef(map,messageType,ref);	
 	}
 
-	private function processCommandMeta(m:haxe.rtti.CType.MetaData,o:Dynamic,f:String):Void{
-		var messageType = Reflect.field(m[0],'command'),
-			order = Std.parseInt(Reflect.field(m[0],'order') ),
-			isInterceptor = (Reflect.field(m[0],'intercept') != null),
-			map = (isInterceptor) ? interceptMap : commandMap,
-			ref = {o:o,f:f, i:order, t:Type.typeof(o)};
+	// private function processCommandMeta(m:haxe.rtti.CType.MetaData,o:Dynamic,f:String):Void{
+	// 	var messageType = Reflect.field(m[0],'command'),
+	// 		order = Std.parseInt(Reflect.field(m[0],'order') ),
+	// 		isInterceptor = (Reflect.field(m[0],'intercept') != null),
+	// 		isAsync =  (Reflect.field(m[0],'async') != null),
+	// 		map = (isInterceptor) ? interceptMap : commandMap,
+	// 		ref = {o:o,f:f, i:order, t:Type.typeof(o)};
 
-		insertCommandRef(map,messageType,ref);			
-	}
+	// 		trace(isAsync);
+	// 		trace('ssfsdf');
+	// 	insertCommandRef(map,messageType,ref);			
+	// }
 
 	private function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
 		var mapArray = map.get(messageType);
@@ -173,7 +190,6 @@ class MessageProcessor
 			}
 		}
 	}
-
 
 	/**
 		Method used to dispatch an object as a message to be handled by commands

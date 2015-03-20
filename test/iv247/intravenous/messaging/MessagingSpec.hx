@@ -74,15 +74,16 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.count.should.be(0);
 					MockCommand.message.should.not.be(message);
 				});				
-
- 				it("should be asynchonous if execute method returns a promise");	
-				it("should be asynchonous if execute method returns a value");	
+                                
 			});
 
-			describe("interceptor", {
-				it("should be executed before commands");
-				it("should be executed before commandResults");
-				it("should be able to be asynchronous");
+			describe("asynchronous commands",{
+				it("should be able to stop the notification flow",{});
+
+				it("should be able to resume the notification flow");
+			});
+
+			describe("interceptors", {
 				it("should be able to stop notification flow", {
 					var message = new Message();
 					processor.mapCommand(CommandInterceptor);
@@ -100,16 +101,7 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.message.should.be(message);
 				});
 			});
-			
-			
-			describe("asynchronous commands",{
 
-			});
-			
-			describe("result command",{
-				it("should be executed after commands");
-				it("should be executed after interceptors");
-			});
 		});
 	}
 

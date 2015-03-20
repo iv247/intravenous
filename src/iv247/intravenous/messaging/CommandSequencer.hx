@@ -81,7 +81,6 @@ class CommandSequencer implements Sequencer
 		stopped = true;
 	}
 
-
 	public function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>,?startIndex:Int=0):Void{
 		var ref,
             instance,
@@ -96,7 +95,10 @@ class CommandSequencer implements Sequencer
 			}
 
 			ref = commandDefs[i];
-			
+			if( ref.async ){
+				args.push(callback);
+			}
+
 			result =
 			switch(ref.t){
 				case TObject:
@@ -116,10 +118,12 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-	private function async(object:Dynamic):Void {
-		var className = Type.getClassName(object),
-			type = Type.getClass(className),
-			asyncExtension = injector.instantiate(type);
-		
+	private function callback(restart:Bool):Void {
+		if(restart){
+			continueSequence();
+		}else{
+			cancel();
+		}	
 	}
 }
+

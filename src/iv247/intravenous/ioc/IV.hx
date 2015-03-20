@@ -252,7 +252,10 @@ class IV implements IInjector {
             
             for(type in meta.types){
                 id = ids[args.length];
+
                 instanceType = Std.string( type.type );
+           
+
                 instance = getInstance( instanceType, id );
                 args.push( instance ); 
             }

@@ -22,8 +22,6 @@ class InjectionMock {
 
 	@inject(null,"injectedObjectId") 
 	public function injectableMethodWithId(v1:InjectedObject,v2:InjectedObject) : Dynamic {
-		var t = @ivmacro {"whatever";};
-		trace(t);
 		return {
 			injectedObject : v1,
 			injectedObjectWithId : v2
@@ -31,8 +29,7 @@ class InjectionMock {
 	}
 
 	@inject("injectedObjectId")
-	public function injectableMethodWithOptionalArg(v1:InjectedObject,?v2:InjectedObject) : Dynamic {
-		
+	public function injectableMethodWithOptionalArg(v1:InjectedObject,?v2:InjectedObject) : Dynamic {	
 		return {
 			injectedObjectWithId : v1,
 			injectedObject : v2

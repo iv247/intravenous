@@ -34,6 +34,6 @@ class CommandInterceptor
 	public function new(){}
 
 	public function execute(msg:Message,sequencer:iv247.intravenous.messaging.CommandSequencer):Void{
-		 sequencer.stop();
+		 sequencer.stop();	
 	}
 }

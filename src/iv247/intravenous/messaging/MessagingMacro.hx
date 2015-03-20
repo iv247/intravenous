@@ -65,7 +65,7 @@ class MessagingMacro
 	}
 
 	static function isAsync(args) : Bool {
-		return false;//iv247.util.macro.TypeInfo.hasType(args);
+		return iv247.util.macro.TypeInfo.hasType(args, "iv247.intravenous.messaging.CallbackFunction");
 	}
 
 	static function isIntercept(args) : Bool {

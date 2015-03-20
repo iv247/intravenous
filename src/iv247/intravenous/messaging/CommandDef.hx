@@ -5,5 +5,6 @@ typedef CommandDef = {
 	o:Dynamic,
 	f:String,
 	i:Int,
-	t:Type.ValueType
+	t:Type.ValueType,
+	?async : Bool
 }

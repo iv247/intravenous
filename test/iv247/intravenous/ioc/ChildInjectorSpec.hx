@@ -49,11 +49,13 @@ class ChildInjectorSpec extends buddy.BuddySuite
 
 			it("should return mapped objects from their parents if child mapping doesn't exist",{
 				var object = new InjectionMock(),
-					childInjector = new IV(iv);
+					childInjector = new IV(iv),
+					result;
 
 				iv.mapValue(InjectionMock, object);
+				result = childInjector.getInstance(InjectionMock);
+				object.should.be(result);
 
-				childInjector.getInstance(InjectionMock).should.be(object);
 			});		
 
 			it("should not return objects mapped on parent if child mapping exists",{
@@ -64,16 +66,17 @@ class ChildInjectorSpec extends buddy.BuddySuite
 				iv.mapValue(InjectionMock, object);
 				childInjector.mapValue(InjectionMock, childMappedObject);
 
-				childInjector.getInstance(InjectionMock).should.not.be(object);
-				childInjector.getInstance(InjectionMock).should.be(childMappedObject);
+				object.should.not.be(childInjector.getInstance(InjectionMock));
+				childMappedObject.should.be(childInjector.getInstance(InjectionMock));
 			});
 
 			it("should return null on unmapped object on parent and child",{
-				var object = new InjectionMock(),
-					childInjector = new IV(iv);
-
-				childInjector.getInstance(InjectionMock).should.be(null);
-			});
+				var childInjector = new IV(iv),
+					result = new InjectionMock();				
+					result = childInjector.getInstance(InjectionMock);
+					
+					result.should.be(null);
+			});{}
 		});
 	}
 }

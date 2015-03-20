@@ -13,6 +13,7 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
             type = Type.resolveEnum(path);
         } 
 
+
         return type;    
     }
 
@@ -20,7 +21,7 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     public static function fromDynamic(v:Dynamic){
         var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = null;
         
-        if(isClass(v)) {
+        if(isAClass(v)) {
             inj = Type.resolveClass(Type.getClassName(v));
         }
         else if(isEnum(v)){
@@ -34,13 +35,13 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
             }
 
         }else{
-            trace('assined invalid type');
+            trace('assigned invalid type');
         }
         return inj; 
     }
 
     public function getName():String {
-        if(isClass(this)){
+        if(isAClass(this)){
             return Type.getClassName(this);
         }else{
             return Type.getEnumName(this);
@@ -48,12 +49,21 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     }
 
     public function instantiate(args,?ctor) {
-        if(isClass(this)){
+        if(isAClass(this)){
             return Type.createInstance(this,args);
         }else{
             return Type.createEnum(this,ctor,args);
         }
     }
+
+    public function isClass():Bool {
+        #if flash
+            return untyped this.__constructs__ == null;
+        #else
+            return Std.is(this,Class);
+        #end
+    }
+
     static
     public function isEnum(v:Dynamic):Bool {
         #if flash
@@ -63,8 +73,9 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
         #end
     }
 
+
     static
-    public function isClass(v:Dynamic):Bool {
+    public function isAClass(v:Dynamic):Bool {
         #if flash
             return untyped v.__constructs__ == null;
         #else

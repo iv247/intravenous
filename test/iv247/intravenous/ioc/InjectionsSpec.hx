@@ -133,7 +133,6 @@ class InjectionsSpec extends BuddySuite {
                 it("should not inject properties that are not mapped",{
                     iv.mapDynamic(InjectionMock,InjectionMock);
                     iv.getInstance(InjectionMock).injectedObject.should.be(null);
-
                 });
 
                 it("should use the property's inject id if set", {
