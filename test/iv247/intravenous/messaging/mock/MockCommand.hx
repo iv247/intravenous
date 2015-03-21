@@ -12,18 +12,9 @@ class MockCommand
 		count++;
 	}
 
-	public function execute(msg:Message):haxe.Http{
+	public function execute(msg:Message):Void{
 		message = msg;
-		
-		return null;
-	}
-
-	public function complete(data):Void {
-		// messageProcessor.complete();h
-	}
-
-	public function onError(data):Void {
-		// messageProcessor.cancel();
+	
 	}
 
 }

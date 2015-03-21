@@ -25,7 +25,7 @@ class MessagingSpec extends buddy.BuddySuite
 				processor = new MessageProcessor(injector);
 				MockCommand.count = 0;
 				IV.extendIocTo('command',processor.processMeta);
-				IV.extendIocTo('commandResult',processor.processMeta);
+				IV.extendIocTo('commandComplete',processor.processMeta);
 			});
 
 			describe("objects with command methods", {
@@ -100,8 +100,8 @@ class MessagingSpec extends buddy.BuddySuite
 						message.commandStack[3].should.be("command");
 					});
 
-					it("should execute command results last",{
-						message.commandStack[4].should.be("result");
+					it("should execute command complete methods last",{
+						message.commandStack[4].should.be("complete");
 					});
 				});
                                 

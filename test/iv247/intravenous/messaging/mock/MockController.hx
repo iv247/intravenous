@@ -20,9 +20,9 @@ class MockController
 
 	}
 
-	@commandResult
+	@commandComplete
 	public function commandResult(object:Message) : Void {
-		object.commandResultCalled = true;
+		object.commandCompleteCalled = true;
 	}	
 
 

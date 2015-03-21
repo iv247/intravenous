@@ -4,7 +4,7 @@ package iv247.intravenous.messaging;
 typedef SequenceDef = {
 	interceptors : Dynamic,
 	commands : Dynamic,
-	resultCommands : Dynamic,
+	completeMethods : Dynamic,
 	processor : MessageProcessor,
 	message : Dynamic
 };

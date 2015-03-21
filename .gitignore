@@ -2,5 +2,9 @@ hxclasses
 build
 doc
 *.glue
+*.iml
+*.ipr
+*.iws
+*.idea
 
 test/iv247/iv/*Test.hx

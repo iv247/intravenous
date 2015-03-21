@@ -8,7 +8,7 @@ class Message
 
 	public var interceptCalled : Bool;
 	public var commandCalled : Bool;
-	public var commandResultCalled : Bool;
+	public var commandCompleteCalled : Bool;
 
 	public var commandStack : Array<String>;
 

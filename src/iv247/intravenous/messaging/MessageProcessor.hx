@@ -16,14 +16,15 @@ class MessageProcessor
 
     private var commandMap : Map<String, Array<CommandDef>>;
     private var interceptMap : Map<String, Array<CommandDef>>;
-    private var resultMap : Map<String, Array<CommandDef>>;
+    private var completeMap : Map<String, Array<CommandDef>>;
     private var openSequencers : Array<CommandSequencer>;
 
     public function new(injector : IInjector) {
         this.injector = injector;
         commandMap = new Map();
         interceptMap = new Map();
-        resultMap = new Map();
+        completeMap = new Map();
+
     }
 
     /**
@@ -39,7 +40,7 @@ class MessageProcessor
                 var order = Reflect.field(def.meta,def.metaname),
                     isAsync =  Reflect.hasField(def.meta,'async'),
                     map = Reflect.hasField(def.meta,'intercept') ? interceptMap : 
-                            Reflect.hasField(def.meta,'commandResult') ? resultMap : commandMap,
+                            Reflect.hasField(def.meta,'commandComplete') ? completeMap : commandMap,
                     messageType =  Reflect.field(def.meta,'types')[0].type,
                     ref : CommandDef;
                      
@@ -86,8 +87,8 @@ class MessageProcessor
             }else if( Reflect.hasField(fieldMeta,"command") && !commandsRemoved){
                 map = commandMap;
                 commandsRemoved = true;
-            }else if(Reflect.hasField(fieldMeta,"commandResult") && !commandResultsRemoved){
-                map = resultMap;
+            }else if(Reflect.hasField(fieldMeta,"commandComplete") && !commandResultsRemoved){
+                map = completeMap;
                 commandResultsRemoved = true;
             }else{
                 map = null;
@@ -208,11 +209,11 @@ class MessageProcessor
         var messageType = Type.getClassName(Type.getClass(o)),
             interceptors = interceptMap.get(messageType),
             commands = commandMap.get(messageType),
-            resultCommands = resultMap.get(messageType),
+            completeMethods = completeMap.get(messageType),
             sequencer = new CommandSequencer({
                 interceptors : interceptors,
                 commands : commands,
-                resultCommands : resultCommands,
+                completeMethods : completeMethods,
                 message: o,
                 processor : this
             },

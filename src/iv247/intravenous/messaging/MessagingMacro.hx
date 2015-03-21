@@ -14,7 +14,7 @@ class MessagingMacro
 			haxe.macro.Context.onGenerate(onGenerate);
 			onGenerateAdded = true;
 		}
-
+		
 		return null;
 	}
 

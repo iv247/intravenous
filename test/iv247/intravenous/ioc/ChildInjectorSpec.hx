@@ -18,8 +18,6 @@ class ChildInjectorSpec extends buddy.BuddySuite
 
 			before({
 				iv = new IV();
-				var t:IV = cast iv;
-				
 			});
 
 			it("should optionally add a parent injector through it's constructor",{

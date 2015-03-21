@@ -42,12 +42,12 @@ class CommandSequencer implements Sequencer
 		}
 
 		if(stopped){
-			setCurrentCommandInfo(sequence.resultCommands,0,[sequence.message]);
+			setCurrentCommandInfo(sequence.completeMethods,0,[sequence.message]);
 			return;
 		}
 
-		if(sequence.resultCommands != null){
-			callCommands(sequence.resultCommands,[sequence.message]);
+		if(sequence.completeMethods != null){
+			callCommands(sequence.completeMethods,[sequence.message]);
 		}
 	}
 

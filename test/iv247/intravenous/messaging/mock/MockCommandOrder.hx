@@ -17,9 +17,9 @@ class MockCommandOrder
 		msg.commandStack.push("command");
 	}
 
-	@commandResult
+	@commandComplete
 	public function commandResult(msg:Message){
-		msg.commandStack.push("result");
+		msg.commandStack.push("complete");
 	}
 }
 
