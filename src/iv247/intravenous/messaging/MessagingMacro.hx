@@ -39,6 +39,8 @@ class MessagingMacro
 			addCommandClassTypes(type);
 		}
 
+		addInterceptToClassFields(type);
+
 	}
 
 	static function addCommandClassTypes(type : haxe.macro.Type.ClassType) : Void {
@@ -77,17 +79,15 @@ class MessagingMacro
 		var types;
 		for(field in type.fields.get()){	
 			if(field.meta.has("command")){
-				types =
 				switch(field.type){						
 						case TFun(args,ret) :
-							  	iv247.util.macro.TypeInfo.getTFunArgs(args);
+								if(isIntercept(args)){			
+							  		field.meta.add('intercept',[],field.pos);
+								}
 						default: null;
 				}
 			}
-			
-			if(types != null && types.length > 1){
-				field.meta.add('intercept',[],field.pos);
-			}				
+					
 		}
 	}
 }

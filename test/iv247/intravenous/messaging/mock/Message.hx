@@ -10,6 +10,10 @@ class Message
 	public var commandCalled : Bool;
 	public var commandResultCalled : Bool;
 
-	public function new(){}
+	public var commandStack : Array<String>;
+
+	public function new(){
+		commandStack = new Array<String>();
+	}
 
 }

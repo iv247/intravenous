@@ -43,7 +43,7 @@ class IV implements IInjector {
         return value;
     }
 
-    public function mapValue<T> (whenType : Injectable< Enum<T>,Class<T>>,
+    public function mapValue<T> (whenType : Injectable<Enum<T>,Class<T>>,
                                  value : T,
                                  ?id : String = "") : Void {
         injectionMap.set( whenType.getName() + id, Value(value) );       

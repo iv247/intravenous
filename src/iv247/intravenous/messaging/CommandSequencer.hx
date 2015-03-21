@@ -67,7 +67,7 @@ class CommandSequencer implements Sequencer
 	/*
 	Continue the command sequence 
 	*/
-	public function continueSequence(){
+	public function resume(){
 		if(stopped){
 			stopped = false;
 			callCommands(currentCommandDefs,currentArgs,currentCommandDefIndex);
@@ -120,7 +120,7 @@ class CommandSequencer implements Sequencer
 
 	private function callback(restart:Bool):Void {
 		if(restart){
-			continueSequence();
+			resume();
 		}else{
 			cancel();
 		}	

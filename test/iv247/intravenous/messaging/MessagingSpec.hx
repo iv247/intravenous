@@ -7,6 +7,7 @@ import iv247.intravenous.ioc.IInjector;
 import iv247.intravenous.messaging.mock.MockCommand;
 import iv247.intravenous.messaging.mock.Message;
 import iv247.intravenous.messaging.mock.*;
+import iv247.intravenous.messaging.mock.MockCommandOrder;
 
 using buddy.Should;
 @:access(iv247.intravenous.messaging.MessageProcessor)
@@ -74,11 +75,42 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.count.should.be(0);
 					MockCommand.message.should.not.be(message);
 				});				
+
+				describe("execution order",{
+					before({
+						var mock = injector.instantiate(MockCommandOrder);
+
+						message = new Message();
+						message.commandStack = [];
+						injector.mapValue(MockCommandOrder,mock);
+						
+						processor.mapCommand(MockCommandOrderInterceptor);
+						processor.mapCommand(MockCommandOrderCommand);
+
+						processor.dispatch(message);
+					});
+					it("should execute interceptors first",{					
+						message.commandStack[0].should.be("intercept");
+						message.commandStack[1].should.be("intercept");
+						
+					});
+
+					it("should execute commands second",{
+						message.commandStack[2].should.be("command");
+						message.commandStack[3].should.be("command");
+					});
+
+					it("should execute command results last",{
+						message.commandStack[4].should.be("result");
+					});
+				});
                                 
 			});
 
 			describe("asynchronous commands",{
-				it("should be able to stop the notification flow",{});
+				it("should be able to stop the notification flow",{
+
+				});
 
 				it("should be able to resume the notification flow");
 			});
@@ -97,7 +129,7 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.mapCommand(MockCommand);
 					processor.dispatch(message);
 					MockCommand.message.should.not.be(message);
-					processor.openSequencers[0].continueSequence();
+					processor.openSequencers[0].resume();
 					MockCommand.message.should.be(message);
 				});
 			});
