@@ -146,7 +146,7 @@ class IVMappingTest extends BuddySuite {
                 });
 
                 it ("should be the same instance on every request", {
-                    var foo;
+                    var foo:Foo;
 
                     iv.mapSingleton(Foo, Foo);
                     foo = iv.getInstance(Foo);

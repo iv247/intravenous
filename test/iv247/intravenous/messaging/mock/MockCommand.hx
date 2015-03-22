@@ -13,8 +13,7 @@ class MockCommand
 	}
 
 	public function execute(msg:Message):Void{
-		message = msg;
-	
+		message = msg;	
 	}
 
 }

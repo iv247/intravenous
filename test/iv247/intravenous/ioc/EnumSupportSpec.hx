@@ -29,7 +29,7 @@ class EnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should create an enum value without constructor", {
-	        	var mockEnum = iv.instantiate(MockEnum,"MockEnumValue");
+	        	var mockEnum:MockEnum = iv.instantiate(MockEnum,"MockEnumValue");
 	        	mockEnum.should.be( MockEnum.MockEnumValue );
 	        });
 
@@ -52,7 +52,7 @@ class EnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should be injected into objects that have enum anotated with inject",{
-	        	var mockEnum, injectionMockWithEnum, mockEnumWCtor;
+	        	var mockEnum, injectionMockWithEnum:InjectionMockWEnum, mockEnumWCtor;
 
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
 	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
@@ -68,7 +68,7 @@ class EnumSupportSpec extends BuddySuite
 	        });
 
 	        it("should inject enums into class constructors",{
-	        	var injectionMockWithEnum, mockEnumWCtor;
+	        	var injectionMockWithEnum:InjectionMockWEnum, mockEnumWCtor;
 
 	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
 	        	iv.mapSingleton(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");

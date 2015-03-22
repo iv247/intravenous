@@ -23,7 +23,7 @@ class InjectionsSpec extends BuddySuite {
             });
 
             it("should instantiate objects with constructor args when constructor is annotated with inject",{
-                var object;
+                var object:MockConstructorArg;
 
                 iv.mapDynamic(MockObject,MockObject);
                 
@@ -33,7 +33,7 @@ class InjectionsSpec extends BuddySuite {
             });
 
             it("should use injections id's if available for constructor args", {
-                var mock1, mock2, object;
+                var mock1, mock2, object:MockConstructorArg.WithId;
 
                 iv.mapSingleton(MockObject,MockObject,"mockId");
                 iv.mapSingleton(MockObject,MockObject,"mockId2");
@@ -123,16 +123,20 @@ class InjectionsSpec extends BuddySuite {
 
             describe("mapped classes",{
                 it("should have their 'inject' annotated properties injected",{
-                    var injectionMock;
+                    var injectionMock:InjectionMock;
 
                     iv.mapDynamic(InjectedObject,InjectedObject);
                     iv.mapDynamic(InjectionMock,InjectionMock);
-                    iv.getInstance(InjectionMock).injectedObject.should.not.be(null);
+                    injectionMock = iv.getInstance(InjectionMock);
+                    injectionMock.injectedObject.should.not.be(null);
                 });
 
                 it("should not inject properties that are not mapped",{
+                    var injectionMock:InjectionMock;
                     iv.mapDynamic(InjectionMock,InjectionMock);
-                    iv.getInstance(InjectionMock).injectedObject.should.be(null);
+
+                    injectionMock = iv.getInstance(InjectionMock);
+                    injectionMock.injectedObject.should.be(null);
                 });
 
                 it("should use the property's inject id if set", {
@@ -150,8 +154,7 @@ class InjectionsSpec extends BuddySuite {
                 });
 
                 it("should have constructor args injected when instantiated",{
-                    var ctorInjectionMock,
-                        ctorObjectWithId;
+                    var ctorInjectionMock:CtorInjectionMock;
 
                     iv.mapDynamic(CtorInjectionMock,CtorInjectionMock);
 
