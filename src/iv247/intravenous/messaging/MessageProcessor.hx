@@ -27,6 +27,12 @@ class MessageProcessor
 
     }
 
+    
+    public static inline function getDispatcher(ext : ExtensionDef) : Void {
+        var processor = ext.injector.getInstance(MessageProcessor);
+        Reflect.setField(ext.object,ext.field,processor.dispatch);
+    }
+
     /**
      Procesess extension definiton sent from the injector 
      after object instantiationg
@@ -230,10 +236,5 @@ class MessageProcessor
         if(openSequencers != null){
             openSequencers.remove(sequencer);
         }
-    }
-
-    private static function getDispatcher(ext : ExtensionDef) : Void {
-        var processor = ext.injector.getInstance(MessageProcessor);
-        Reflect.setField(ext.object,ext.field,processor.dispatch);
     }
 }

@@ -153,6 +153,13 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 			});
 
+			describe("command flow utilizing all features", {
+				it("should execute in the correct order",function(){
+					var message = new Message();
+					processor.dispatch(message);
+				});
+			});
+
 		});
 	}
 

@@ -5,7 +5,6 @@ import iv247.intravenous.ioc.IV;
 import iv247.intravenous.view.View;
 import iv247.intravenous.messaging.MessageProcessor;
 
-@:access(iv247.intravenous.messaging.MessageProcessor)
 class Context 
 {
 	public var injector(default,null) : IV;
@@ -55,10 +54,5 @@ class Context
 
 	}
 
-	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {
-		
-	}
-
-
-
+	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {}
 }
