@@ -12,8 +12,9 @@ class CommandSequencer implements Sequencer
 	private var currentArgs : Array<Dynamic>;
 	private var currentCommandDefIndex : Int = 0;
 
-	private var stopped:Bool;
-	private var started:Bool;
+	public var stopped(default,null):Bool;
+	public var started(default,null):Bool;
+	private var running:Bool = false;
 
 	public function new(sequence:SequenceDef, injector:IInjector){
 		this.sequence = sequence;
@@ -28,22 +29,16 @@ class CommandSequencer implements Sequencer
 
 		started = true;
 
+		startSequence();		
+	}
+
+	private function startSequence(){
 		if(sequence.interceptors != null){
 			callCommands(sequence.interceptors,[sequence.message,this]);
 		}
 
-		if(stopped){
-			setCurrentCommandInfo(sequence.commands,0,[sequence.message]);
-			return;
-		}
-
 		if(sequence.commands != null){
 			callCommands(sequence.commands,[sequence.message]);
-		}
-
-		if(stopped){
-			setCurrentCommandInfo(sequence.completeMethods,0,[sequence.message]);
-			return;
 		}
 
 		if(sequence.completeMethods != null){
@@ -70,7 +65,7 @@ class CommandSequencer implements Sequencer
 	public function resume(){
 		if(stopped){
 			stopped = false;
-			callCommands(currentCommandDefs,currentArgs,currentCommandDefIndex);
+			startSequence();
 		}
 	}
 
@@ -86,17 +81,24 @@ class CommandSequencer implements Sequencer
             instance,
             result;
 
+         currentCommandDefs = commandDefs;
+         currentArgs = args;		
+         running = true;	
+
 		for(i in startIndex...commandDefs.length){
-			if(stopped){
-				currentCommandDefs = commandDefs;
-				currentCommandDefIndex = i;
-				currentArgs = args;
+
+			ref = commandDefs[i];			
+			currentCommandDefIndex = i;
+
+			if(stopped){	
+				running = false;
 				return;
 			}
 
-			ref = commandDefs[i];
-			if( ref.async ){
+			if(ref.async){
 				args.push(callback);
+				currentCommandDefIndex++;
+				stop();
 			}
 
 			result =
@@ -115,11 +117,26 @@ class CommandSequencer implements Sequencer
 			if(result != null){
 				stop();				
 			}
+
+		}
+		commandDefsComplete(commandDefs);
+	}
+
+	private function commandDefsComplete(commandDefs:Array<CommandDef>){
+		if(commandDefs == sequence.interceptors){
+			sequence.interceptors = null;	
+		}
+		else if(commandDefs == sequence.commands){
+			sequence.commands = null;		
+		}else{
+			sequence.completeMethods = null;
 		}
 	}
 
 	private function callback(restart:Bool):Void {
-		if(restart){
+		if(restart && running){
+			stopped = false;
+		}else if(restart){
 			resume();
 		}else{
 			cancel();

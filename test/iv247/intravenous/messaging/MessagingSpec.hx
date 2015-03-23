@@ -108,11 +108,30 @@ class MessagingSpec extends buddy.BuddySuite
 			});
 
 			describe("asynchronous commands",{
-				it("should be able to stop the notification flow",{
+				it("should stop notification flow",{		
+					var message = new Message(),
+						sequencer;
 
+					processor.mapCommand(MockAsyncCommand);
+					message.asyncResume = false;
+					processor.dispatch(message);
+
+					sequencer = processor.openSequencers[0];
+
+					sequencer.stopped.should.be(true);
 				});
+				it("should be able to resume the notification flow",{
+					var message = new Message(),
+						sequencer;
 
-				it("should be able to resume the notification flow");
+					processor.mapCommand(MockAsyncCommand);
+					message.asyncResume = true;
+					processor.dispatch(message);
+
+					sequencer = processor.openSequencers[0];
+
+					sequencer.stopped.should.be(false);
+				});
 			});
 
 			describe("interceptors", {

@@ -47,7 +47,7 @@ class EnumSupportSpec extends BuddySuite
 	        			i1.should.be(obj1);
 	        			Std.is(i2,InjectedObject).should.be(true);
 	        			i3.should.be(null);
-	        		default:
+	        		default: throw "enum not matched";
 	        	}
 	        });
 

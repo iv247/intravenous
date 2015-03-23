@@ -7,12 +7,10 @@ import iv247.intravenous.messaging.CallbackFunction;
 class MockAsyncCommand 
 {
 
-	public function new (){
-
-	}
+	public function new (){}
 
 	public function execute(msg:Message,cb:CallbackFunction):Void {
-		untyped cb(false);
+		cb(msg.asyncResume);
 	}
 
 }
