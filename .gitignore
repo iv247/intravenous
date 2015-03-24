@@ -1,5 +1,6 @@
 hxclasses
 build
+dist
 doc
 *.glue
 *.iml
@@ -8,3 +9,5 @@ doc
 *.idea
 
 test/iv247/iv/*Test.hx
+
+node_modules

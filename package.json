@@ -1,0 +1,28 @@
+{
+  "name": "intravenous",
+  "version": "1.0.0-alpha",
+  "description": "MVC framework with dependency injection",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "haxelib build.hxml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iv247/iv.git"
+  },
+  "author": "Clark Jones",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iv247/iv/issues"
+  },
+  "homepage": "https://github.com/iv247/iv",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-run": "^1.6.6",
+    "gulp-zip": "^2.0.3"
+  }
+}
