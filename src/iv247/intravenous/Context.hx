@@ -5,7 +5,7 @@ import iv247.intravenous.ioc.IV;
 import iv247.intravenous.view.View;
 import iv247.intravenous.messaging.MessageProcessor;
 
-class Context 
+class Context
 {
 	public var injector(default,null) : IV;
 	public var initialized(default,null) : Bool;
@@ -17,13 +17,13 @@ class Context
 	**/
 	public function new (?mainView : View, ?autostart : Bool = true) {
 		app = mainView;
-		
+
 		if(autostart){
 			initialize();
 		}
 	}
 	/**
-		Initializes context by:	
+		Initializes context by:
 
 		 * Creating and injector if one has not been defined;
 		 * Settting the default configuration if one has not been defined;
@@ -35,13 +35,13 @@ class Context
 		}
 		configureMessaging();
 		initialized = true;
-	}	
+	}
 	/**
 		Sets up Command/Messaging feature set
 	**/
 	public function configureMessaging() : Void {
 		messageProcessor = new MessageProcessor(injector);
-		injector.mapValue(MessageProcessor,messageProcessor);	
+		injector.mapValue(MessageProcessor,messageProcessor);
 		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
 		IV.extendIocTo("command",messageProcessor.processMeta);
 	}

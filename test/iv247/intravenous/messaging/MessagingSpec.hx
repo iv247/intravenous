@@ -8,6 +8,7 @@ import iv247.intravenous.messaging.mock.MockCommand;
 import iv247.intravenous.messaging.mock.Message;
 import iv247.intravenous.messaging.mock.*;
 import iv247.intravenous.messaging.mock.MockCommandOrder;
+import iv247.intravenous.messaging.mock.FullMessageFlow;
 
 using buddy.Should;
 @:access(iv247.intravenous.messaging.MessageProcessor)
@@ -154,9 +155,36 @@ class MessagingSpec extends buddy.BuddySuite
 			});
 
 			describe("command flow utilizing all features", {
-				it("should execute in the correct order",function(){
-					var message = new Message();
+				var message;
+				before({
+					var controller = injector.instantiate(FullMessageFlowController);
+
+					message = new FullMessageFlow();
+
+					injector.mapValue(FullMessageFlowController,controller);
+					processor.mapCommand(FullMessageFlowCommand);
+					processor.mapCommand(FullMessageFlowInterceptor);
 					processor.dispatch(message);
+				});
+				
+				it("should call intercepts in the correct order",function(){
+					message.interceptors[0].should.be("firstInterceptor");
+					message.interceptors[1].should.be("secondInterceptor");
+					message.interceptors[2].should.be("thirdInterceptor");
+					message.interceptors[3].should.be("fourthInterceptor");
+				});
+
+				it("should call commands in the correct order", function(){
+					message.commands[0].should.be("firstCommand");
+					message.commands[1].should.be("secondCommand");
+					message.commands[2].should.be("thirdCommand");
+					message.commands[3].should.be("fourthCommand");
+				});
+
+				it("should call complete methods in the correct order", function(){
+					message.completeMethods[0].should.be("firstComplete");
+					message.completeMethods[1].should.be("secondComplete");
+					message.completeMethods[2].should.be("thirdComplete");
 				});
 			});
 

@@ -9,7 +9,7 @@ import iv247.intravenous.messaging.CommandDef;
 #if !macro
 @:build(iv247.intravenous.messaging.MessagingMacro.buildCommand())
 #end
-class MessageProcessor 
+class MessageProcessor
 {
     public static inline var DISPATCHER_META = "dispatcher";
     public var injector(default,null): IInjector;
@@ -24,40 +24,40 @@ class MessageProcessor
         commandMap = new Map();
         interceptMap = new Map();
         completeMap = new Map();
-
     }
 
-    
     public static inline function getDispatcher(ext : ExtensionDef) : Void {
         var processor = ext.injector.getInstance(MessageProcessor);
         Reflect.setField(ext.object,ext.field,processor.dispatch);
     }
 
     /**
-     Procesess extension definiton sent from the injector 
+     Procesess extension definiton sent from the injector
      after object instantiationg
     **/
     public function processMeta(def : ExtensionDef):Void {
         switch(def.type){
             case iv247.intravenous.ioc.ExtensionType.Constructor : return;
 
-            case iv247.intravenous.ioc.ExtensionType.Property : 
-            
-                var order = Reflect.field(def.meta,def.metaname),
+            case iv247.intravenous.ioc.ExtensionType.Property :
+
+                var metaValue = Reflect.field(def.meta,def.metaname),
+                    order = (metaValue == null) ? 0 : metaValue[0],
                     isAsync =  Reflect.hasField(def.meta,'async'),
-                    map = Reflect.hasField(def.meta,'intercept') ? interceptMap : 
+                    map = Reflect.hasField(def.meta,'intercept') ? interceptMap :
                             Reflect.hasField(def.meta,'commandComplete') ? completeMap : commandMap,
                     messageType =  Reflect.field(def.meta,'types')[0].type,
                     ref : CommandDef;
-                     
+
+
                     if(!Std.is(order,Int)){
                         order = 0;
                     }
-                    ref = { 
-                        o:def.object, 
-                        f: def.field, 
-                        i:order, 
-                        t:Type.typeof(def.object), 
+                    ref = {
+                        o:def.object,
+                        f: def.field,
+                        i:order,
+                        t:Type.typeof(def.object),
                         async : isAsync
                     };
 
@@ -86,7 +86,7 @@ class MessageProcessor
         for(field in fields){
 
             fieldMeta = Reflect.field(meta,field);
-            
+
             if(Reflect.hasField(fieldMeta,"intercept") && !interceptorsRemoved){
                 map = interceptMap;
                 interceptorsRemoved = true;
@@ -101,7 +101,7 @@ class MessageProcessor
             }
 
             if(map != null){
-                removeFromMap(o,type,map);      
+                removeFromMap(o,type,map);
             }
         }
     }
@@ -128,24 +128,19 @@ class MessageProcessor
         var className = Type.getClassName(commandClass),
             classMeta = Meta.getType(commandClass),
             messageType = classMeta.messageTypes[0].type,
-            order = classMeta.command == null ? -1 : classMeta.command[0],
+            order = (classMeta.command == null) ? -1 : classMeta.command[0],
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
             isAsync = Reflect.hasField(classMeta,"async"),
             map = (isInterceptor) ? interceptMap : commandMap,
             ref = {
-                o:commandClass, 
-                f:'execute', 
-                i:order, 
+                o:commandClass,
+                f:'execute',
+                i:order,
                 t:Type.typeof(commandClass),
                 async: isAsync
             };
 
-            if(className == "iv247.intravenous.messaging.mock.MockCommandOrderInterceptor"){
-                trace('interceptor');
-                trace(isInterceptor);
-            }
-
-        insertCommandRef(map,messageType,ref);  
+        insertCommandRef(map,messageType,ref);
     }
 
     /**
@@ -160,35 +155,29 @@ class MessageProcessor
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
             map = (isInterceptor) ? interceptMap : commandMap,
             ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
-
-        removeCommandRef(map,messageType,ref);  
+        removeCommandRef(map,messageType,ref);
     }
 
-    // private function processCommandMeta(m:haxe.rtti.CType.MetaData,o:Dynamic,f:String):Void{
-    //  var messageType = Reflect.field(m[0],'command'),
-    //      order = Std.parseInt(Reflect.field(m[0],'order') ),
-    //      isInterceptor = (Reflect.field(m[0],'intercept') != null),
-    //      isAsync =  (Reflect.field(m[0],'async') != null),
-    //      map = (isInterceptor) ? interceptMap : commandMap,
-    //      ref = {o:o,f:f, i:order, t:Type.typeof(o)};
-
-    //      trace(isAsync);
-    //      trace('ssfsdf');
-    //  insertCommandRef(map,messageType,ref);          
-    // }
-
     private function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
-        var mapArray = map.get(messageType);
-    
+        var mapArray = map.get(messageType),
+            newArray;
+
         if(mapArray == null){
             mapArray = new Array<CommandDef>();
             map.set(messageType,mapArray);
         }
 
-        mapArray.insert(def.i,def);
-        
+        mapArray.push(def);
+
         mapArray.sort(function(ref,ref2):Int{
-            return (ref == ref2) ? 0 : (ref.i < ref2.i) ? -1 : 1;
+            if(ref.i < ref2.i){
+                return -1;
+            }
+            else if(ref.i > ref2.i){
+                return 1;
+            }else{
+                return 0;
+            }
         });
     }
 
