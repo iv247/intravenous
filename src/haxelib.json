@@ -1,0 +1,11 @@
+{
+  "name": "intravenous",
+  "url" : "https://github.com/iv247/intravenous/",
+  "license": "MIT",
+  "tags": ["cross"],
+  "description": "MVC framework with IOC",
+  "version": "1.0.0-alpha",
+  "releasenote": "alpha release",
+  "contributors": ["Clark Jones"],
+  "dependencies": {}
+}
