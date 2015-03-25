@@ -78,24 +78,18 @@ class MessageProcessor
             meta = Meta.getFields(type),
             fields = Reflect.fields(meta),
             fieldMeta,
-            map,
-            interceptorsRemoved = false,
-            commandsRemoved = false,
-            commandResultsRemoved = false;
+            map;
 
         for(field in fields){
 
             fieldMeta = Reflect.field(meta,field);
 
-            if(Reflect.hasField(fieldMeta,"intercept") && !interceptorsRemoved){
+            if(Reflect.hasField(fieldMeta,"intercept")){
                 map = interceptMap;
-                interceptorsRemoved = true;
-            }else if( Reflect.hasField(fieldMeta,"command") && !commandsRemoved){
+            }else if( Reflect.hasField(fieldMeta,"command")){
                 map = commandMap;
-                commandsRemoved = true;
-            }else if(Reflect.hasField(fieldMeta,"commandComplete") && !commandResultsRemoved){
+            }else if(Reflect.hasField(fieldMeta,"commandComplete")){
                 map = completeMap;
-                commandResultsRemoved = true;
             }else{
                 map = null;
             }
