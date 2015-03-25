@@ -38,6 +38,7 @@ class ChildInjectorSpec extends buddy.BuddySuite
 			it("should throw an error if a parent wants to be a child (circular reference)",{
 				var childInjector = new IV(iv);
 				setParent.bind(childInjector,iv).should.throwType(String);
+
 			});
 
 			it("should allow removal of their parent",{
