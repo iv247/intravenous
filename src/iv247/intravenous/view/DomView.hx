@@ -1,7 +1,6 @@
-
 package iv247.intravenous.view;
 
-class ViewImpl implements View
+class DomView implements View
 {
 	public var parent(default,null):View;
 

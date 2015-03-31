@@ -36,14 +36,15 @@ class MessagingSpec extends buddy.BuddySuite
 					var mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
 					processor.dispatch(message);
 					message.commandCalled.should.be(true);
+
 				});
 
 				it("should remove objects waiting for dispatched objects",{
 					var message = new Message(),
-						mock; 
+						mock;
 
 					injector.mapDynamic(iv247.intravenous.messaging.mock.MockController,iv247.intravenous.messaging.mock.MockController );
-					mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );					
+					mock = injector.instantiate( iv247.intravenous.messaging.mock.MockController  );
 					processor.deregister(mock);
 					processor.dispatch(message);
 
@@ -75,7 +76,7 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.dispatch(message);
 					MockCommand.count.should.be(0);
 					MockCommand.message.should.not.be(message);
-				});				
+				});
 
 				describe("execution order",{
 					before({
@@ -84,16 +85,16 @@ class MessagingSpec extends buddy.BuddySuite
 						message = new Message();
 						message.commandStack = [];
 						injector.mapValue(MockCommandOrder,mock);
-						
+
 						processor.mapCommand(MockCommandOrderInterceptor);
 						processor.mapCommand(MockCommandOrderCommand);
 
 						processor.dispatch(message);
 					});
-					it("should execute interceptors first",{					
+					it("should execute interceptors first",{
 						message.commandStack[0].should.be("intercept");
 						message.commandStack[1].should.be("intercept");
-						
+
 					});
 
 					it("should execute commands second",{
@@ -105,11 +106,11 @@ class MessagingSpec extends buddy.BuddySuite
 						message.commandStack[4].should.be("complete");
 					});
 				});
-                                
+
 			});
 
 			describe("asynchronous commands",{
-				it("should stop notification flow",{		
+				it("should stop notification flow",{
 					var message = new Message(),
 						sequencer;
 
@@ -166,7 +167,7 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.mapCommand(FullMessageFlowInterceptor);
 					processor.dispatch(message);
 				});
-				
+
 				it("should call intercepts in the correct order",function(){
 					message.interceptors[0].should.be("firstInterceptor");
 					message.interceptors[1].should.be("secondInterceptor");

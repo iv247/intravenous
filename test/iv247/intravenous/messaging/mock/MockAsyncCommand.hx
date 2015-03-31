@@ -10,7 +10,7 @@ class MockAsyncCommand
 	public function new (){}
 
 	public function execute(msg:Message,cb:CallbackFunction):Void {
-		cb(msg.asyncResume);
+		untyped cb(msg.asyncResume);
 	}
 
 }

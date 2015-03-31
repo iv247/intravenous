@@ -129,12 +129,13 @@ class InjectionsSpec extends BuddySuite {
                     iv.mapDynamic(InjectionMock,InjectionMock);
                     injectionMock = iv.getInstance(InjectionMock);
                     injectionMock.injectedObject.should.not.be(null);
+                    
+
                 });
 
                 it("should not inject properties that are not mapped",{
                     var injectionMock:InjectionMock;
                     iv.mapDynamic(InjectionMock,InjectionMock);
-
                     injectionMock = iv.getInstance(InjectionMock);
                     injectionMock.injectedObject.should.be(null);
                 });
@@ -144,7 +145,6 @@ class InjectionsSpec extends BuddySuite {
                         injectionMock;
 
                     iv.mapDynamic(InjectionMock,InjectionMock);
-
                     iv.mapValue(InjectedObject,injectedObjectWithId, "injectedObjectId");
 
                     injectionMock = iv.getInstance(InjectionMock);

@@ -54,5 +54,7 @@ class Context
 
 	}
 
-	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {}
+	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {
+		
+	}
 }

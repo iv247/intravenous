@@ -6,11 +6,12 @@ import iv247.intravenous.ioc.mock.InjectionMock;
 
 class PostInjectionSpec extends buddy.BuddySuite {
 	public function new() {
-		var iv;
+		var iv:IV;
 
 		describe('IV, after injection into objects, ',{
 			before({
 				iv = new IV();
+
 			});
 			
 			it("should call methods annotated with post",{

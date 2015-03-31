@@ -26,6 +26,7 @@ class MessageProcessor
         completeMap = new Map();
     }
 
+
     public static inline function getDispatcher(ext : ExtensionDef) : Void {
         var processor = ext.injector.getInstance(MessageProcessor);
         Reflect.setField(ext.object,ext.field,processor.dispatch);
