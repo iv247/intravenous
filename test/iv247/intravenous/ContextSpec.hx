@@ -17,7 +17,7 @@ class ContextSpec extends buddy.BuddySuite
 			it('should initialize on instantiation by default',{
 				context = new Context();
 				context.initialized.should.be(true);
-							});
+			});
 
 			it("should not initialize on instantiation", {
 				context = new Context(false);

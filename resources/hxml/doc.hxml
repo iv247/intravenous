@@ -1,0 +1,4 @@
+-xml build/.xml
+-cp src
+-D doc
+--macro include('iv247')

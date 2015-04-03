@@ -1,7 +1,6 @@
 hxclasses
 build
 dist
-doc
 .sublime-gulp.cache
 *.glue
 *.iml

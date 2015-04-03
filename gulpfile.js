@@ -4,18 +4,25 @@ var zip = require("gulp-zip");
 var del = require("del");
 var runSequence = require('run-sequence');
 
-
 gulp.task('clean',function(cb) {
     del('dist',cb);
 });
 
 gulp.task('neko', function(cb) {
-   run('haxe build/neko.hxml').exec("",cb);    
+   run('haxe resources/hxml/neko.hxml').exec("",cb);
 });
 
 gulp.task('js', function(cb) {
-   run('haxe build/js.hxml').exec();    
-   run('phantomjs build/tests.phantom.js').exec("",cb);
+   run('haxe resources/hxml/js.hxml').exec();
+   run('phantomjs resources/tests.phantom.js').exec("",cb);
+});
+
+gulp.task('docs', function(cb) {
+  run('mkdir dist').exec(function(){
+    run('haxe resources/hxml/doc.hxml').exec(function(){
+      run('haxelib run dox -i build/.xml -in iv247 -o dist/doc').exec(cb)
+      });
+  })
 });
 
 gulp.task('archive', function(){
@@ -28,7 +35,7 @@ gulp.task('build',function(cb) {
 	return runSequence(
 		'clean',
 		['js','neko'],
-		'archive',
+		['archive','docs'],
 		cb
     );
 });

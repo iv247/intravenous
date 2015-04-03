@@ -1,4 +1,3 @@
-
 package iv247.intravenous.messaging;
 
 import iv247.intravenous.messaging.MessageProcessor;
@@ -20,7 +19,6 @@ class MessagingSpec extends buddy.BuddySuite
 
 	public function new(){
 		describe("Messaging", {
-			
 			before({
 				injector = new IV();
 				processor = new MessageProcessor(injector);
