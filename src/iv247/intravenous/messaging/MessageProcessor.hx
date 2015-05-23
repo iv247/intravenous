@@ -28,8 +28,13 @@ class MessageProcessor
 
 
     public static inline function getDispatcher(ext : ExtensionDef) : Void {
-        var processor = ext.injector.getInstance(MessageProcessor);
-        Reflect.setField(ext.object,ext.field,processor.dispatch);
+        var processor = ext.injector.getInstance(MessageProcessor);      
+        
+        Reflect.setField( ext.object,ext.field, 
+            function(v:Dynamic):Void{
+                processor.dispatch(v);
+            }
+        );     
     }
 
     /**
