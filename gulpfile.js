@@ -22,7 +22,7 @@ gulp.task('docs', function(cb) {
     run('haxe resources/hxml/doc.hxml').exec(function(){
       run('haxelib run dox -i build/.xml -in iv247 -o dist/doc').exec(cb)
       });
-  })
+  });
 });
 
 gulp.task('archive', function(){

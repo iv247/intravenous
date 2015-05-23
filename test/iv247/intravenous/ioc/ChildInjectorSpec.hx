@@ -5,13 +5,13 @@ import iv247.intravenous.ioc.mock.InjectionMock;
 using buddy.Should;
 
 class ChildInjectorSpec extends buddy.BuddySuite
-{	
+{
 	public var iv:IInjector;
 
 	public function new(){
 		describe("Child injectors",{
 			var iv, setParent;
-			
+
 			setParent = function(parent:IInjector,child:IInjector):Void{
 				child.parent = parent;
 			};
@@ -57,7 +57,7 @@ class ChildInjectorSpec extends buddy.BuddySuite
 				result = childInjector.getInstance(InjectionMock);
 				object.should.be(result);
 
-			});		
+			});
 
 			it("should not return objects mapped on parent if child mapping exists",{
 				var object = new InjectionMock(),
@@ -73,10 +73,9 @@ class ChildInjectorSpec extends buddy.BuddySuite
 
 			it("should return null on unmapped object on parent and child",{
 				var childInjector = new IV(iv),
-					result = new InjectionMock();				
 					result = childInjector.getInstance(InjectionMock);
-					
-					result.should.be(null);
+
+					(result == null).should.be(true);
 			});{}
 		});
 	}

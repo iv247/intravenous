@@ -177,12 +177,14 @@ class IV implements IInjector {
                                 });
                     }
                 }else{
-                    targetType = Std.string( metaField.types[0] ) ;
+                    if(metaField.types != null){
+                        targetType = Std.string( metaField.types[0] ) ;
 
-                    instanceId = metaField.inject != null ? metaField.inject[0] : "";
-                    instance = getInstance(targetType, instanceId);
+                        instanceId = metaField.inject != null ? metaField.inject[0] : "";
+                        instance = getInstance(targetType, instanceId);
 
-                    Reflect.setField(object,field,instance);
+                        Reflect.setField(object,field,instance);
+                    }      
                 }
        
                 callExtensions(metaField,object,ExtensionType.Property,field); 

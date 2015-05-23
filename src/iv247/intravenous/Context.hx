@@ -4,6 +4,7 @@ package iv247.intravenous;
 import iv247.intravenous.ioc.IV;
 import iv247.intravenous.view.View;
 import iv247.intravenous.messaging.MessageProcessor;
+import iv247.intravenous.view.ViewController;
 
 class Context
 {
@@ -43,7 +44,10 @@ class Context
 		messageProcessor = new MessageProcessor(injector);
 		injector.mapValue(MessageProcessor,messageProcessor);
 		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
+
 		IV.extendIocTo("command",messageProcessor.processMeta);
+		mapCommand(ViewController);
+
 	}
 
 	/**
