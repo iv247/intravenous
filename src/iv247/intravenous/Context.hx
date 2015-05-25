@@ -52,6 +52,7 @@ class Context
 		var viewController;
 		viewController = injector.instantiate(ViewController);
 		injector.mapValue(ViewController,viewController);
+		injector.injectInto(app);
 	}
 
 	/**
