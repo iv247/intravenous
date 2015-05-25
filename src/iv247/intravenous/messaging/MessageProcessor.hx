@@ -21,6 +21,7 @@ class MessageProcessor
 
     public function new(injector : IInjector) {
         this.injector = injector;
+        injector.mapValue(MessageProcessor,this);
         commandMap = new Map();
         interceptMap = new Map();
         completeMap = new Map();
@@ -76,7 +77,7 @@ class MessageProcessor
     /**
         Deregister an object with registered command, commandResult, or intercept methods.
         Calling this method is necessary for any objects that need to be removed from memory
-        (ie. Prestionation Models/View Controllers)
+        (ie. Mediators/Presentation Models/View Controllers)
     **/
     public function deregister(o:Dynamic):Void{
         var type = Type.getClass(o),

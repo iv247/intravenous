@@ -27,6 +27,7 @@ class IV implements IInjector {
     public function new (?parentInjector : IInjector) {
         injectionMap = new Map();
         parent = parentInjector;
+        this.mapValue(IInjector,this);
     }
 
  

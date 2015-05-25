@@ -17,6 +17,7 @@ class DomView implements View {
 
     public function new (type:String = "div") {
         this.nodeType = type;
+        this.create();
     }
 
     public function add (view:View):Void {
@@ -25,14 +26,14 @@ class DomView implements View {
         }
 
         if ( !Lambda.has( children, view ) ) {
+            dispatch(new ViewMessage(ViewMessage.Types.ADDING, view));
             this.children.push( view );
-            view.create( );
-            view.render( );
+            view.render();
             view.onRenderComplete( );
             viewElement.appendChild( view.viewElement );
         }
 
-        dispatch( new ViewMessage(ViewMessage.Types.ADDED) );
+        dispatch( new ViewMessage(ViewMessage.Types.ADDED, view) );
     }
 
     public function create ():Void {
@@ -45,10 +46,14 @@ class DomView implements View {
         viewElement = Browser.document.createElement( nodeType );
         viewElement.classList.add( name );
         viewElement.attributes.setNamedItem( attr );
+        this.createChildren();
     }
+
+    private function createChildren():Void{};
 
     public function render ():Void {}
 
+    public function onCreateComplete ():Void{}
     public function onRenderComplete ():Void {}
 
     public function remove (view:View):Void {
@@ -56,7 +61,7 @@ class DomView implements View {
             view.viewElement.remove( );
         }
 
-        dispatch( new ViewMessage(ViewMessage.Types.REMOVED) );
+        dispatch( new ViewMessage(ViewMessage.Types.REMOVED, view) );
     }
 
 }#end

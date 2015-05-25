@@ -35,6 +35,7 @@ class Context
 			injector = new IV();
 		}
 		configureMessaging();
+		configureViewHandling();
 		initialized = true;
 	}
 	/**
@@ -42,12 +43,15 @@ class Context
 	**/
 	public function configureMessaging() : Void {
 		messageProcessor = new MessageProcessor(injector);
-		injector.mapValue(MessageProcessor,messageProcessor);
 		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
-
 		IV.extendIocTo("command",messageProcessor.processMeta);
-		mapCommand(ViewController);
+		injector.mapValue(MessageProcessor,messageProcessor);
+	}
 
+	public function configureViewHandling() : Void {
+		var viewController;
+		viewController = injector.instantiate(ViewController);
+		injector.mapValue(ViewController,viewController);
 	}
 
 	/**

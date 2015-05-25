@@ -17,7 +17,7 @@ interface View
 	var children(default,null) : Array<View>;
 	
 	public function add(view:View):Void;
-	
+
 	public function remove(view:View):Void;
 
 	function create():Void;
