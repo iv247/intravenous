@@ -42,7 +42,7 @@ interface IInjector {
     /**
         Retrive and instance of a Class or Enum that has been mapped
     **/
-    function getInstance<T> ( type:Injectable<Enum<T>, Class<T>>,?id:String ):T;
+    function getInstance<T> ( type:Injectable<Enum<T>, Class<T>>,?id:String ):Null<T>;
 
     /**
         Instantiate a Class or Enum not mapped in a IInjector implementation

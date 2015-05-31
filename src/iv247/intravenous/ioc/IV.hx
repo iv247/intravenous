@@ -78,7 +78,7 @@ class IV implements IInjector {
         injectionMap.remove( type.getName() + id );
     }
 
-    public function getInstance<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : T {
+    public function getInstance<T> (type : Injectable<Enum<T>,Class<T>>, ?id : String = "") : Null<T> {
         var injection = type.getName() + id,
             instance, newInstance;
 
