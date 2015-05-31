@@ -1,6 +1,8 @@
 package iv247.intravenous.view;
 #if js
 
+import haxe.extern.Rest;
+import js.html.DOMTokenList;
 import js.Browser;
 
 class DomView implements View {
@@ -11,12 +13,14 @@ class DomView implements View {
     public var viewElement(default, null):js.html.Element;
 
     private var nodeType:String;
+    private var classList : Array<String>;
 
     @dispatcher
     public var dispatch:Dynamic -> Void;
 
-    public function new (type:String = "div") {
+    public function new (type:String = "div", ?classes:Array<String>) {
         this.nodeType = type;
+        this.classList = classes;
         this.create();
     }
 
@@ -44,8 +48,13 @@ class DomView implements View {
 
         attr.value = Type.getClassName( type );
         viewElement = Browser.document.createElement( nodeType );
-        viewElement.classList.add( name );
         viewElement.attributes.setNamedItem( attr );
+        viewElement.classList.add(name);
+
+        if(classList != null){
+            Reflect.callMethod(viewElement.classList,viewElement.classList.add,classList);
+        }
+
         this.createChildren();
     }
 
