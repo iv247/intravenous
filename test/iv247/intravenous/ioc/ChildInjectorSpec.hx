@@ -46,6 +46,7 @@ class ChildInjectorSpec extends buddy.BuddySuite
 				childInjector.parent = iv;
 				childInjector.parent = null;
 				childInjector.parent.should.be(null);
+				
 			});
 
 			it("should return mapped objects from their parents if child mapping doesn't exist",{

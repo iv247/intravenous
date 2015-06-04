@@ -6,7 +6,7 @@ import iv247.intravenous.ioc.IV;
 
 using buddy.Should;
 
-class IVMappingTest extends BuddySuite {
+class MappingSpec extends BuddySuite {
     public function new ( )
     {
 
