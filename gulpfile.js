@@ -21,13 +21,13 @@ gulp.task('test', function(cb){
 });
 
 gulp.task('docs', function(cb) {
-      del('dist', function(){
-        run('mkdir dist').exec(function(){
-          run('haxe resources/hxml/doc.hxml').exec(function(){
-            run('haxelib run dox -i build -in iv247 -o dist/doc').exec(cb)
-          });
-      });
-  });
+    del(['dist/doc'], function(){
+        run('mkdir dist && mkdir dist/doc').exec(function(){
+            run('haxe resources/hxml/doc.hxml').exec(function(){
+                run('haxelib run dox -i build -in intravenous -o dist/doc').exec(cb)
+            });
+        });
+    });
 });
 
 gulp.task('archive', function(){
