@@ -39,8 +39,8 @@ gulp.task('archive', function(){
 gulp.task('build',function(cb) {
 	return runSequence(
 		'clean',
-		['js','neko'],
-		['archive','docs'],
+		'test',
+		['docs','archive'],
 		cb
     );
 });

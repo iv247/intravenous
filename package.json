@@ -2,23 +2,19 @@
   "name": "intravenous",
   "version": "1.0.0-alpha",
   "description": "MVC framework with dependency injection",
-  "directories": {
-    "doc": "doc",
-    "test": "test"
-  },
   "scripts": {
     "test": "gulp test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/iv247/iv.git"
+    "url": "https://github.com/iv247/intravnous.git"
   },
   "author": "iv247 Design Studio LLC",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/iv247/iv/issues"
+    "url": "https://github.com/iv247/intravenous/issues"
   },
-  "homepage": "https://github.com/iv247/iv",
+  "homepage": "https://github.com/iv247/intravnous",
   "devDependencies": {
     "del": "^1.1.1",
     "gulp": "^3.8.11",
