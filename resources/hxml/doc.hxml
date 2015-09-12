@@ -1,4 +1,18 @@
--xml build/.xml
 -cp src
 -D doc
 --macro include('iv247')
+--no-output
+--each
+
+-xml build/.xml
+
+--next
+
+-js build/t.js
+-xml build/js.xml
+
+--next
+
+-xml build/neko.xml
+-neko build/neko.n
+

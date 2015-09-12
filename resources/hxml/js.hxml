@@ -1,5 +1,3 @@
--lib buddy
--cp test
--cp src
--main TestMain
--js build/TestMain.js
+./resources/hxml/_base.hxml
+-js resources/TestMain.js
+-cmd phantomjs resources/tests.phantom.js

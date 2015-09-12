@@ -13,14 +13,19 @@ gulp.task('neko', function(cb) {
 });
 
 gulp.task('js', function(cb) {
-   run('haxe resources/hxml/js.hxml').exec();
-   run('phantomjs resources/tests.phantom.js').exec("",cb);
+   run('haxe resources/hxml/js.hxml').exec("",cb);
+});
+
+gulp.task('test', function(cb){
+  return runSequence(['js','neko'],cb);
 });
 
 gulp.task('docs', function(cb) {
-  run('mkdir dist').exec(function(){
-    run('haxe resources/hxml/doc.hxml').exec(function(){
-      run('haxelib run dox -i build/.xml -in iv247 -o dist/doc').exec(cb)
+      del('dist', function(){
+        run('mkdir dist').exec(function(){
+          run('haxe resources/hxml/doc.hxml').exec(function(){
+            run('haxelib run dox -i build -in iv247 -o dist/doc').exec(cb)
+          });
       });
   });
 });

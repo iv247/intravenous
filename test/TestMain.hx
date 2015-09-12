@@ -13,4 +13,5 @@ class TestMain implements Buddy<[
 		iv247.intravenous.ioc.MappingSpec,
 		iv247.intravenous.ioc.PostInjectionSpec,
 		iv247.intravenous.messaging.MessagingSpec ]> {
-}
+
+		}

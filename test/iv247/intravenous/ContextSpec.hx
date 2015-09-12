@@ -11,12 +11,12 @@ class ContextSpec extends buddy.BuddySuite
 		describe("Context",{
 			before({
 				context = null;
-
 			});
 
 			it('should initialize on instantiation by default',{
 				context = new Context();
 				context.initialized.should.be(true);
+
 			});
 
 			it("should not initialize on instantiation", {
@@ -24,9 +24,6 @@ class ContextSpec extends buddy.BuddySuite
 				context.initialized.should.not.be(true);
 
 			});
-
 		});
 	}
-
-
 }

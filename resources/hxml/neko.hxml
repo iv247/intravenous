@@ -1,5 +1,2 @@
--lib buddy
--cp test
--cp src
--main TestMain
+./resources/hxml/_base.hxml
 --interp
