@@ -1,13 +1,14 @@
 hxclasses
 build
 dist
-.sublime-gulp.cache
 *.glue
 *.iml
 *.ipr
 *.iws
 *.idea
+.npm-debug.log
 
 test/iv247/iv/*Test.hx
 
 node_modules
+                       .
