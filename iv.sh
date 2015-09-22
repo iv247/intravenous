@@ -4,9 +4,11 @@ task=$1
 
 if [ $task == "test" ]
 	then
-	echo "testing neko"
+	echo "\n***TESTING IN NEKO***"
 	haxe resources/hxml/neko.hxml 
-	echo "texting js"
+	echo "\n***TESTING IN NODE.JS***"
+	haxe resources/hxml/node.hxml
+	echo "\n***TESTING IN JS***"
 	haxe resources/hxml/js.hxml
 
 elif [ $task == "docs" ]
