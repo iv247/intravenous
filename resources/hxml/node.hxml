@@ -1,0 +1,4 @@
+./resources/hxml/_base.hxml
+-js build/js/TestMain.node.js
+-D nodejs
+-cmd node build/js/TestMain.node.js
