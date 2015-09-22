@@ -1,6 +1,6 @@
 var page = require('webpage').create();
 
-page.open('../build/js/index.html', function(status) {
+page.open('build/js/index.html', function(status) {
     if (status !== 'success') {
         console.log('Error: Unable to access network!');
 		phantom.exit(1);
