@@ -1,16 +1,16 @@
 
 package intravenous.messaging.mock;
 
-import intravenous.messaging.MessageProcessor;
+import intravenous.messaging.CommandSequencer;
 
-class MockController 
+class MockController
 {
 
 	public function new(){
 	}
 
 	@command
-	public function intercept(object:Message, processor : MessageProcessor) : Void {
+	public function intercept(object:Message, sequencer : CommandSequencer) : Void {
 		object.interceptCalled = true;
 	}
 
