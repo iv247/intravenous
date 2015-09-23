@@ -304,7 +304,8 @@ class IV implements IInjector {
 
         for(key in extensionMap.keys()){
             if(Reflect.hasField(meta,key)){
-                extensionMap.get(key)({
+                var fn = extensionMap.get(key);
+                fn({
                     meta : meta,
                     injector : this,
                     metaname : key,
