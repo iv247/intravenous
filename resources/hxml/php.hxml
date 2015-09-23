@@ -1,0 +1,3 @@
+./resources/hxml/_base.hxml
+-php build/php
+-cmd php build/php/index.php
