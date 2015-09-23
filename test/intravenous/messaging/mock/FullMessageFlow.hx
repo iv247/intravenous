@@ -33,9 +33,9 @@ class FullMessageFlowController {
 	@command public function firstCommand(msg:FullMessageFlow):Void{
 		msg.commands.push("firstCommand");
 	}
-	@command(1) public function secondCommand(msg:FullMessageFlow):Void{
+	@command(1) public function secondCommand(msg:FullMessageFlow,cb:CallbackFunction):Void{
 		msg.commands.push("secondCommand");
-//		cb(false);
+		cb(true);
 	}
 	@command(3) public function fourthCommand(msg:FullMessageFlow):Void{
 		msg.commands.push("fourthCommand");
