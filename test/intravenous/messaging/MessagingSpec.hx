@@ -159,11 +159,13 @@ class MessagingSpec extends buddy.BuddySuite
 					var controller = injector.instantiate(FullMessageFlowController);
 
 					message = new FullMessageFlow();
-
 					injector.mapValue(FullMessageFlowController,controller);
 					processor.mapCommand(FullMessageFlowCommand);
+					processor.mapCommand(FullMessageFlowCommand2);
+					processor.mapCommand(FullMessageFlowCommand3);
 					processor.mapCommand(FullMessageFlowInterceptor);
 					processor.dispatch(message);
+					processor.openSequencers[0].resume();
 				});
 
 				it("should call intercepts in the correct order",function(){
@@ -171,6 +173,7 @@ class MessagingSpec extends buddy.BuddySuite
 					message.interceptors[1].should.be("secondInterceptor");
 					message.interceptors[2].should.be("thirdInterceptor");
 					message.interceptors[3].should.be("fourthInterceptor");
+
 				});
 
 				it("should call commands in the correct order", function(){
@@ -178,6 +181,8 @@ class MessagingSpec extends buddy.BuddySuite
 					message.commands[1].should.be("secondCommand");
 					message.commands[2].should.be("thirdCommand");
 					message.commands[3].should.be("fourthCommand");
+					message.commands[4].should.be("fifthCommand");
+					message.commands[5].should.be("sixthCommand");
 				});
 
 				it("should call complete methods in the correct order", function(){

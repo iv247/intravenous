@@ -10,7 +10,7 @@ class CommandSequencer implements Sequencer
 
 	private var currentCommandDefs : Array<CommandDef>;
 	private var currentArgs : Array<Dynamic>;
-	private var currentCommandDefIndex : Int = 0;
+	public var currentCommandDefIndex : Int = 0;
 
 	public var stopped(default,null):Bool;
 	public var started(default,null):Bool;
@@ -28,39 +28,25 @@ class CommandSequencer implements Sequencer
 		}
 
 		started = true;
-
-		startSequence();		
+		startSequence();
 	}
-
-	private function startSequence(){
-		if(sequence.interceptors != null){
-			callCommands(sequence.interceptors,[sequence.message,this]);
-		}
-
-		if(sequence.commands != null){
-			callCommands(sequence.commands,[sequence.message]);
-		}
-
-		if(sequence.completeMethods != null){
-			callCommands(sequence.completeMethods,[sequence.message]);
-		}
-	}
-
-	private function setCurrentCommandInfo(commandDefs,commandDefIndex,args):Void {
-		currentCommandDefs = commandDefs;
-		currentCommandDefIndex = commandDefIndex;
-		currentArgs = args;
-	}
-
 	/*
-	Stop the command sqequence from calling more commands. The current command will still be executed 
+		Stop the command sqequence from calling more commands. The current command will still be executed
 	*/
 	public function stop(){
 		stopped = true;
 	}
-	
+
+
 	/*
-	Continue the command sequence 
+		Cancel the command sequence
+	*/
+	public function cancel(){
+		stopped = true;
+	}
+
+	/*
+		Continue the command sequence
 	*/
 	public function resume(){
 		if(stopped){
@@ -69,67 +55,60 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-	/*
-	Cancel the command sequence 
-	*/
-	public function cancel(){
-		stopped = true;
+
+	private function startSequence(){
+		var cmdsCompleted = false;
+
+		if( !isEmpty(sequence.interceptors) ){
+			callCommands(sequence.interceptors,[sequence.message,this]);
+		}
+		if( !isEmpty(sequence.commands) && !stopped ){
+			callCommands(sequence.commands,[sequence.message]);
+		}
+
+		if( !isEmpty(sequence.completeMethods) && !stopped ){
+			callCommands(sequence.completeMethods,[sequence.message]);
+		}
 	}
 
-	public function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>,?startIndex:Int=0):Void{
-		var ref,
-            instance,
-            result;
+	private function isEmpty(arr:Array<CommandDef>):Bool {
+		return (arr == null || arr.length == 0);
+	}
 
-         currentCommandDefs = commandDefs;
-         currentArgs = args;		
-         running = true;	
+	public function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
+		var instance, result;
+		currentArgs = args;
 
-		for(i in startIndex...commandDefs.length){
+		while(commandDefs.length > 0){
 
-			ref = commandDefs[i];			
-			currentCommandDefIndex = i;
-
-			if(stopped){	
+			if(stopped){
 				running = false;
 				return;
 			}
 
+			var ref = commandDefs.shift() ;
+
 			if(ref.async){
-				args.push(callback);
-				currentCommandDefIndex++;
+				currentArgs = args.concat([callback]);
 				stop();
 			}
 
 			result =
 			switch(ref.t){
 				case TObject:
-                    //ref.o is a class in this case
-                    instance = (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
-                    Reflect.callMethod( instance , Reflect.field(instance,ref.f), args);
+					//ref.o is a class in this case
+					instance = (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
+					Reflect.callMethod( instance , Reflect.field(instance,ref.f), currentArgs);
 				case TClass(c):
-					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), args);
+					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), currentArgs);
 				case _: //todo: throw error
-						//errorHandler('callCommands',ref);
-						null;
+						// errorHandler('callCommands',ref);
+					null;
 			}
 
 			if(result != null){
-				stop();				
+				stop();
 			}
-
-		}
-		commandDefsComplete(commandDefs);
-	}
-
-	private function commandDefsComplete(commandDefs:Array<CommandDef>){
-		if(commandDefs == sequence.interceptors){
-			sequence.interceptors = null;	
-		}
-		else if(commandDefs == sequence.commands){
-			sequence.commands = null;		
-		}else{
-			sequence.completeMethods = null;
 		}
 	}
 
@@ -137,7 +116,9 @@ class CommandSequencer implements Sequencer
 		if(restart && running){
 			stopped = false;
 		}else if(restart){
+			trace('resuming');
 			resume();
+
 		}else{
 			cancel();
 		}	

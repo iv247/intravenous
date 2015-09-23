@@ -203,9 +203,9 @@ class MessageProcessor
     //Consider returning the sequencer
     public function dispatch(o:Dynamic):Void{
         var messageType = Type.getClassName(Type.getClass(o)),
-            interceptors = interceptMap.get(messageType),
-            commands = commandMap.get(messageType),
-            completeMethods = completeMap.get(messageType),
+            interceptors = getCommandDefFromMap(interceptMap,messageType),
+            commands =  getCommandDefFromMap(commandMap,messageType),
+            completeMethods = getCommandDefFromMap(completeMap,messageType),
             sequencer = new CommandSequencer({
                 interceptors : interceptors,
                 commands : commands,
@@ -215,11 +215,17 @@ class MessageProcessor
             },
             injector);
 
+
         if(openSequencers == null){
             openSequencers = new Array<CommandSequencer>();
         }
         openSequencers.push(sequencer);
         sequencer.start();
+    }
+
+    private function getCommandDefFromMap(map:Map<String, Array<CommandDef>>, messageType):Array<CommandDef> {
+           var array = map.get(messageType);
+           return (array != null) ? array.slice(0) : null;
     }
 
     private function removeSequence(sequencer:CommandSequencer){

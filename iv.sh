@@ -10,6 +10,8 @@ if [ $task == "test" ]
 	haxe resources/hxml/node.hxml
 	echo "\n***TESTING IN JS***"
 	haxe resources/hxml/js.hxml
+	echo "\n***TESTING IN PHP***"
+    	haxe resources/hxml/php.hxml
 
 elif [ $task == "docs" ]
 	then

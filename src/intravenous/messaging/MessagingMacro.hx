@@ -79,10 +79,13 @@ class MessagingMacro
 		var types;
 		for(field in type.fields.get()){	
 			if(field.meta.has("command")){
-				switch(field.type){						
+				switch(field.type){
 						case TFun(args,ret) :
 								if(isIntercept(args)){			
 							  		field.meta.add('intercept',[],field.pos);
+								}
+								if(isAsync(args)){
+									field.meta.add('async',[],field.pos);
 								}
 						default: null;
 				}
