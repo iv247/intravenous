@@ -23,7 +23,7 @@ class InjectableSpec extends buddy.BuddySuite  {
 
 		  	 it('can not be an instance',{
 			  	inj = new MockObject();
-			  	inj.should.be(null);
+				(inj == null).should.be(true);
 			 });
 
 		  	 it('can be made from a class path',{
