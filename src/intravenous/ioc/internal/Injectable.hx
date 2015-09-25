@@ -20,13 +20,14 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     @:from 
     public static function fromDynamic(v:Dynamic){
         var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = null;
-        
-        if(isAClass(v)) {
+
+        if(isAnEnum(v)){
+             inj = Type.resolveEnum(Type.getEnumName(v));
+        }
+        else if(isAClass(v) ) {
             inj = Type.resolveClass(Type.getClassName(v));
         }
-        else if(isEnum(v)){
-            inj = Type.resolveEnum(Type.getEnumName(v));
-        }
+
         else if(Std.is(v,String)) {
             inj = cast(v,String);
             
@@ -41,7 +42,7 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     }
 
     public function getName():String {
-        if(isAClass(this)){
+        if(isAClass(this) && !isAnEnum(this)){
             return Type.getClassName(this);
         }else{
             return Type.getEnumName(this);
@@ -57,7 +58,9 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     }
 
     public function isClass():Bool {
-        #if flash
+        #if cpp
+            return !isEnum();
+        #elseif flash
             return untyped this.__constructs__ == null;
         #else
             return Std.is(this,Class);
@@ -65,7 +68,9 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
     }
 
     public function isEnum():Bool {
-        #if flash
+        #if cpp
+           return Type.allEnums(this).length > 0;
+        #elseif flash
             return untyped this.__constructs__ != null;
         #else
             return Std.is(this,Enum);
@@ -74,7 +79,9 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 
     static
     public function isAnEnum(v:Dynamic):Bool {
-        #if flash
+        #if cpp
+           return Type.allEnums(v).length > 0;
+        #elseif flash
             return untyped v.__constructs__ != null;
         #else
             return Std.is(v,Enum);
@@ -84,7 +91,9 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 
     static
     public function isAClass(v:Dynamic):Bool {
-        #if flash
+         #if cpp
+            return Type.allEnums(v).length == 0;
+        #elseif flash
             return untyped v.__constructs__ == null;
         #else
             return Std.is(v,Class);

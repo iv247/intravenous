@@ -3,20 +3,43 @@ package intravenous.ioc.internal;
 import intravenous.ioc.mock.MockObject;
 import intravenous.ioc.mock.MockEnum;
 
+
 using buddy.Should;
 
 class InjectableSpec extends buddy.BuddySuite  {
 	  public function new(){
+	  	var inj:Injectable<Enum<Dynamic>,Class<Dynamic>>;
+
 		  describe('Injectable types', {
-			 it('can be an enum');
-		  	 it('can be a class');
-		  	 it('can be made from a class path');
-		     it('can be made from an enum path');
+			 it('can be an enum',{
+			 	inj = MockEnum;
+			 	inj.should.be(MockEnum);
+			 });
+
+		  	 it('can be a class',{
+		  	 	inj = MockObject;
+		  	 	inj.should.be(MockObject);
+		  	 });
+
+		  	 it('can be made from a class path',{
+		  	 	inj = 'intravenous.ioc.mock.MockObject';
+		  	 	inj.should.be(MockObject);
+		  	 });
+
+		     it('can be made from an enum path',{
+		     	inj = 'intravenous.ioc.mock.MockEnum';
+		     	inj.should.be(MockEnum);
+		     });
+		     
+		     it('can not be made from invalid paths',{
+		     	inj = 'intravenous.ioc.NotAClass';
+		     	inj.should.be(null);
+		     });
 		  });
 
 		  describe('isClass/isAClass',{
 		  	it('should return true if object is a class', function(){
-		  		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = MockObject;
+		  		inj = MockObject;
 		  		inj.isClass().should.be(true);
 		  		Injectable.isAClass(inj).should.be(true);
 		  	});
@@ -30,13 +53,13 @@ class InjectableSpec extends buddy.BuddySuite  {
 
 		  describe('isEnum/isAEnum',{
 		  	it('should return true if object is an enum', function(){
-		  		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = intravenous.ioc.mock.MockEnum;
+		  		inj = intravenous.ioc.mock.MockEnum;
 		  		inj.isEnum().should.be(true);
 		  		Injectable.isAnEnum(inj).should.be(true);
 		  	});
 
-		  	it('should return false if object is an enum', function(){
-		  		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = MockObject;
+		  	it('should return false if object is a class', function(){
+		  		inj = MockObject;
 		  		inj.isEnum().should.be(false);
 		  		Injectable.isAnEnum(inj).should.be(false);
 		  	});
