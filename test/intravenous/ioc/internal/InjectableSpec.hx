@@ -16,10 +16,15 @@ class InjectableSpec extends buddy.BuddySuite  {
 			 	inj.should.be(MockEnum);
 			 });
 
-		  	 it('can be a class',{
+			 it('can be a class',{
 		  	 	inj = MockObject;
 		  	 	inj.should.be(MockObject);
 		  	 });
+
+		  	 it('can not be an instance',{
+			  	inj = new MockObject();
+			  	inj.should.be(null);
+			 });
 
 		  	 it('can be made from a class path',{
 		  	 	inj = 'intravenous.ioc.mock.MockObject';
