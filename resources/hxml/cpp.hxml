@@ -1,0 +1,4 @@
+./resources/hxml/_base.hxml
+-debug
+-cpp build/cpp
+-cmd chmod +x build/cpp/TestMain-debug && ./build/cpp/TestMain-debug
