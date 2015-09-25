@@ -10,6 +10,7 @@ class TestMain implements Buddy<[
 		intravenous.ioc.InjectionsSpec,
 		intravenous.ioc.MappingSpec,
 		intravenous.ioc.PostInjectionSpec,
-		intravenous.messaging.MessagingSpec ]> {
+		intravenous.messaging.MessagingSpec,
+		intravenous.ioc.internal.InjectableSpec ]> {
 
 }

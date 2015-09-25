@@ -64,8 +64,16 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
         #end
     }
 
+    public function isEnum():Bool {
+        #if flash
+            return untyped this.__constructs__ != null;
+        #else
+            return Std.is(this,Enum);
+        #end
+    }
+
     static
-    public function isEnum(v:Dynamic):Bool {
+    public function isAnEnum(v:Dynamic):Bool {
         #if flash
             return untyped v.__constructs__ != null;
         #else
