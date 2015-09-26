@@ -40,6 +40,13 @@ class InjectableSpec extends buddy.BuddySuite  {
 		     	inj = 'intravenous.ioc.NotAClass';
 		     	inj.should.be(null);
 		     });
+
+		     it('can be made from a path string var typed as dynamic', {
+		     	var test:Dynamic;
+		     	test = 'intravenous.ioc.mock.MockEnum';
+		     	inj = test;
+		     	inj.should.be(MockEnum);
+		     });
 		  });
 
 		  describe('isClass/isAClass',{

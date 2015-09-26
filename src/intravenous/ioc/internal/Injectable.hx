@@ -18,7 +18,7 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 
 	@:from 
 	public static function fromDynamic(v:Dynamic){
-		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>>;
+		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = null;
 
 		if(isAnEnum(v)){
 			inj = Type.resolveEnum(Type.getEnumName(v));
@@ -26,9 +26,12 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 		else if(isAClass(v)) {
 			inj = Type.resolveClass(Type.getClassName(v));
 		}
-		else if(Std.is(v,String)) {
+		
+		if(inj == null && Std.is(v,String)) {
 			inj = fromString(v);
-		}else{
+		}
+		
+		else{
 			trace('assigned invalid type');
 		}
 		return inj; 
