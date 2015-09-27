@@ -1,6 +1,5 @@
 package intravenous.ioc.internal;
-
-abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T1 from T2  to T1 to T2 {
+ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T1 from T2  to T1 to T2 {
 
 	@:from 
 	public static function fromString(path:String) {
@@ -30,10 +29,10 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 		if(inj == null && Std.is(v,String)) {
 			inj = fromString(v);
 		}
-		
 		else{
 			trace('assigned invalid type');
 		}
+
 		return inj; 
 	}
 
