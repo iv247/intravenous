@@ -2,6 +2,7 @@ package intravenous.ioc.internal;
 
 import intravenous.ioc.mock.MockObject;
 import intravenous.ioc.mock.MockEnum;
+import intravenous.ioc.internal.Injectable;
 
 
 using buddy.Should;
@@ -53,27 +54,29 @@ class InjectableSpec extends buddy.BuddySuite  {
 		  	it('should return true if object is a class', function(){
 		  		inj = MockObject;
 		  		inj.isClass().should.be(true);
-		  		Injectable.isAClass(inj).should.be(true);
+		  		Injectable.IS_A_CLASS(inj).should.be(true);
 		  	});
 
 		  	it('should return false if object is an enum', function(){
 		  		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = MockEnum;
 		  		inj.isClass().should.be(false);
-		  		Injectable.isAClass(inj).should.be(false);
+		  		Injectable.IS_A_CLASS(inj).should.be(false);
 		  	});
 		  });
 
-		  describe('isEnum/isAEnum',{
+		  describe('isEnum/isAnEnum',{
 		  	it('should return true if object is an enum', function(){
 		  		inj = intravenous.ioc.mock.MockEnum;
 		  		inj.isEnum().should.be(true);
-		  		Injectable.isAnEnum(inj).should.be(true);
+		  		Injectable.IS_AN_ENUM(inj).should.be(true);
+		  		var test = "one two three
+		  		four five six seven eight nine ten";
 		  	});
 
 		  	it('should return false if object is a class', function(){
 		  		inj = MockObject;
 		  		inj.isEnum().should.be(false);
-		  		Injectable.isAnEnum(inj).should.be(false);
+		  		Injectable.IS_AN_ENUM(inj).should.be(false);
 		  	});
 		  });
 	  }
