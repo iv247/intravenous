@@ -69,8 +69,6 @@ class InjectableSpec extends buddy.BuddySuite  {
 		  		inj = intravenous.ioc.mock.MockEnum;
 		  		inj.isEnum().should.be(true);
 		  		Injectable.IS_AN_ENUM(inj).should.be(true);
-		  		var test = "one two three
-		  		four five six seven eight nine ten";
 		  	});
 
 		  	it('should return false if object is a class', function(){
