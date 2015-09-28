@@ -48,9 +48,8 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 		}
 		
 		if(inj == null && Std.is(v,String)) {
-			inj = fromString(v);
-		}
-	 	else{
+			inj = Std.is(v,String) ? fromString(v) : null;
+		}else if(inj == null){
 			trace('assigned invalid type');
 		}
 
