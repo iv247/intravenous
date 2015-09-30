@@ -89,7 +89,6 @@ class CommandSequencer implements Sequencer
 			var ref = commandDefs.shift() ;
 
 			if(ref.skip){
-				trace('ref skip, $ref');
 				continue;
 			}
 
