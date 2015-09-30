@@ -45,6 +45,7 @@ class Context
 		messageProcessor = new MessageProcessor(injector);
 		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
 		IV.extendIocTo("command",messageProcessor.processMeta);
+		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
 		injector.mapValue(MessageProcessor,messageProcessor);
 	}
 

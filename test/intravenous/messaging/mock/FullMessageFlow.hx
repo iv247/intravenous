@@ -20,12 +20,17 @@ class FullMessageFlow
 class FullMessageFlowController {	
 	public function new(){};
 
-	@command public function firstInterceptor(msg:FullMessageFlow,sequence:CommandSequencer):Void{
+	@intercept
+	@command(0) public function firstInterceptor(msg:FullMessageFlow,sequence:CommandSequencer):Void{
 		msg.interceptors.push("firstInterceptor");
 	}
+
+	@intercept
 	@command(1) public function secondInterceptor(msg:FullMessageFlow,sequence:CommandSequencer):Void{
 		msg.interceptors.push("secondInterceptor");
 	}
+
+	@intercept
 	@command(3) public function fourthInterceptor(msg:FullMessageFlow,sequence:CommandSequencer):Void{
 		msg.interceptors.push("fourthInterceptor");
 	}
@@ -33,10 +38,12 @@ class FullMessageFlowController {
 	@command public function firstCommand(msg:FullMessageFlow):Void{
 		msg.commands.push("firstCommand");
 	}
+
 	@command(1) public function secondCommand(msg:FullMessageFlow,cb:CallbackFunction):Void{
 		msg.commands.push("secondCommand");
 		cb(true);
 	}
+	
 	@command(3) public function fourthCommand(msg:FullMessageFlow):Void{
 		msg.commands.push("fourthCommand");
 	}
@@ -53,18 +60,9 @@ class FullMessageFlowController {
 
 }
 
+@intercept
 @command(2)
  class FullMessageFlowInterceptor {
-	public function new(){};
-
-	public function execute(msg:FullMessageFlow,sequence:CommandSequencer):Void{
-		msg.interceptors.push("thirdInterceptor");
-	}
-
-}
-
-@command(2)
- class FullMessageFlowInterceptorTwo {
 	public function new(){};
 
 	public function execute(msg:FullMessageFlow,sequence:CommandSequencer):Void{

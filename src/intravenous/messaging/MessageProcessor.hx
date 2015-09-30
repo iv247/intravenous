@@ -51,20 +51,21 @@ class MessageProcessor
                 var metaValue = Reflect.field(def.meta,def.metaname),
                     order = (metaValue == null) ? 0 : metaValue[0],
                     isAsync =  Reflect.hasField(def.meta,'async'),
-                    map = Reflect.hasField(def.meta,'intercept') ? interceptMap :
-                            Reflect.hasField(def.meta,'commandComplete') ? completeMap : commandMap,
+                    map = Reflect.hasField(def.meta,'intercept') ? interceptMap : Reflect.hasField(def.meta,'commandComplete') ? completeMap : commandMap,
                     messageType =  Reflect.field(def.meta,'types')[0].type,
+                    needsSequencer = Reflect.hasField(def.meta,'controlSequence'),
                     ref : CommandDef;
-
 
                     if(!Std.is(order,Int)){
                         order = 0;
                     }
+
                     ref = {
                         o:def.object,
                         f: def.field,
                         i:order,
                         t:Type.typeof(def.object),
+                        sequenceController : needsSequencer,
                         async : isAsync
                     };
 
@@ -134,12 +135,14 @@ class MessageProcessor
             order = (classMeta.command == null) ? -1 : classMeta.command[0],
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
             isAsync = Reflect.hasField(classMeta,"async"),
+            sequenceController = Reflect.hasField(classMeta,"controlSequence"),
             map = (isInterceptor) ? interceptMap : commandMap,
             ref = {
                 o:commandClass,
                 f:'execute',
                 i:order,
                 t:Type.typeof(commandClass),
+                sequenceController:sequenceController,
                 async: isAsync
             };
 
@@ -156,8 +159,9 @@ class MessageProcessor
             messageType = classMeta.messageTypes[0].type,
             order = classMeta.command == null ? -1 : classMeta.command[0],
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
+            sequenceController = Reflect.hasField(classMeta,"sequenceController"),
             map = (isInterceptor) ? interceptMap : commandMap,
-            ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass)};
+            ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass), sequenceController: sequenceController};
         removeCommandRef(map,messageType,ref);
     }
 

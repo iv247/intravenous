@@ -29,8 +29,6 @@ class MessagingMacro
 	}
 
 	static function addTypeMetaToClass(type : haxe.macro.Type.ClassType) : Void {
-		var types;
-
 		if(type.isInterface){			
 			return;
 		}
@@ -50,15 +48,16 @@ class MessagingMacro
 				switch(field.type){
 					case TFun(args,_): 						
 						types = iv247.util.macro.TypeInfo.getTFunArgs(args);
-						if(isAsync(args)){
+						
+						 if(isAsync(args)){
 							type.meta.add('async',[],type.pos);
-						}
+						 }
 
-						if(isIntercept(args)){
-							type.meta.add("intercept",types,type.pos);
-						}
+						 if(isSequenceController(args)){
+						 	type.meta.add("controlSequence",[],type.pos);
+						 }
 
-						type.meta.add('messageTypes', types, type.pos );
+						type.meta.add('messageTypes', [types[0]], type.pos );
 						return;
 					default:
 				}
@@ -70,7 +69,7 @@ class MessagingMacro
 		return iv247.util.macro.TypeInfo.hasType(args, "intravenous.messaging.CallbackFunction");
 	}
 
-	static function isIntercept(args) : Bool {
+	static function isSequenceController(args) : Bool {
 		var typeName = Type.getClassName(intravenous.messaging.CommandSequencer);
 		return iv247.util.macro.TypeInfo.hasType(args,typeName);
 	}
@@ -81,8 +80,9 @@ class MessagingMacro
 			if(field.meta.has("command")){
 				switch(field.type){
 						case TFun(args,ret) :
-								if(isIntercept(args)){			
-							  		field.meta.add('intercept',[],field.pos);
+
+								if(isSequenceController(args)){
+							   		field.meta.add('controlSequence',[],field.pos);
 								}
 								if(isAsync(args)){
 									field.meta.add('async',[],field.pos);

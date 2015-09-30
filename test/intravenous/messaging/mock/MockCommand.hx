@@ -17,6 +17,7 @@ class MockCommand
 
 }
 
+@intercept
 @command
 class CommandInterceptor
 {

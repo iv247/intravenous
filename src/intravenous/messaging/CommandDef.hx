@@ -6,6 +6,7 @@ typedef CommandDef = {
 	f:String,
 	i:Int,
 	t:Type.ValueType,
+	sequenceController:Bool,
 	?async : Bool,
 	?skip : Bool,
 }

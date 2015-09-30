@@ -7,6 +7,7 @@ class MockCommandOrder
 {
 	public function new(){};
 
+	@intercept
 	@command
 	public function intercept(msg:Message,process:CommandSequencer){
 		msg.commandStack.push("intercept");
@@ -24,7 +25,8 @@ class MockCommandOrder
 }
 
 
-@command 
+@intercept
+@command
 class MockCommandOrderInterceptor 
 {
 	public function new(){}

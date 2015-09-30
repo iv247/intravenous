@@ -9,7 +9,6 @@ class CommandSequencer implements Sequencer
 	private var injector: IInjector;
 
 	private var currentCommandDefs : Array<CommandDef>;
-	private var currentArgs : Array<Dynamic>;
 	public var currentCommandDefIndex : Int = 0;
 
 	public var stopped(default,null):Bool;
@@ -55,12 +54,11 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-
 	private function startSequence(){
 		var cmdsCompleted = false;
 
 		if( !isEmpty(sequence.interceptors) ){
-			callCommands(sequence.interceptors,[sequence.message,this]);
+			callCommands(sequence.interceptors,[sequence.message]);
 		}
 		if( !isEmpty(sequence.commands) && !stopped ){
 			callCommands(sequence.commands,[sequence.message]);
@@ -76,10 +74,11 @@ class CommandSequencer implements Sequencer
 	}
 
 	public function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
-		var instance, result;
-		currentArgs = args;
+		var instance, 
+			result;
 
 		while(commandDefs.length > 0){
+			var currentArgs = args.copy();
 
 			if(stopped){
 				running = false;
@@ -93,10 +92,12 @@ class CommandSequencer implements Sequencer
 			}
 
 			if(ref.async){
-				currentArgs = args.concat([callback]);
+				currentArgs = args.concat([this.callback]);
 				stop();
 			}
-
+			if(ref.sequenceController){
+				currentArgs = currentArgs.concat([this]);
+			}
 			result =
 			switch(ref.t){
 				case TObject:
