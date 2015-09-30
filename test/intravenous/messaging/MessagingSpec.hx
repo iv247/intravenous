@@ -50,6 +50,37 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 			});
 
+			describe('open message sequences', {
+				var message:intravenous.messaging.mock.RemoveFromSequenceMock;
+				var controllerToBeRemoved:intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved;
+				var controller : intravenous.messaging.mock.RemoveFromSequenceMock.Controller;
+				
+				before({
+					message = new RemoveFromSequenceMock();
+					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.Command);
+					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.CommandToBeRemoved);
+
+					injector.mapSingleton( intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved,
+						intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved);
+					injector.mapSingleton( intravenous.messaging.mock.RemoveFromSequenceMock.Controller,
+						intravenous.messaging.mock.RemoveFromSequenceMock.Controller);
+
+					controller = injector.getInstance(intravenous.messaging.mock.RemoveFromSequenceMock.Controller);
+					controllerToBeRemoved = injector.getInstance(intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved);
+					processor.dispatch(message);
+				});
+
+				it('should not execute a removed command class',{
+					message.commandToBeRemovedCalled.should.be(false);
+					message.commandCalled.should.be(true);
+				});
+
+				it('should not execute a command method on a removed object',{
+					message.controllerToBeRemovedCalled.should.be(false);
+					message.controllerCalled.should.be(true);
+				});
+			});
+
 			describe("command classes",{
 				var message;
 

@@ -88,6 +88,11 @@ class CommandSequencer implements Sequencer
 
 			var ref = commandDefs.shift() ;
 
+			if(ref.skip){
+				trace('ref skip, $ref');
+				continue;
+			}
+
 			if(ref.async){
 				currentArgs = args.concat([callback]);
 				stop();
@@ -116,9 +121,7 @@ class CommandSequencer implements Sequencer
 		if(restart && running){
 			stopped = false;
 		}else if(restart){
-			trace('resuming');
 			resume();
-
 		}else{
 			cancel();
 		}	

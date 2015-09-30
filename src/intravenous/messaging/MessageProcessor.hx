@@ -114,6 +114,8 @@ class MessageProcessor
         for(defArray in map){
             for(def in defArray){
                 if(def.o == object){
+                    def.o = null;
+                    def.skip = true;
                     defArray.remove(def);
                 }
             }
@@ -182,12 +184,16 @@ class MessageProcessor
         });
     }
 
+    /**
+    * Removes a command ref from a specified map
+    */
     private function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef):Void{
         var mapArray = map.get(messageType);
 
         if(mapArray != null){
             for(commandDef in mapArray){
                 if(commandDef.o == def.o){
+                    commandDef.skip = true;
                     mapArray.remove(commandDef);
                 }
             }
