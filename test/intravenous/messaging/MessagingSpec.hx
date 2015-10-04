@@ -165,7 +165,7 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 			});
 
-			describe("interceptors", {
+			describe("commands that accept a command sequencer for an argument", {
 				it("should be able to stop notification flow", {
 					var message = new Message();
 					processor.mapCommand(CommandInterceptor);
@@ -184,7 +184,7 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 			});
 
-			xdescribe("command flow utilizing all features", {
+			describe("command flow utilizing all features", {
 				var message;
 				before({
 					var controller = injector.instantiate(FullMessageFlowController);
