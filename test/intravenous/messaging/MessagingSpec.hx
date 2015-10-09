@@ -79,6 +79,10 @@ class MessagingSpec extends buddy.BuddySuite
 					message.controllerToBeRemovedCalled.should.be(false);
 					message.controllerCalled.should.be(true);
 				});
+
+				it('should be removed after completion', {
+					// processor.openSequencers.length.should.be(0);
+				});
 			});
 
 			describe("command classes",{
@@ -107,7 +111,6 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.message.should.not.be(message);
 				});
 
-				@include
 				describe("execution order",{
 					before({
 						var mock = injector.instantiate(MockCommandOrder);

@@ -42,6 +42,7 @@ class CommandSequencer implements Sequencer
 	*/
 	public function cancel(){
 		stopped = true;
+		// _done(this);
 	}
 
 	/*
@@ -55,17 +56,8 @@ class CommandSequencer implements Sequencer
 	}
 
 	private function startSequence(){
-		var cmdsCompleted = false;
-
-		if( !isEmpty(sequence.interceptors) ){
-			callCommands(sequence.interceptors,[sequence.message]);
-		}
 		if( !isEmpty(sequence.commands) && !stopped ){
 			callCommands(sequence.commands,[sequence.message]);
-		}
-
-		if( !isEmpty(sequence.completeMethods) && !stopped ){
-			callCommands(sequence.completeMethods,[sequence.message]);
 		}
 	}
 
@@ -73,7 +65,7 @@ class CommandSequencer implements Sequencer
 		return (arr == null || arr.length == 0);
 	}
 
-	public function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
+	private function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
 		var instance, 
 			result;
 

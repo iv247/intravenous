@@ -217,25 +217,27 @@ class MessageProcessor
             commands =  getCommandDefFromMap(commandMap,messageType),
             completeMethods = getCommandDefFromMap(completeMap,messageType),
             sequencer = new CommandSequencer({
-                interceptors : interceptors,
-                commands : commands,
-                completeMethods : completeMethods,
+                commands : interceptors.concat ( commands.concat( completeMethods )),
                 message: o,
                 processor : this
             },
             injector);
 
-
         if(openSequencers == null){
             openSequencers = new Array<CommandSequencer>();
         }
+
         openSequencers.push(sequencer);
         sequencer.start();
     }
 
+    private function onSequencerComplete(sequencer:CommandSequencer){
+        openSequencers.remove(sequencer);
+    }
+
     private function getCommandDefFromMap(map:Map<String, Array<CommandDef>>, messageType):Array<CommandDef> {
            var array = map.get(messageType);
-           return (array != null) ? array.slice(0) : null;
+           return (array != null) ? array.slice(0) : [];
     }
 
     private function removeSequence(sequencer:CommandSequencer){
