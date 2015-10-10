@@ -81,7 +81,7 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 
 				it('should be removed after completion', {
-					// processor.openSequencers.length.should.be(0);
+					processor.openSequencers.length.should.be(0);
 				});
 			});
 
@@ -147,24 +147,31 @@ class MessagingSpec extends buddy.BuddySuite
 						sequencer;
 
 					processor.mapCommand(MockAsyncCommand);
+					processor.mapCommand(MockCommandOrderCommand);
+
 					message.asyncResume = false;
 					processor.dispatch(message);
 
 					sequencer = processor.openSequencers[0];
 
 					sequencer.stopped.should.be(true);
+					message.commandStack.length.should.be(0);			
 				});
+
 				it("should be able to resume the notification flow",{
 					var message = new Message(),
 						sequencer;
 
 					processor.mapCommand(MockAsyncCommand);
+					processor.mapCommand(MockCommandOrderCommand );
+
 					message.asyncResume = true;
 					processor.dispatch(message);
 
 					sequencer = processor.openSequencers[0];
 
-					sequencer.stopped.should.be(false);
+					processor.openSequencers.length.should.be(0);	
+					message.commandStack[0].should.be('command');			
 				});
 			});
 

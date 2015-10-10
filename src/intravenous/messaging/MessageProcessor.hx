@@ -221,7 +221,7 @@ class MessageProcessor
                 message: o,
                 processor : this
             },
-            injector);
+            injector, onSequencerComplete);
 
         if(openSequencers == null){
             openSequencers = new Array<CommandSequencer>();
@@ -231,8 +231,8 @@ class MessageProcessor
         sequencer.start();
     }
 
-    private function onSequencerComplete(sequencer:CommandSequencer){
-        openSequencers.remove(sequencer);
+    private function onSequencerComplete(sequencer:intravenous.messaging.Sequencer){
+        openSequencers.remove(cast sequencer);
     }
 
     private function getCommandDefFromMap(map:Map<String, Array<CommandDef>>, messageType):Array<CommandDef> {

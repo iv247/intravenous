@@ -7,17 +7,20 @@ class CommandSequencer implements Sequencer
 
 	private var sequence: SequenceDef;
 	private var injector: IInjector;
-
 	private var currentCommandDefs : Array<CommandDef>;
+
+	private var running:Bool = false;
+	private var done:Sequencer->Void;
+
 	public var currentCommandDefIndex : Int = 0;
 
 	public var stopped(default,null):Bool;
 	public var started(default,null):Bool;
-	private var running:Bool = false;
 
-	public function new(sequence:SequenceDef, injector:IInjector){
+	public function new(sequence:SequenceDef, injector:IInjector,?onComplete:Sequencer->Void){
 		this.sequence = sequence;
 		this.injector = injector;
+		done = onComplete;
 	}
 
 
@@ -42,7 +45,7 @@ class CommandSequencer implements Sequencer
 	*/
 	public function cancel(){
 		stopped = true;
-		// _done(this);
+		done(this);
 	}
 
 	/*
@@ -58,6 +61,11 @@ class CommandSequencer implements Sequencer
 	private function startSequence(){
 		if( !isEmpty(sequence.commands) && !stopped ){
 			callCommands(sequence.commands,[sequence.message]);
+		}
+
+		if(!stopped && done != null){
+			stopped = true;
+			done(this);
 		}
 	}
 
@@ -115,7 +123,7 @@ class CommandSequencer implements Sequencer
 		}else if(restart){
 			resume();
 		}else{
-			cancel();
+			stop();
 		}	
 	}
 }
