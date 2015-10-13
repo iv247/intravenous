@@ -74,7 +74,7 @@ class IV implements IInjector {
         return injectionMap.exists( type.getName() + id );       
     }
 
-    public function unmap (type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") : Void {
+    public function unmap<T>(type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") : Void {
         injectionMap.remove( type.getName() + id );
     }
 

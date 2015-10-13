@@ -37,8 +37,8 @@ class CommandSequencer implements Sequencer
 	*/
 	public function stop(){
 		stopped = true;
+		running = false;
 	}
-
 
 	/*
 		Cancel the command sequence

@@ -35,13 +35,12 @@ class MockCommandOrderInterceptor
 	}
 }
 
-@command 
+@command(1)
 class MockCommandOrderCommand 
 {
 	public function new(){}
 
 	public function execute(msg:Message):Void{
 		msg.commandStack.push("command");
-
 	}
 }

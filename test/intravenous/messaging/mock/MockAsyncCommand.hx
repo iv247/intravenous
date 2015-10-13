@@ -3,7 +3,7 @@ package intravenous.messaging.mock;
 
 import intravenous.messaging.CallbackFunction;
 
-@command
+@command(0)
 class MockAsyncCommand 
 {
 

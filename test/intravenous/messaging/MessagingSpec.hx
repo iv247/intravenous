@@ -206,7 +206,10 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.mapCommand(FullMessageFlowCommand3);
 					processor.mapCommand(FullMessageFlowInterceptor);
 					processor.dispatch(message);
+					trace(processor.openSequencers.length);
 					processor.openSequencers[0].resume();
+					trace(processor.openSequencers.length);
+
 				});
 
 				it("should call intercepts in the correct order",{
