@@ -8,6 +8,7 @@ typedef Route = {
 	urlExp : EReg,
 	paramNames : Array<String>,
 	params:Map<String,String>,
+	?query:Map<String,String>,
 	meta: {}
 };
 
@@ -29,15 +30,19 @@ class Router {
 		return this;
 	}
 
-	public function matchRoute(url:String):Route{
+	public function getRoute(url:String):Route{
 		var params =  new Map<String,String>();
 		var matchedRoute = null;
+		var ex = ~/(\?.*)/;
+		var path;
 		
+		//remove query
+		path = ~/(\?.*)/.replace(url,'');
 		//add a trailing slash if one doesn't exist
-		url = ~/([^\/])$/.replace(url,'$1/');
-
+		path = ~/([^\/])$/.replace(path,'$1/');
+ 
 		for(route in _routes){
-			if(route.urlExp.match(url)){
+			if(route.urlExp.match(path)){
 				matchedRoute = Reflect.copy(route);
 				for(i in 0...route.paramNames.length){
         			params[route.paramNames[i]] = route.urlExp.matched(i+1);
@@ -47,9 +52,27 @@ class Router {
 		}
 		if(matchedRoute != null){
 			matchedRoute.params = params;
+			matchedRoute.query = getQuery(url);
 		}
 
 		return matchedRoute;
+	}
+
+	public function getQuery(url:String) {
+		var query = new Map<String,String>();
+		var regEx = ~/(.*\?)/;
+		var pairRegEx =  ~/(=)/;
+		var pairs = regEx.replace(url,'').split('&');
+
+		for(pair in pairs){
+			if(pairRegEx.match(pair)){
+				query[pairRegEx.matchedLeft()] = pairRegEx.matchedRight();
+			}else{
+				query[pair] = null;
+			}
+		}
+
+		return query;
 	}
 
 	private function createRoute(meta:RouteMeta):Route {
@@ -62,7 +85,7 @@ class Router {
             var param =  varMatch.matched(0);
             var left = varMatch.matchedLeft();
             
-            stringForRegEx = StringTools.replace(stringForRegEx,param,'([ \\w|()_"+`~%20-\\[ \\]{}!#$^&*,.]*/?)');
+            stringForRegEx = StringTools.replace(stringForRegEx,param,'([ \\w|()_"+`~%20-\\[ \\]{}!$^&*,.]*/?)');
             
             paramNames.push(param.substr(1));
             
