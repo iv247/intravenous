@@ -1,6 +1,6 @@
 package intravenous;
 
-typedef RouteVO = {
+typedef RouteMeta = {
 	url : String,
 	?data:Dynamic
 };
@@ -8,7 +8,7 @@ typedef Route = {
 	urlExp : EReg,
 	paramNames : Array<String>,
 	params:Map<String,String>,
-	routeVO: {}
+	meta: {}
 };
 
 class Router {
@@ -19,24 +19,14 @@ class Router {
 		_routes = [];
 	}
 
-	public function add( routeVO:RouteVO ):Router{
+	public function add( meta:RouteMeta ):Router{
 		var route:Route;
 
-		route = createRoute(routeVO);
+		route = createRoute(meta);
 
 		_routes.push(route);
 
 		return this;
-	}
-
-	public function get(url:String):Route {
-		var result = null;
-		
-		for(route in _routes){
-			result = route;
-		}
-
-		return result;
 	}
 
 	public function matchRoute(url:String):Route{
@@ -62,10 +52,10 @@ class Router {
 		return matchedRoute;
 	}
 
-	private function createRoute(vo:RouteVO):Route {
+	private function createRoute(meta:RouteMeta):Route {
 		var varMatch = ~/:\w*/g;
-		var content  = vo.url;
-		var stringForRegEx = vo.url;
+		var content  = meta.url;
+		var stringForRegEx = meta.url;
 		var paramNames = new Array<String>();
 
 		while(varMatch.match(content)){
@@ -86,8 +76,8 @@ class Router {
 		return { 
 			urlExp:  new EReg(stringForRegEx,'g'),
 			paramNames: paramNames,
-			params: null,
-			routeVO: vo
+			meta: Reflect.copy(meta),
+			params: null
 		};
 	}
 }
