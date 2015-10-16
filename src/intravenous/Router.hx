@@ -1,7 +1,7 @@
 package intravenous;
 
 typedef RouteMeta = {
-	url : String,
+	path : String,
 	?data:Dynamic
 };
 typedef Route = {
@@ -30,14 +30,18 @@ class Router {
 		return this;
 	}
 
-	public function getRoute(url:String):Route{
+	/*
+		return a instance of Route
+		@param absPath - an absolute path to match list of added Routes against
+	*/
+	public function getRoute(absPath:String):Route{
 		var params =  new Map<String,String>();
 		var matchedRoute = null;
 		var ex = ~/(\?.*)/;
 		var path;
 		
 		//remove query
-		path = ~/(\?.*)/.replace(url,'');
+		path = ~/(\?.*)/.replace(absPath,'');
 		//add a trailing slash if one doesn't exist
 		path = ~/([^\/])$/.replace(path,'$1/');
  
@@ -52,12 +56,15 @@ class Router {
 		}
 		if(matchedRoute != null){
 			matchedRoute.params = params;
-			matchedRoute.query = getQuery(url);
+			matchedRoute.query = getQuery(absPath);
 		}
 
 		return matchedRoute;
 	}
 
+	/*
+		Returns a Map of name value pairs from a standard query string
+	*/
 	public function getQuery(url:String) {
 		var query = new Map<String,String>();
 		var regEx = ~/(.*\?)/;
@@ -77,8 +84,8 @@ class Router {
 
 	private function createRoute(meta:RouteMeta):Route {
 		var varMatch = ~/:\w*/g;
-		var content  = meta.url;
-		var stringForRegEx = meta.url;
+		var content  = meta.path;
+		var stringForRegEx = meta.path;
 		var paramNames = new Array<String>();
 
 		while(varMatch.match(content)){
