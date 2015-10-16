@@ -21,12 +21,8 @@ class Router {
 	}
 
 	public function add( meta:RouteMeta ):Router{
-		var route:Route;
-
-		route = createRoute(meta);
-
+		var route = createRoute(meta);
 		_routes.push(route);
-
 		return this;
 	}
 
@@ -104,7 +100,7 @@ class Router {
         }
 
 		return { 
-			urlExp:  new EReg(stringForRegEx,'g'),
+			urlExp: new EReg(stringForRegEx,'g'),
 			paramNames: paramNames,
 			meta: Reflect.copy(meta),
 			params: null

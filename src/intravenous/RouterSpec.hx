@@ -6,7 +6,6 @@ using buddy.Should;
 
 class RouterSpec extends BuddySuite {
 	public function new(){
-		@include
 		describe('Router',{
 			var router;
 
