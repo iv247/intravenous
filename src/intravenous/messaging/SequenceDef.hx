@@ -2,9 +2,7 @@
 package intravenous.messaging;
 
 typedef SequenceDef = {
-	// interceptors : Dynamic,
-	commands : Dynamic,
-	// completeMethods : Dynamic,
+	commands : Array<CommandDef>,
 	processor : MessageProcessor,
 	message : Dynamic
 };
