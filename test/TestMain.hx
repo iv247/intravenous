@@ -4,6 +4,7 @@ import buddy.Buddy;
 
 class TestMain implements Buddy<[
 		intravenous.ContextSpec,
+		intravenous.RouterSpec,
 		intravenous.ioc.ChildInjectorSpec,
 		intravenous.ioc.EnumSupportSpec,
 		intravenous.ioc.ExtensionSpec,
@@ -12,6 +13,9 @@ class TestMain implements Buddy<[
 		intravenous.ioc.PostInjectionSpec,
 		intravenous.ioc.internal.InjectableSpec,
 		intravenous.messaging.MessagingSpec,
-		intravenous.RouterSpec ]> {
+		intravenous.task.TaskRunnerSpec,
+		intravenous.task.ParallelTaskRunnerSpec,
+		intravenous.task.SequentialTaskRunnerSpec
+		 ]> {
 
 }
