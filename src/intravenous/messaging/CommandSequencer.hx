@@ -8,21 +8,17 @@ class CommandSequencer implements Sequencer
 	private var sequence: SequenceDef;
 	private var injector: IInjector;
 	private var currentCommandDefs : Array<CommandDef>;
-
 	private var running:Bool = false;
-	private var done:Sequencer->Void;
 
 	public var currentCommandDefIndex : Int = 0;
 
 	public var stopped(default,null):Bool;
 	public var started(default,null):Bool;
 
-	public function new(sequence:SequenceDef, injector:IInjector,?onComplete:Sequencer->Void){
+	public function new(sequence:SequenceDef, injector:IInjector){
 		this.sequence = sequence;
 		this.injector = injector;
-		done = onComplete;
 	}
-
 
 	public function start(){		
 		if(started){
@@ -45,7 +41,7 @@ class CommandSequencer implements Sequencer
 	*/
 	public function cancel(){
 		stopped = true;
-		done(this);
+		done();
 	}
 
 	/*
@@ -58,14 +54,20 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
+	private function done(){
+		if(sequence.onComplete != null){
+			sequence.onComplete(this);
+		}
+	}
+
 	private function startSequence(){
 		if( !isEmpty(sequence.commands) && !stopped ){
 			callCommands(sequence.commands,[sequence.message]);
 		}
 
-		if(!stopped && done != null){
+		if(!stopped){
 			stopped = true;
-			done(this);
+			done();
 		}
 	}
 
@@ -75,17 +77,19 @@ class CommandSequencer implements Sequencer
 
 	private function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
 		var instance, 
-			result;
+			result,
+			currentArgs,
+			ref;
 
 		while(commandDefs.length > 0){
-			var currentArgs = args.copy();
+			currentArgs = args.copy();
 
 			if(stopped){
 				running = false;
-				return;
+				break;
 			}
 
-			var ref = commandDefs.shift() ;
+			ref = commandDefs.shift();
 
 			if(ref.skip){
 				continue;
@@ -98,6 +102,7 @@ class CommandSequencer implements Sequencer
 			if(ref.sequenceController){
 				currentArgs = currentArgs.concat([this]);
 			}
+
 			result =
 			switch(ref.t){
 				case TObject:
@@ -107,7 +112,7 @@ class CommandSequencer implements Sequencer
 				case TClass(c):
 					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), currentArgs);
 				case _: //todo: throw error
-						// errorHandler('callCommands',ref);
+					// errorHandler('callCommands',ref);
 					null;
 			}
 

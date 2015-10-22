@@ -219,9 +219,8 @@ class MessageProcessor
             sequencer = new CommandSequencer({
                 commands : interceptors.concat ( commands.concat( completeMethods )),
                 message: o,
-                processor : this
-            },
-            injector, onSequencerComplete);
+                onComplete : onSequencerComplete 
+            },injector);
 
         if(openSequencers == null){
             openSequencers = new Array<CommandSequencer>();

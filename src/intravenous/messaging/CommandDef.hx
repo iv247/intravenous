@@ -1,11 +1,10 @@
-
 package intravenous.messaging;
 
+import intravenous.task.TaskDef;
+
 typedef CommandDef = {
-	o:Dynamic,
-	f:String,
+	> TaskDef,
 	i:Int,
-	t:Type.ValueType,
 	sequenceController:Bool,
 	?async : Bool,
 	?skip : Bool,
