@@ -9,15 +9,15 @@ import intravenous.messaging.CommandDef;
 #if !macro
 @:build(intravenous.messaging.MessagingMacro.buildCommand())
 #end
-class MessageProcessor
-{
+class MessageProcessor {
     public static inline var DISPATCHER_META = "dispatcher";
+
     public var injector(default,null): IInjector;
 
-    private var commandMap : Map<String, Array<CommandDef>>;
-    private var interceptMap : Map<String, Array<CommandDef>>;
-    private var completeMap : Map<String, Array<CommandDef>>;
-    private var openSequencers : Array<CommandSequencer>;
+    var commandMap : Map<String, Array<CommandDef>>;
+    var interceptMap : Map<String, Array<CommandDef>>;
+    var completeMap : Map<String, Array<CommandDef>>;
+    var openSequencers : Array<CommandSequencer>;
 
     public function new(injector : IInjector) {
         this.injector = injector;
@@ -27,8 +27,7 @@ class MessageProcessor
         completeMap = new Map();
     }
 
-
-    public static inline function getDispatcher(ext : ExtensionDef) : Void {
+    public static inline function getDispatcher(ext : ExtensionDef): Void {
         var processor = ext.injector.getInstance(MessageProcessor);      
         
         Reflect.setField( ext.object,ext.field, 
@@ -39,8 +38,8 @@ class MessageProcessor
     }
 
     /**
-     Procesess extension definiton sent from the injector
-     after object instantiationg
+        Procesess extension definiton sent from the injector
+        after object instantiationg
     **/
     public function processMeta(def : ExtensionDef):Void {
         switch(def.type){
@@ -64,7 +63,6 @@ class MessageProcessor
                         o:def.object,
                         f: def.field,
                         i:order,
-                        t:Type.typeof(def.object),
                         sequenceController : needsSequencer,
                         async : isAsync
                     };
@@ -109,22 +107,6 @@ class MessageProcessor
     }
 
     /**
-        Removed all references to object from map
-    **/
-    private function removeFromMap(object: Dynamic, type : Class<Dynamic>, map : Map<String,Array<CommandDef>>):Void {
-        for(defArray in map){
-            for(def in defArray){
-                if(def.o == object){
-                    def.o = null;
-                    def.skip = true;
-                    defArray.remove(def);
-                }
-            }
-        }
-    }
-
-
-    /**
         Maps a class to instantiate when an object respective of the class execute method
         is dispatched using the message processors dispatch method
     **/
@@ -141,7 +123,6 @@ class MessageProcessor
                 o:commandClass,
                 f:'execute',
                 i:order,
-                t:Type.typeof(commandClass),
                 sequenceController:sequenceController,
                 async: isAsync
             };
@@ -161,47 +142,8 @@ class MessageProcessor
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
             sequenceController = Reflect.hasField(classMeta,"sequenceController"),
             map = (isInterceptor) ? interceptMap : commandMap,
-            ref = {o:commandClass, f:'execute', i:order, t:Type.typeof(commandClass), sequenceController: sequenceController};
+            ref = {o:commandClass, f:'execute', i:order, sequenceController: sequenceController};
         removeCommandRef(map,messageType,ref);
-    }
-
-    private function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
-        var mapArray = map.get(messageType),
-            newArray;
-
-        if(mapArray == null){
-            mapArray = new Array<CommandDef>();
-            map.set(messageType,mapArray);
-        }
-
-        mapArray.push(def);
-
-        mapArray.sort(function(ref,ref2):Int{
-            if(ref.i < ref2.i){
-                return -1;
-            }
-            else if(ref.i > ref2.i){
-                return 1;
-            }else{
-                return 0;
-            }
-        });
-    }
-
-    /**
-    * Removes a command ref from a specified map
-    */
-    private function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef):Void{
-        var mapArray = map.get(messageType);
-
-        if(mapArray != null){
-            for(commandDef in mapArray){
-                if(commandDef.o == def.o){
-                    commandDef.skip = true;
-                    mapArray.remove(commandDef);
-                }
-            }
-        }
     }
 
     /**
@@ -230,16 +172,69 @@ class MessageProcessor
         sequencer.start();
     }
 
-    private function onSequencerComplete(sequencer:intravenous.messaging.Sequencer){
+    /**
+        Removed all references to object from map
+    **/
+    function removeFromMap(object: Dynamic, type : Class<Dynamic>, map : Map<String,Array<CommandDef>>):Void {
+        for(defArray in map){
+            for(def in defArray){
+                if(def.o == object){
+                    def.o = null;
+                    def.skip = true;
+                    defArray.remove(def);
+                }
+            }
+        }
+    }
+
+    function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
+        var mapArray = map.get(messageType),
+            newArray;
+
+        if(mapArray == null){
+            mapArray = new Array<CommandDef>();
+            map.set(messageType,mapArray);
+        }
+
+        mapArray.push(def);
+
+        mapArray.sort(function(ref,ref2):Int{
+            if(ref.i < ref2.i){
+                return -1;
+            }
+            else if(ref.i > ref2.i){
+                return 1;
+            }else{
+                return 0;
+            }
+        });
+    }
+    /**
+    * Removes a command ref from a specified map
+    */
+    function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef):Void{
+        var mapArray = map.get(messageType);
+
+        if(mapArray != null){
+            for(commandDef in mapArray){
+                if(commandDef.o == def.o){
+                    commandDef.skip = true;
+                    mapArray.remove(commandDef);
+                }
+            }
+        }
+    }
+
+    function onSequencerComplete(sequencer:intravenous.messaging.Sequencer){
         openSequencers.remove(cast sequencer);
     }
 
-    private function getCommandDefFromMap(map:Map<String, Array<CommandDef>>, messageType):Array<CommandDef> {
-           var array = map.get(messageType);
-           return (array != null) ? array.slice(0) : [];
+    function getCommandDefFromMap(map:Map<String, Array<CommandDef>>, messageType):Array<CommandDef> {
+        var array = map.get(messageType);
+        return (array != null) ? array.slice(0) : [];
     }
 
-    private function removeSequence(sequencer:CommandSequencer){
+    function removeSequence(sequencer:CommandSequencer){
         if(openSequencers != null){
             openSequencers.remove(sequencer);
         }

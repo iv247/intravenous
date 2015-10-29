@@ -5,15 +5,14 @@ import intravenous.ioc.IInjector;
 class CommandSequencer implements Sequencer
 {
 
-	private var sequence: SequenceDef;
-	private var injector: IInjector;
-	private var currentCommandDefs : Array<CommandDef>;
-	private var running:Bool = false;
-
 	public var currentCommandDefIndex : Int = 0;
-
 	public var stopped(default,null):Bool;
 	public var started(default,null):Bool;
+
+	var sequence: SequenceDef;
+	var injector: IInjector;
+	var currentCommandDefs : Array<CommandDef>;
+	var running:Bool = false;
 
 	public function new(sequence:SequenceDef, injector:IInjector){
 		this.sequence = sequence;
@@ -54,13 +53,13 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-	private function done(){
+	function done(){
 		if(sequence.onComplete != null){
 			sequence.onComplete(this);
 		}
 	}
 
-	private function startSequence(){
+	function startSequence(){
 		if( !isEmpty(sequence.commands) && !stopped ){
 			callCommands(sequence.commands,[sequence.message]);
 		}
@@ -71,11 +70,11 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-	private function isEmpty(arr:Array<CommandDef>):Bool {
+	function isEmpty(arr:Array<CommandDef>):Bool {
 		return (arr == null || arr.length == 0);
 	}
 
-	private function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
+	function callCommands(commandDefs:Array<CommandDef>,args:Array<Dynamic>):Void{
 		var instance, 
 			result,
 			currentArgs,
@@ -104,7 +103,7 @@ class CommandSequencer implements Sequencer
 			}
 
 			result =
-			switch(ref.t){
+			switch(Type.typeof(ref.o)){
 				case TObject:
 					//ref.o is a class in this case
 					instance = (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
@@ -122,7 +121,7 @@ class CommandSequencer implements Sequencer
 		}
 	}
 
-	private function callback(restart:Bool):Void {
+	function callback(restart:Bool):Void {
 		if(restart && running){
 			stopped = false;
 		}else if(restart){

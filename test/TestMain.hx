@@ -13,9 +13,7 @@ class TestMain implements Buddy<[
 		intravenous.ioc.PostInjectionSpec,
 		intravenous.ioc.internal.InjectableSpec,
 		intravenous.messaging.MessagingSpec,
-		intravenous.task.TaskRunnerSpec,
-		intravenous.task.ParallelTaskRunnerSpec,
-		intravenous.task.SequentialTaskRunnerSpec
-		 ]> {
+		intravenous.task.TaskRunnerSpec
+	]> {
 
 }
