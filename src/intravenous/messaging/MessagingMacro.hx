@@ -1,4 +1,3 @@
-
 package intravenous.messaging;
 
 #if macro
@@ -6,7 +5,7 @@ class MessagingMacro
 {
 	public static var messageTypes : Array<String>;
 
-	private static var onGenerateAdded : Bool = false;
+	static var onGenerateAdded : Bool = false;
 
 	public static function buildCommand():Array<haxe.macro.Expr.Field> {
 

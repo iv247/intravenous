@@ -3,7 +3,7 @@ package intravenous.messaging;
 import intravenous.task.TaskDef;
 
 typedef CommandDef = {
-	> TaskDef,
+	> TaskRef,
 	f:String,
 	i:Int,
 	sequenceController:Bool,

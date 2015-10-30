@@ -5,6 +5,7 @@ import intravenous.ioc.ExtensionDef;
 import intravenous.ioc.IV;
 import haxe.rtti.Meta;
 import intravenous.messaging.CommandDef;
+import intravenous.task.TaskDef.Task;
 
 #if !macro
 @:build(intravenous.messaging.MessagingMacro.buildCommand())
@@ -120,7 +121,7 @@ class MessageProcessor {
             sequenceController = Reflect.hasField(classMeta,"controlSequence"),
             map = (isInterceptor) ? interceptMap : commandMap,
             ref = {
-                o:commandClass,
+                o: cast commandClass,
                 f:'execute',
                 i:order,
                 sequenceController:sequenceController,
@@ -142,7 +143,7 @@ class MessageProcessor {
             isInterceptor = Reflect.hasField(classMeta,"intercept"),
             sequenceController = Reflect.hasField(classMeta,"sequenceController"),
             map = (isInterceptor) ? interceptMap : commandMap,
-            ref = {o:commandClass, f:'execute', i:order, sequenceController: sequenceController};
+            ref = {o: cast commandClass, f:'execute', i:order, sequenceController: sequenceController};
         removeCommandRef(map,messageType,ref);
     }
 

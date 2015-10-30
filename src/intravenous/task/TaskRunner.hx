@@ -1,28 +1,28 @@
 package intravenous.task;
 
-import haxe.ds.Either;
 import intravenous.ioc.IInjector;
 import intravenous.messaging.CommandSequencer;
 import intravenous.task.TaskDef;
 
+
 class TaskRunner {
 	public var stopped(default,null):Bool; 
 	public var running(default,null):Bool; 
-	public var execution(default,null):Bool;
+	public var execution(default,null):Execution;
 
-	var taskDefs:Array<TaskDef>;
+	var taskDefs:Array<TaskRef>;
 	var injector:IInjector;
 	var onComplete:Void->Void;
 
-	public function new(type:Execution,completeHandler:Void->Void,?injector:IInjector){
+	public function new(type:Execution,completeHandler:Void->Void,?inj:IInjector){
 		taskDefs = [];
-		injector = injector;
+		injector = inj;
 		onComplete = completeHandler;
 
 		execution = type;
 	}
 
-	public function add(task:Dynamic, ?fn:String='execute'):TaskRunner{
+	public function add(task:Task, ?fn:String='execute'):TaskRunner{
 		taskDefs.push({ o:task, fn:fn });
 		return this;
 	}
@@ -58,16 +58,16 @@ class TaskRunner {
 			switch(Type.typeof(ref.o)){
 				case TObject:
 					//ref.o is a class in this case
-					(injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
+					cast (injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
 				case TClass(c):
-					instance = ref.o;		
+					cast ref.o;		
 				case _: //todo: throw error
 					// errorHandler('callCommands',ref);
 					null;
 			}
 
-			if(_isSequential){
-				if(isTaskAsync(instance,ref.fn)){
+			if(execution == Execution.SEQUENTIAL) {
+				if(isTaskAsync(instance,ref.fn)){ 
 					stop();
 				}
 				result = Reflect.callMethod(instance, Reflect.field(ref.o, ref.fn), currentArgs);
@@ -75,15 +75,15 @@ class TaskRunner {
 				if(result != null){
 					stop();
 				}
+			}else{
+				instance.callback = onComplete;
 			}
-			
+		
 		}
 	}
 
-	function isTaskAsync(obj:Dynamic,fn:String){
-		var meta = haxe.rtti.Meta.getFields(obj);
-		var fieldMeta = Reflect.field(meta,fn);
-		return Reflect.hasField(fieldMeta,'async');
+	function isTaskAsync(obj:Dynamic,fn:String){		
+		return Reflect.hasField(obj,'callback');
 	}
 }
 
@@ -105,7 +105,3 @@ abstract Sequential(TaskRunner) to TaskRunner {
 		this = new TaskRunner(Execution.SEQUENTIAL,onComplete,injector);
 	}
 }
-
-
-
-
