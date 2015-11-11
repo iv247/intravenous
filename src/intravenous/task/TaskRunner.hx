@@ -9,33 +9,50 @@ class TaskRunner {
 	public var stopped(default,null):Bool; 
 	public var running(default,null):Bool; 
 	public var execution(default,null):Execution;
+	public var done:Void->Void;
 
 	var taskDefs:Array<TaskRef>;
 	var injector:IInjector;
 	var onComplete:Void->Void;
+	var openTaskRefs:Array<TaskRef>;
+	var data:Dynamic;
 
-	public function new(type:Execution,completeHandler:Void->Void,?inj:IInjector){
+	public function new(type:Execution,?completeHandler:Void->Void,?inj:IInjector){
 		taskDefs = [];
 		injector = inj;
 		onComplete = completeHandler;
-
+		openTaskRefs = [];
 		execution = type;
 	}
 
-	public function add(task:Task, ?fn:String='execute'):TaskRunner{
-		taskDefs.push({ o:task, fn:fn });
-		return this;
+	public function execute(model:Dynamic){
+		start(model);
 	}
 
-	public function start(model:Dynamic){
-		if(!running){
-			executeTasks([model]);
-		}
+	public function add(task:Task):TaskRunner{
+		taskDefs.push({ o:task, fn:'execute'});
+		return this;
 	}
 
 	public function stop(){
 		stopped = true;
 		running = false;
+	}
+
+	function start(model:Dynamic){
+		if(!running){
+			executeTasks([model]);
+		}
+
+		if(!stopped && openTaskRefs.length == 0){
+			stopped = true;
+			if(onComplete != null){
+				onComplete();
+			}
+			if(done != null){
+				done();
+			}
+		}
 	}
 
 	function executeTasks(args:Array<Dynamic>){
@@ -45,6 +62,7 @@ class TaskRunner {
 			ref;
 
 		while(taskDefs.length > 0){
+			var isAsync;
 			currentArgs = args.copy();
 
 			if(stopped){
@@ -65,27 +83,41 @@ class TaskRunner {
 					// errorHandler('callCommands',ref);
 					null;
 			}
+			isAsync = isTaskAsync(instance,ref.fn);
 
-			if(execution == Execution.SEQUENTIAL) {
-				if(isTaskAsync(instance,ref.fn)){ 
-					stop();
-				}
-				result = Reflect.callMethod(instance, Reflect.field(ref.o, ref.fn), currentArgs);
-
-				if(result != null){
-					stop();
-				}
-			}else{
-				instance.callback = onComplete;
+			result =
+			switch(execution){
+				case Execution.SEQUENTIAL: 
+					if(isAsync){
+						instance.done = onTaskComplete;
+						stop();
+					}
+					Reflect.callMethod(instance, Reflect.field(ref.o, ref.fn), currentArgs);
+				case Execution.PARALLEL:
+					if(isAsync){
+						instance.done = onParallelAsyncTaskComplete.bind(ref);
+						openTaskRefs.push(ref);
+					}
+					Reflect.callMethod(instance, Reflect.field(ref.o, ref.fn), currentArgs);
 			}
-		
 		}
 	}
 
+	function onTaskComplete():Void {
+		start(data);
+	}
+
+	function onParallelAsyncTaskComplete(ref:TaskRef):Void {
+		openTaskRefs.remove(ref);
+		onTaskComplete();
+	}
+
 	function isTaskAsync(obj:Dynamic,fn:String){		
-		return Reflect.hasField(obj,'callback');
+		return Reflect.hasField(obj,'done');
 	}
 }
+
+
 
 @:enum
 abstract Execution(String) {
@@ -94,13 +126,13 @@ abstract Execution(String) {
 }
 
 @:forward
-abstract Parallel(TaskRunner) to TaskRunner  {
+abstract Parallel(TaskRunner) to TaskRunner to Task   {
 	public function new(onComplete:Void->Void,?injector:IInjector){
 		this = new TaskRunner(Execution.PARALLEL,onComplete,injector);
 	}
 }
 @:forward
-abstract Sequential(TaskRunner) to TaskRunner {
+abstract Sequential(TaskRunner) to TaskRunner to Task {
 	public function new(onComplete:Void->Void,?injector:IInjector){
 		this = new TaskRunner(Execution.SEQUENTIAL,onComplete,injector);
 	}
