@@ -1,2 +1,4 @@
 ./resources/hxml/_base.hxml
---interp
+
+-D no-root
+-java build/java
