@@ -25,25 +25,31 @@ abstract Sequential<T>(TaskRunner<T>) to TaskRunner<T> to Task{
 
 class TaskResult<T>  {
 	public var resultData(default,null):T;
-	public var faults(default,null):Array<Dynamic>;
+	public var faults(default,null):Array<TaskFault<T>>;
 
-	public function new(data:T,taskFaults:Array<Dynamic>){
+	public function new(data:T,taskFaults:Array<TaskFault<T>>){
 		resultData = data;
 		faults = taskFaults;
 	}
+}
+
+typedef TaskFault<T> = {
+	var fault:Dynamic;
+	var data:T;
 }
 
 class TaskRunner<T> {
 	public var stopped(default,null):Bool;
 	public var running(default,null):Bool;
 	public var execution(default,null):Execution;
-	public var done:Void->Void;
+	public var done:Dynamic->Void;
 
 	var taskDefs:Array<TaskRef>;
 	var injector:IInjector;
 	var onComplete:TaskResult<T>->Void;
 	var openTaskRefs:Array<TaskRef>;
 	var data:Dynamic;
+	var faults:Array<TaskFault<T>>;
 
 	public function new(type:Execution,?completeHandler:TaskResult<T>->Void,?inj:IInjector){
 		taskDefs = [];
@@ -78,10 +84,10 @@ class TaskRunner<T> {
 		if(!stopped && openTaskRefs.length == 0){
 			stopped = true;
 			if(onComplete != null){
-				onComplete(new TaskResult(data,null));
+				onComplete(new TaskResult(data,faults));
 			}
 			if(done != null){
-				done();
+				done(faults);
 			}
 		}
 	}
@@ -133,7 +139,7 @@ class TaskRunner<T> {
 
 				case Execution.PARALLEL:
 					if(isAsync){
-						instance.done = onParallelAsyncTaskComplete.bind(ref);
+						instance.done = onParallelAsyncTaskComplete.bind(ref,_);
 						openTaskRefs.push(ref);
 					}
 
@@ -143,13 +149,30 @@ class TaskRunner<T> {
 		}
 	}
 
-	function onTaskComplete():Void {
+	function onTaskComplete(?fault:Dynamic) {
+		if(fault == null){
+			start(this.data);
+		}else {
+			addFault(fault);
+		}
+	}
+
+	function onParallelAsyncTaskComplete(ref:TaskRef,?fault:Dynamic) {
+		openTaskRefs.remove(ref);
+		addFault(fault);
 		start(this.data);
 	}
 
-	function onParallelAsyncTaskComplete(ref:TaskRef):Void {
-		openTaskRefs.remove(ref);
-		onTaskComplete();
+	function addFault(fault:Dynamic){
+		if(fault==null){
+			return;
+		}
+
+		if(faults == null){
+			faults = [];
+		}
+
+		faults.push({ data: this.data, fault: fault});
 	}
 
 	function isTaskAsync(type:Class<Dynamic>,fn:String){

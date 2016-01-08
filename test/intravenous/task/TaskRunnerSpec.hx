@@ -207,7 +207,7 @@ class MockTask2 extends MockTask {
 class MockAsyncTask extends MockTask {
 	var model:TaskModel;
 
-	public var done:Void->Void;
+	public var done:?Dynamic->Void;
 
 	override public function execute(taskModel:TaskModel) {
 		model = taskModel;
