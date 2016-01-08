@@ -12,14 +12,14 @@ abstract Execution(String) {
 
 @:forward
 abstract Parallel<T>(TaskRunner<T>) to TaskRunner<T> to Task  {
-	public function new(onComplete:TaskResult<T>->Void,?injector:IInjector){
-		this = new TaskRunner<T>(Execution.PARALLEL,onComplete,injector);
+	public function new(?injector:IInjector){
+		this = new TaskRunner<T>(Execution.PARALLEL,injector);
 	}
 }
 @:forward
 abstract Sequential<T>(TaskRunner<T>) to TaskRunner<T> to Task{
-	public function new<T>(onComplete:TaskResult<T>->Void,?injector:IInjector){
-		this = new TaskRunner<T>(Execution.SEQUENTIAL,onComplete,injector);
+	public function new<T>(?injector:IInjector){
+		this = new TaskRunner<T>(Execution.SEQUENTIAL,injector);
 	}
 }
 
@@ -42,26 +42,38 @@ class TaskRunner<T> {
 	public var stopped(default,null):Bool;
 	public var running(default,null):Bool;
 	public var execution(default,null):Execution;
-	public var done:Dynamic->Void;
+	public var done:?Dynamic->Void;
 
 	var taskDefs:Array<TaskRef>;
 	var injector:IInjector;
-	var onComplete:TaskResult<T>->Void;
+	var completeFn:TaskResult<T>->Void;
 	var openTaskRefs:Array<TaskRef>;
 	var data:Dynamic;
-	var faults:Array<TaskFault<T>>;
+	var taskResult:TaskResult<T>;
+	var completed:Bool = false;
 
-	public function new(type:Execution,?completeHandler:TaskResult<T>->Void,?inj:IInjector){
+	public function new(type:Execution,?inj:IInjector){
 		taskDefs = [];
 		injector = inj;
-		onComplete = completeHandler;
 		openTaskRefs = [];
 		execution = type;
 	}
 
-	public function execute(model:Dynamic){
+	public function execute(model:Dynamic):TaskRunner<T>{		
 		data = model;
+		taskResult = new TaskResult(data,[]);
 		start(data);
+		
+		return this;
+	}
+
+	public function onComplete(fn:TaskResult<T>->Void):TaskRunner<T>{
+		completeFn = fn;
+		if(completed){
+			fn(taskResult);
+		}
+
+		return this;
 	}
 
 	public function add(task:Task):TaskRunner<T>{
@@ -76,6 +88,7 @@ class TaskRunner<T> {
 	}
 
 	function start(model:Dynamic){
+
 		if(!running){
 			stopped = false;
 			running = true;
@@ -83,12 +96,21 @@ class TaskRunner<T> {
 		}
 
 		if(!stopped && openTaskRefs.length == 0){
+			
 			stopped = true;
-			if(onComplete != null){
-				onComplete(new TaskResult(data,faults));
+			completed = true;
+			running = false;
+
+			if(completeFn != null){
+				completeFn(taskResult);
 			}
+
 			if(done != null){
-				done(faults);
+				if(taskResult.faults.length > 0){
+					done(taskResult.faults);
+				}else{
+					done();
+				}
 			}
 		}
 	}
@@ -161,7 +183,7 @@ class TaskRunner<T> {
 	function onParallelAsyncTaskComplete(ref:TaskRef,?fault:Dynamic) {
 		openTaskRefs.remove(ref);
 		addFault(fault);
-		start(this.data);
+		start(data);
 	}
 
 	function addFault(fault:Dynamic){
@@ -169,11 +191,7 @@ class TaskRunner<T> {
 			return;
 		}
 
-		if(faults == null){
-			faults = [];
-		}
-
-		faults.push({ data: this.data, fault: fault});
+		taskResult.faults.push({ data: this.data, fault: fault});
 	}
 
 	function isTaskAsync(type:Class<Dynamic>,fn:String){

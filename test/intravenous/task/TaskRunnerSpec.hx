@@ -15,13 +15,15 @@ class TaskRunnerSpec extends BuddySuite {
 				model = {tasks: new Array<String>()};
 			});
 
+			it('should only call the onComplete handler once');
+
 			it('should use injector if one is supplied',{
 				var injector = new intravenous.ioc.IV();
 
 				injector.mapDynamic(MockTask,MockTask);
 				injector.mapValue(intravenous.ioc.IV,injector);
 
-				runner = new Sequential(null,injector);
+				runner = new Sequential(injector);
 				runner.add(MockTask);
 				runner.execute(model);
 
@@ -29,36 +31,32 @@ class TaskRunnerSpec extends BuddySuite {
 			});
 
 			it('should support classes with an execute method',{
-				runner = new Sequential(null,null);
+				runner = new Sequential();
 				runner.add(MockTask);
 				runner.add(MockTask2);
 				runner.execute(model);
 				model.tasks.should.containExactly(['task1','task2']);
 			});
 
+
 			it('should support nesting tasking runners', function(){
-				var mainRunner = new Sequential(null,null);
-				var sRunner2 = new Sequential(null,null);
-				var pRunner = new Parallel(null,null);
+				var mainRunner = new Sequential();
+				var sRunner2 = new Sequential();
+				var pRunner = new Parallel();
 
 				var asyncTask = new MockAsyncTask();
 				var asyncTask2 = new MockAsyncTask();
 
-				mainRunner.add(MockTask)
+				mainRunner
+					.add(MockTask)
 					.add(MockTask2)
-					.add(sRunner2);
-
-				//nested seqential runner
-				sRunner2.add(asyncTask2)
-					.add(MockTask);
-
-				mainRunner.add(pRunner);
-
-				//nested parallel runner
-				pRunner.add(MockTask2)
-					.add(asyncTask);
-
-				mainRunner.execute(model);
+					.add(sRunner2
+							.add(asyncTask2)
+							.add(MockTask))
+					.add(pRunner
+							.add(MockTask2)
+							.add(asyncTask))
+					.execute(model);
 
 				asyncTask2.complete();
 				asyncTask.complete();
@@ -77,28 +75,30 @@ class TaskRunnerSpec extends BuddySuite {
 			describe('Sequential Tasks',{
 
 				it('should run tasks in the order they are added',{
-					runner = new Sequential(null,null);
+					runner = new Sequential();
 					runner.add(new MockTask())
 						.add(new MockTask2())
 						.execute(model);
 					model.tasks.should.containExactly(['task1','task2']);
 				});
 
-
 				it('should call complete callback when all tasks have been executed',{
 					var called;
-					runner = new Sequential(function(result){
-						called = true;
-					},null);
+					runner = new Sequential();
 					runner.add(MockTask)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							called = true;
+						}
+					);
+
 					called.should.be(true);
 				});
 
 				it('should pause runner and wait for async tasks to complete before restarting',{
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Sequential(null,null);
+					runner = new Sequential();
 
 					runner.add(MockTask)
 						.add(asyncTask)
@@ -118,13 +118,15 @@ class TaskRunnerSpec extends BuddySuite {
 					var called;
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Sequential(function(result){
-						called = true;
-					},null);
+					runner = new Sequential();
 
 					runner.add(MockTask)
 						.add(asyncTask)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							called = true;
+						}
+					);
 
 					called.should.not.be(true);
 					asyncTask.fault('error');
@@ -135,13 +137,15 @@ class TaskRunnerSpec extends BuddySuite {
 					var called;
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Sequential(function(result){
-						called = true;
-					},null);
+					runner = new Sequential();
 
 					runner.add(MockTask)
 						.add(asyncTask)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							called = true;
+						}
+					);
 
 					called.should.not.be(true);
 					asyncTask.complete();
@@ -154,7 +158,7 @@ class TaskRunnerSpec extends BuddySuite {
 				it('should not pause runner to wait for async tasks to complete', {
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Parallel(null,null);
+					runner = new Parallel();
 
 					runner.add(MockTask)
 						.add(asyncTask)
@@ -171,13 +175,15 @@ class TaskRunnerSpec extends BuddySuite {
 					var called;
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Parallel(function(result){
-						called = true;
-					},null);
+					runner = new Parallel();
 
 					runner.add(MockTask)
 						.add(asyncTask)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							called = true;
+						}
+					);
 
 					called.should.not.be(true);
 					asyncTask.complete();
@@ -188,13 +194,15 @@ class TaskRunnerSpec extends BuddySuite {
 					var called;
 					var asyncTask = new MockAsyncTask();
 
-					runner = new Parallel(function(result){
-						called = true;
-					},null);
+					runner = new Parallel();
 
 					runner.add(MockTask)
 						.add(asyncTask)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							called = true;
+						}
+					);
 
 					called.should.not.be(true);
 					asyncTask.fault('error');
@@ -206,14 +214,16 @@ class TaskRunnerSpec extends BuddySuite {
 					var asyncTask2 = new MockAsyncTask();
 					var taskResult;
 
-					runner = new Parallel(function(result){
-						taskResult = result;
-					},null);
+					runner = new Parallel();
 
 					runner.add(MockTask)
 						.add(asyncTask)
 						.add(asyncTask2)
-						.execute(model);
+						.execute(model)
+						.onComplete(function(result){
+							taskResult = result;
+						}
+					);
 
 					asyncTask.fault('error1');
 					asyncTask2.fault('error2');
