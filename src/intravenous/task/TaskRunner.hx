@@ -11,19 +11,29 @@ abstract Execution(String) {
 }
 
 @:forward
-abstract Parallel(TaskRunner) to TaskRunner to Task   {
-	public function new(onComplete:Void->Void,?injector:IInjector){
-		this = new TaskRunner(Execution.PARALLEL,onComplete,injector);
+abstract Parallel<T>(TaskRunner<T>) to TaskRunner<T> to Task  {
+	public function new(onComplete:TaskResult<T>->Void,?injector:IInjector){
+		this = new TaskRunner<T>(Execution.PARALLEL,onComplete,injector);
 	}
 }
 @:forward
-abstract Sequential(TaskRunner) to TaskRunner to Task {
-	public function new(onComplete:Void->Void,?injector:IInjector){
-		this = new TaskRunner(Execution.SEQUENTIAL,onComplete,injector);
+abstract Sequential<T>(TaskRunner<T>) to TaskRunner<T> to Task{
+	public function new<T>(onComplete:TaskResult<T>->Void,?injector:IInjector){
+		this = new TaskRunner<T>(Execution.SEQUENTIAL,onComplete,injector);
 	}
 }
 
-class TaskRunner {
+class TaskResult<T>  {
+	public var resultData(default,null):T;
+	public var faults(default,null):Array<Dynamic>;
+
+	public function new(data:T,taskFaults:Array<Dynamic>){
+		resultData = data;
+		faults = taskFaults;
+	}
+}
+
+class TaskRunner<T> {
 	public var stopped(default,null):Bool;
 	public var running(default,null):Bool;
 	public var execution(default,null):Execution;
@@ -31,11 +41,11 @@ class TaskRunner {
 
 	var taskDefs:Array<TaskRef>;
 	var injector:IInjector;
-	var onComplete:Void->Void;
+	var onComplete:TaskResult<T>->Void;
 	var openTaskRefs:Array<TaskRef>;
 	var data:Dynamic;
 
-	public function new(type:Execution,?completeHandler:Void->Void,?inj:IInjector){
+	public function new(type:Execution,?completeHandler:TaskResult<T>->Void,?inj:IInjector){
 		taskDefs = [];
 		injector = inj;
 		onComplete = completeHandler;
@@ -48,7 +58,7 @@ class TaskRunner {
 		start(data);
 	}
 
-	public function add(task:Task):TaskRunner{
+	public function add(task:Task):TaskRunner<T>{
 		taskDefs.push({ o:task, fn:'execute'});
 		return this;
 	}
@@ -68,7 +78,7 @@ class TaskRunner {
 		if(!stopped && openTaskRefs.length == 0){
 			stopped = true;
 			if(onComplete != null){
-				onComplete();
+				onComplete(new TaskResult(data,null));
 			}
 			if(done != null){
 				done();
@@ -126,7 +136,7 @@ class TaskRunner {
 						instance.done = onParallelAsyncTaskComplete.bind(ref);
 						openTaskRefs.push(ref);
 					}
-					
+
 					Reflect.callMethod(instance, Reflect.field(instance, ref.fn), currentArgs);
 			}
 
