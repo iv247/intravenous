@@ -69,9 +69,10 @@ class TaskRunner<T> {
 		return this;
 	}
 
-	public function stop(){
+	public function stop():TaskRunner<T>{
 		stopped = true;
 		running = false;
+		return this;
 	}
 
 	function start(model:Dynamic){
