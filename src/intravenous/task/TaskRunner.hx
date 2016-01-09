@@ -51,6 +51,7 @@ class TaskRunner<T> {
 	var data:Dynamic;
 	var taskResult:TaskResult<T>;
 	var completed:Bool = false;
+	var executed:Bool;
 
 	public function new(type:Execution,?inj:IInjector){
 		taskDefs = [];
@@ -59,10 +60,16 @@ class TaskRunner<T> {
 		execution = type;
 	}
 
-	public function execute(model:Dynamic):TaskRunner<T>{		
-		data = model;
-		taskResult = new TaskResult(data,[]);
-		start(data);
+	public function execute(model:Dynamic):TaskRunner<T>{	
+		if(!executed){
+			data = model;
+			taskResult = new TaskResult(data,[]);
+			executed = true;
+
+			start(data);
+		}else{
+			throw 'execute can only be called once';
+		}
 		
 		return this;
 	}

@@ -15,7 +15,11 @@ class TaskRunnerSpec extends BuddySuite {
 				model = {tasks: new Array<String>()};
 			});
 
-			it('should only call the onComplete handler once');
+			it('should throw an error if executed more than once', {
+				runner = new Sequential();
+				runner.execute(model);
+				runner.execute.bind(model).should.throwType(String);
+			});
 
 			it('should use injector if one is supplied',{
 				var injector = new intravenous.ioc.IV();
@@ -39,7 +43,7 @@ class TaskRunnerSpec extends BuddySuite {
 			});
 
 
-			it('should support nesting tasking runners', function(){
+			it('should support nesting tasking runners',{
 				var mainRunner = new Sequential();
 				var sRunner2 = new Sequential();
 				var pRunner = new Parallel();
