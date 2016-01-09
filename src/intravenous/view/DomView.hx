@@ -12,8 +12,8 @@ class DomView implements View {
 
     public var viewElement(default, null):js.html.Element;
 
-    private var nodeType:String;
-    private var classList : Array<String>;
+    var nodeType:String;
+    var classList : Array<String>;
 
     @dispatcher
     public var dispatch:Dynamic -> Void;
@@ -24,7 +24,7 @@ class DomView implements View {
         this.create();
     }
 
-    public function add (view:View):Void {
+    public function add (view:View){
         if ( children == null ) {
             children = [];
         }
@@ -40,7 +40,7 @@ class DomView implements View {
         dispatch( new ViewMessage(ViewMessage.Types.ADDED, view) );
     }
 
-    public function create ():Void {
+    public function create () {
         var attr = Browser.document.createAttribute( 'view' );
         var type = Type.getClass( this );
         var className = Type.getClassName( type );
@@ -58,14 +58,14 @@ class DomView implements View {
         this.createChildren();
     }
 
-    private function createChildren():Void{};
+    function createChildren(){};
 
     public function render ():Void {}
 
-    public function onCreateComplete ():Void{}
-    public function onRenderComplete ():Void {}
+    public function onCreateComplete (){}
+    public function onRenderComplete (): {}
 
-    public function remove (view:View):Void {
+    public function remove (view:View) {
         if ( children.remove( view ) ) {
             view.viewElement.remove( );
         }

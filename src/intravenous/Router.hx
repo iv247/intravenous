@@ -14,15 +14,15 @@ typedef Route = {
 
 class Router {
 
-	private var _routes:Array<Route>;
+	var routes:Array<Route>;
 
 	public function new(){
-		_routes = [];
+		routes = [];
 	}
 
-	public function add( meta:RouteMeta ):Router{
+	public function add(meta:RouteMeta):Router{
 		var route = createRoute(meta);
-		_routes.push(route);
+		routes.push(route);
 		return this;
 	}
 
@@ -41,7 +41,7 @@ class Router {
 		//add a trailing slash if one doesn't exist
 		path = ~/([^\/])$/.replace(path,'$1/');
  
-		for(route in _routes){
+		for(route in routes){
 			if(route.urlExp.match(path)){
 				matchedRoute = Reflect.copy(route);
 				for(i in 0...route.paramNames.length){
@@ -61,7 +61,7 @@ class Router {
 	/*
 		Returns a Map of name value pairs from a standard query string
 	*/
-	public function getQuery(url:String) {
+	public function getQuery(url:String):Map<String,String> {
 		var query = new Map<String,String>();
 		var regEx = ~/(.*\?)/;
 		var pairRegEx =  ~/(=)/;
@@ -78,7 +78,7 @@ class Router {
 		return query;
 	}
 
-	private function createRoute(meta:RouteMeta):Route {
+	function createRoute(meta:RouteMeta):Route {
 		var varMatch = ~/:\w*/g;
 		var content  = meta.path;
 		var stringForRegEx = meta.path;

@@ -30,7 +30,7 @@ class Context
 		 * Settting the default configuration if one has not been defined;
 		 * Sets initialized to true;
 	**/
-	public function initialize() : Void {
+	public function initialize() {
 		if(injector == null){
 			injector = new IV();
 		}
@@ -41,7 +41,7 @@ class Context
 	/**
 		Sets up Command/Messaging feature set
 	**/
-	public function configureMessaging() : Void {
+	public function configureMessaging() {
 		messageProcessor = new MessageProcessor(injector);
 		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
 		IV.extendIocTo("command",messageProcessor.processMeta);
@@ -49,7 +49,7 @@ class Context
 		injector.mapValue(MessageProcessor,messageProcessor);
 	}
 
-	public function configureViewHandling() : Void {
+	public function configureViewHandling() {
 		var viewController;
 		viewController = injector.instantiate(ViewController);
 		injector.mapValue(ViewController,viewController);
@@ -59,12 +59,12 @@ class Context
 	/**
 		Map a command to be created an executed when the commands message type is dispatched
 	**/
-	public function mapCommand(commandClass : Class<Dynamic>) : Void {
+	public function mapCommand(commandClass : Class<Dynamic>) {
 		messageProcessor.mapCommand(commandClass);
 
 	}
 
-	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {
+	public function mapView(view : Class<View>, mediator : Class<Dynamic>) {
 		
 	}
 }

@@ -10,7 +10,7 @@ class ViewController
 	public function new(){}
 
 	@command
-	public function execute(message:ViewMessage):Void{
+	public function execute(message:ViewMessage){
 
 		switch(message.type){
 
@@ -24,15 +24,15 @@ class ViewController
 
 	}
 
-	private function viewAdded(message):Void {
+	function viewAdded(message) {
 		//nothing to do for now
 	}
 
-	private function addingView(message):Void {
+	function addingView(message) {
 		processor.injector.injectInto(message.view);
 	}
 
-	private function viewRemoved(message:ViewMessage):Void {
+	function viewRemoved(message:ViewMessage) {
 		processor.deregister(message.view);
 	}
 

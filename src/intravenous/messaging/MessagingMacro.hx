@@ -17,7 +17,7 @@ class MessagingMacro
 		return null;
 	}
 
-	static function onGenerate(types : Array<haxe.macro.Type>) : Void {
+	static function onGenerate(types : Array<haxe.macro.Type>){
 		for(type in types){
 			switch type {
 				case TInst(ref, params): 
@@ -27,7 +27,7 @@ class MessagingMacro
 		}
 	}
 
-	static function addTypeMetaToClass(type : haxe.macro.Type.ClassType) : Void {
+	static function addTypeMetaToClass(type : haxe.macro.Type.ClassType){
 		if(type.isInterface){			
 			return;
 		}
@@ -40,7 +40,7 @@ class MessagingMacro
 
 	}
 
-	static function addCommandClassTypes(type : haxe.macro.Type.ClassType) : Void {
+	static function addCommandClassTypes(type : haxe.macro.Type.ClassType){
 		var types;
 		for(field in type.fields.get()){
 			if(field.name == 'execute'){
@@ -73,7 +73,7 @@ class MessagingMacro
 		return iv247.util.macro.TypeInfo.hasType(args,typeName);
 	}
 
-	static function addInterceptToClassFields(type : haxe.macro.Type.ClassType) : Void {
+	static function addInterceptToClassFields(type : haxe.macro.Type.ClassType){
 		var types;
 		for(field in type.fields.get()){	
 			if(field.meta.has("command")){

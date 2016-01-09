@@ -16,7 +16,7 @@ class IV implements IInjector {
 
     private static var extensionMap : Map<String, ExtensionDef->Void>;
 
-    private var injectionMap : Map<String, Injection>;
+    var injectionMap : Map<String, Injection>;
 
     public var parent(default,set) : IInjector;
     
@@ -31,7 +31,7 @@ class IV implements IInjector {
     }
 
  
-    private function set_parent(value:IInjector):IInjector{
+    function set_parent(value:IInjector):IInjector{
         if(value == null){
             parent = value;
         }
@@ -63,7 +63,7 @@ class IV implements IInjector {
     public function mapSingleton<T> (whenType : Injectable<Enum<T>,Class<T>>,
                                      getInstance : Injectable<Enum<T>,Class<T>>,
                                      ?id : String = "",
-                                     ?constr : String) : Void {
+                                     ?constr : String) {
         var key =  whenType.getName() + id,
             value = Injection.Singleton(whenType, getInstance,constr);
 
@@ -74,7 +74,7 @@ class IV implements IInjector {
         return injectionMap.exists( type.getName() + id );       
     }
 
-    public function unmap<T>(type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") : Void {
+    public function unmap<T>(type : Injectable<Enum<Dynamic>,Class<Dynamic>>, ?id : String = "") {
         injectionMap.remove( type.getName() + id );
     }
 
@@ -144,7 +144,7 @@ class IV implements IInjector {
         Any method annotated with @post, including in herited will be called after 
         property injection and extensions are called.
     **/
-    public function injectInto (object : Dynamic) : Void {
+    public function injectInto (object : Dynamic) {
         var targetType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
             type = Type.getClass(object),
             fields,
@@ -200,7 +200,7 @@ class IV implements IInjector {
 
     }
 
-    private function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
+    function getFieldMeta(meta,fieldName) : Dynamic<Array<Dynamic>> {
         return  Reflect.field(meta,fieldName);
     }
 
@@ -222,7 +222,7 @@ class IV implements IInjector {
         return  result;
     }
 
-    private function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<Dynamic>) : Dynamic {
+    function callMethod(metaList:Dynamic<Array<Dynamic>>, methodName : String, object: Dynamic,?ids:Array<Dynamic>) : Dynamic {
         var types : Array<Dynamic> = metaList.types,
             args,
             newInstance,
@@ -242,7 +242,7 @@ class IV implements IInjector {
         return  result;
     }
    
-    private function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>,?ids:Array<Dynamic>):Array<Dynamic> {
+    function getMethodArgInstances(meta:Dynamic<Array<Dynamic>>,?ids:Array<Dynamic>):Array<Dynamic> {
         var id,
             args = [],
             instanceType : Injectable<Enum<Dynamic>,Class<Dynamic>>,
@@ -300,7 +300,7 @@ class IV implements IInjector {
         extensionMap.remove(metaname);
     }
 
-    private function callExtensions(meta:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType,?fieldName:String) : Void {
+    function callExtensions(meta:Dynamic<Array<Dynamic>>, object:Dynamic, extensionType:ExtensionType,?fieldName:String) : Void {
 
         for(key in extensionMap.keys()){
             if(Reflect.hasField(meta,key)){

@@ -28,7 +28,7 @@ class MessageProcessor {
         completeMap = new Map();
     }
 
-    public static inline function getDispatcher(ext : ExtensionDef): Void {
+    public static inline function getDispatcher(ext : ExtensionDef) {
         var processor = ext.injector.getInstance(MessageProcessor);      
         
         Reflect.setField( ext.object,ext.field, 
@@ -42,7 +42,7 @@ class MessageProcessor {
         Procesess extension definiton sent from the injector
         after object instantiationg
     **/
-    public function processMeta(def : ExtensionDef):Void {
+    public function processMeta(def : ExtensionDef) {
         switch(def.type){
             case intravenous.ioc.ExtensionType.Constructor : return;
 
@@ -79,7 +79,7 @@ class MessageProcessor {
         Calling this method is necessary for any objects that need to be removed from memory
         (ie. Mediators/Presentation Models/View Controllers)
     **/
-    public function deregister(o:Dynamic):Void{
+    public function deregister(o:Dynamic){
         var type = Type.getClass(o),
             fields = Type.getClassFields(type),
             meta = Meta.getFields(type),
@@ -111,7 +111,7 @@ class MessageProcessor {
         Maps a class to instantiate when an object respective of the class execute method
         is dispatched using the message processors dispatch method
     **/
-    public function mapCommand(commandClass:Class<Dynamic>):Void {
+    public function mapCommand(commandClass:Class<Dynamic>){
         var className = Type.getClassName(commandClass),
             classMeta = Meta.getType(commandClass),
             messageType = classMeta.messageTypes[0].type,
@@ -135,7 +135,7 @@ class MessageProcessor {
         Removes a mapped class from list of commands to be instansiated and executed
         when the associated dispatch object is dispatched
     **/
-    public function removeCommand(commandClass:Class<Dynamic>):Void {
+    public function removeCommand(commandClass:Class<Dynamic>){
         var className = Type.getClassName(commandClass),
             classMeta = Meta.getType(commandClass),
             messageType = classMeta.messageTypes[0].type,
@@ -154,7 +154,7 @@ class MessageProcessor {
 
     **/
     //Consider returning the sequencer
-    public function dispatch(o:Dynamic):Void{
+    public function dispatch(o:Dynamic){
         var messageType = Type.getClassName(Type.getClass(o)),
             interceptors = getCommandDefFromMap(interceptMap,messageType),
             commands =  getCommandDefFromMap(commandMap,messageType),
@@ -176,7 +176,7 @@ class MessageProcessor {
     /**
         Removed all references to object from map
     **/
-    function removeFromMap(object: Dynamic, type : Class<Dynamic>, map : Map<String,Array<CommandDef>>):Void {
+    function removeFromMap(object: Dynamic, type : Class<Dynamic>, map : Map<String,Array<CommandDef>>){
         for(defArray in map){
             for(def in defArray){
                 if(def.o == object){
@@ -188,7 +188,7 @@ class MessageProcessor {
         }
     }
 
-    function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef):Void{
+    function insertCommandRef(map:Map<String, Array<CommandDef>>,messageType:String,def:CommandDef){
         var mapArray = map.get(messageType),
             newArray;
 
@@ -213,7 +213,7 @@ class MessageProcessor {
     /**
     * Removes a command ref from a specified map
     */
-    function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef):Void{
+    function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef){
         var mapArray = map.get(messageType);
 
         if(mapArray != null){
