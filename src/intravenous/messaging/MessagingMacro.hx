@@ -58,7 +58,7 @@ class MessagingMacro
 
 						type.meta.add('messageTypes', [types[0]], type.pos );
 						return;
-					default:
+					case _:
 				}
 			}
 		}

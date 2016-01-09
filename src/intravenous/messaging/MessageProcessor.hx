@@ -32,7 +32,7 @@ class MessageProcessor {
         var processor = ext.injector.getInstance(MessageProcessor);      
         
         Reflect.setField( ext.object,ext.field, 
-            function(v:Dynamic):Void{
+            function(v:Dynamic){
                 processor.dispatch(v);
             }
         );     
@@ -210,9 +210,7 @@ class MessageProcessor {
             }
         });
     }
-    /**
-    * Removes a command ref from a specified map
-    */
+    
     function removeCommandRef(map:Map<String,Array<CommandDef>>,messageType:String, def:CommandDef){
         var mapArray = map.get(messageType);
 
