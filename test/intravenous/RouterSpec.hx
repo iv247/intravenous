@@ -116,6 +116,7 @@ class RouterSpec extends BuddySuite {
 					params = router.getRoute('/users/cla=$%&ark/20?sdf').params;
 					params['user'].should.be('cla=$%&ark');
 					params['id'].should.be('20');
+
 				});
 
 				it('should not match an invalid route',{
@@ -124,8 +125,23 @@ class RouterSpec extends BuddySuite {
 						path: '/users/:user/:id'
 					});
 					
-					route = router.getRoute('/invalid/clark/20/');
+					route = router.getRoute('/users/clark/20/asdfasfd');
 					route.should.be(null);
+				});
+
+				it('should match a route if the beginning path is valid',{
+					var route;
+					router.add({
+						path: '/users/:user/:id',
+						allow: true,
+
+					});
+					
+					route = router.getRoute('/users/clark/20/asdfasfd');
+					route.should.not.be(null);
+					route.params['user'].should.be('clark');
+					route.params['id'].should.be('20');
+					trace(route.params);
 				});
 			});
 		
