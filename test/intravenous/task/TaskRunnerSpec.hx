@@ -17,8 +17,9 @@ class TaskRunnerSpec extends BuddySuite {
 
 			it('should throw an error if executed more than once', {
 				runner = new Sequential();
-				runner.execute(model);
-				runner.execute.bind(model).should.throwType(String);
+				runner
+					.execute(model)
+					.execute.bind(model).should.throwType(String);
 			});
 
 			it('should use injector if one is supplied',{
@@ -28,17 +29,20 @@ class TaskRunnerSpec extends BuddySuite {
 				injector.mapValue(intravenous.ioc.IV,injector);
 
 				runner = new Sequential(injector);
-				runner.add(MockTask);
-				runner.execute(model);
+				runner
+					.add(MockTask)
+					.execute(model);
 
 				model.hasInjection.should.be(true);
 			});
 
 			it('should support classes with an execute method',{
 				runner = new Sequential();
-				runner.add(MockTask);
-				runner.add(MockTask2);
-				runner.execute(model);
+				runner
+					.add(MockTask)
+					.add(MockTask2)
+					.execute(model);
+					
 				model.tasks.should.containExactly(['task1','task2']);
 			});
 
