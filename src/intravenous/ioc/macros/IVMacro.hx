@@ -16,6 +16,7 @@ class IVMacro {
 
 		var fields = Context.getBuildFields().copy(),
 			newField;
+
 		
 		if(metaNames == null) {
 			metaNames = [];

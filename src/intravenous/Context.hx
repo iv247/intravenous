@@ -1,28 +1,34 @@
 
 package intravenous;
 
-import intravenous.ioc.IV;
-import intravenous.view.View;
+import intravenous.configuration.Configuration;
+import intravenous.ioc.IInjector;
 import intravenous.messaging.MessageProcessor;
-import intravenous.view.ViewController;
+import intravenous.view.View;
 
+@:allow(Configuration)
 class Context
 {
-	public var injector(default,null) : IV;
-	public var initialized(default,null) : Bool;
+	public var injector(default,null):IInjector;
+	public var initialized(default,null):Bool;
 	public var messageProcessor(default,null):MessageProcessor;
 	public var app(default,null):View;
+	
+	var configuration:Configuration;
 
 	/**
 		Creates a new context, optionally initializing on instantiation.
 	**/
-	public function new (?mainView : View, ?autostart : Bool = true) {
+	public function new (appConfig:Configuration, ?mainView : View, ?autostart : Bool = true) {
 		app = mainView;
+
+		configuration = appConfig;
 
 		if(autostart){
 			initialize();
 		}
 	}
+
 	/**
 		Initializes context by:
 
@@ -31,29 +37,12 @@ class Context
 		 * Sets initialized to true;
 	**/
 	public function initialize() {
-		if(injector == null){
-			injector = new IV();
+		if(initialized){
+			throw 'Context has already been initialized';
 		}
-		configureMessaging();
-		configureViewHandling();
-		initialized = true;
-	}
-	/**
-		Sets up Command/Messaging feature set
-	**/
-	public function configureMessaging() {
-		messageProcessor = new MessageProcessor(injector);
-		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
-		IV.extendIocTo("command",messageProcessor.processMeta);
-		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
-		injector.mapValue(MessageProcessor,messageProcessor);
-	}
-
-	public function configureViewHandling() {
-		var viewController;
-		viewController = injector.instantiate(ViewController);
-		injector.mapValue(ViewController,viewController);
+		configuration.configure(this);
 		injector.injectInto(app);
+		initialized = true;
 	}
 
 	/**
@@ -61,10 +50,9 @@ class Context
 	**/
 	public function mapCommand(commandClass : Class<Dynamic>) {
 		messageProcessor.mapCommand(commandClass);
-
 	}
 
-	public function mapView(view : Class<View>, mediator : Class<Dynamic>) {
+	// public function mapView(view : Class<View<Dynamic>>, mediator : Class<Dynamic>) {
 		
-	}
+	// }
 }

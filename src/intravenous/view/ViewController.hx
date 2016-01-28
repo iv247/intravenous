@@ -1,15 +1,17 @@
 package intravenous.view;
-import intravenous.messaging.MessageProcessor;
-import intravenous.ioc.IInjector;
+
+import intravenous.messaging.IVMessageProcessor;
+import intravenous.view.ViewMessage;
 
 class ViewController
 {
 
-	@inject public var processor:MessageProcessor;
+	@inject 
+	public var processor:IVMessageProcessor;
 
 	public function new(){}
 
-	@command
+	@command 
 	public function execute(message:ViewMessage){
 
 		switch(message.type){

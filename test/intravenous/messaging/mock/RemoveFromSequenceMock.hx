@@ -1,6 +1,7 @@
 package intravenous.messaging.mock;
 
 import intravenous.messaging.*;
+import intravenous.messaging.MessageProcessor;
 
 class RemoveFromSequenceMock {
 	
@@ -16,7 +17,7 @@ class RemoveFromSequenceMock {
 @command(0)
 class Command {
 	@inject
-	public var processor:MessageProcessor;
+	public var processor:IVMessageProcessor;
 
 	public function new(){}
 
@@ -38,7 +39,7 @@ class CommandToBeRemoved {
 class Controller {
 
 	@inject
-	public var processor:MessageProcessor;
+	public var processor:IVMessageProcessor;
 
 	@inject 
 	public var controllerToBeRemoved:ControllerToBeRemoved;

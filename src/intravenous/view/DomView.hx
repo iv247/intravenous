@@ -24,7 +24,7 @@ class DomView implements View {
         this.create();
     }
 
-    public function add (view:View){
+    public function addView (view:View){
         if ( children == null ) {
             children = [];
         }
@@ -38,6 +38,7 @@ class DomView implements View {
         }
 
         dispatch( new ViewMessage(ViewMessage.Types.ADDED, view) );
+        return this;
     }
 
     public function create () {
@@ -63,7 +64,7 @@ class DomView implements View {
     public function render ():Void {}
 
     public function onCreateComplete (){}
-    public function onRenderComplete (): {}
+    public function onRenderComplete (){}
 
     public function remove (view:View) {
         if ( children.remove( view ) ) {
@@ -71,6 +72,7 @@ class DomView implements View {
         }
 
         dispatch( new ViewMessage(ViewMessage.Types.REMOVED, view) );
+        return this;
     }
 
 }#end

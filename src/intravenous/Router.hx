@@ -2,6 +2,7 @@ package intravenous;
 
 typedef RouteMeta = {
 	path : String,
+	?allow: Bool,
 	?data:Dynamic
 };
 typedef Route = {
@@ -11,6 +12,8 @@ typedef Route = {
 	?query:Map<String,String>,
 	meta: {}
 };
+
+//matches the path given and allows anything after
 
 class Router {
 
@@ -27,7 +30,7 @@ class Router {
 	}
 
 	/*
-		return a instance of Route
+		return an instance of Route
 		@param absPath - an absolute path to match list of added Routes against
 	*/
 	public function getRoute(absPath:String):Route{
@@ -95,7 +98,7 @@ class Router {
             content = varMatch.matchedRight();
            
             if(content==''){
-            	stringForRegEx+="/$";
+            	stringForRegEx+= meta.allow ? "/.*": "/$";
             }
         }
 

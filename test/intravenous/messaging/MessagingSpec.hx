@@ -1,27 +1,32 @@
 package intravenous.messaging;
 
-import intravenous.messaging.MessageProcessor;
-import intravenous.ioc.IV;
 import intravenous.ioc.IInjector;
-import intravenous.messaging.mock.MockCommand;
-import intravenous.messaging.mock.Message;
+import intravenous.ioc.IV;
 import intravenous.messaging.mock.*;
-import intravenous.messaging.mock.MockCommandOrder;
 import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.MockAsyncCommand;
+import intravenous.messaging.mock.MockCommand;
+import intravenous.messaging.mock.MockCommandOrder;
+import intravenous.messaging.mock.MockCommandOrder;
+import intravenous.messaging.mock.RemoveFromSequenceMock;
 
 using buddy.Should;
-@:access(intravenous.messaging.MessageProcessor)
+@:access(intravenous.messaging.IVMessageProcessor)
 class MessagingSpec extends buddy.BuddySuite
 {
 
-	public var processor: MessageProcessor;
+	public var processor:IVMessageProcessor;
 	public var injector : IInjector;
 
 	public function new(){
 		describe("Messaging", {
 			before({
 				injector = new IV();
-				processor = new MessageProcessor(injector);
+				processor = new IVMessageProcessor(injector);
 				MockCommand.count = 0;
 				IV.extendIocTo('command',processor.processMeta);
 				IV.extendIocTo('commandComplete',processor.processMeta);
