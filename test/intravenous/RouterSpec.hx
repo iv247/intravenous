@@ -10,7 +10,7 @@ class RouterSpec extends BuddySuite {
 			var router;
 
 			before({
-				router = new Router();
+				router = new Router();				
 			});
 
 			after({
@@ -51,7 +51,8 @@ class RouterSpec extends BuddySuite {
 			describe('getting a route based on a path', {
 				it('should return a valid route when matching path is added',{
 					var route;
-					router.add({
+					router
+					.add({
 						path: '/users/:user/:id'
 					});
 					
@@ -85,16 +86,25 @@ class RouterSpec extends BuddySuite {
 					query['empty'].should.be('');
 				});
 
-				it('should match a valid routes from a multiple added routes', {
+				it('should match a valid routes from multiple added routes', {
 					var params;
 					
 					router
 					.add({
+						path: '/',
+						data: 'main'
+					})
+					.add({
 						path: '/users/:user/:id'
+					})
+					.add({
+						path: '/testing'
 					})
 					.add({
 						path: '/users/:user/:id/:location'
 					});
+
+					router.getRoute('/').meta.data.should.be('main');
 
 					params = router.getRoute('/users/jones/81/newyork').params;
 					params['user'].should.be('jones');
@@ -105,6 +115,10 @@ class RouterSpec extends BuddySuite {
 					params['user'].should.be('clark');
 					params['id'].should.be('20');
 					params.exists('location').should.be(false);
+
+					var paramNames = router.getRoute('/testing').paramNames;
+					paramNames.length.should.be(0);
+					router.getRoute('/testing').should.not.be(null);
 				});
 
 				it('should match a valid route with special characters',{

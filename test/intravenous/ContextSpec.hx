@@ -15,7 +15,6 @@ class ContextSpec extends buddy.BuddySuite
 			before({
 				context = null;
 				config = new DefaultConfiguration();
-
 			});
 
 			it('should initialize on instantiation by default',{

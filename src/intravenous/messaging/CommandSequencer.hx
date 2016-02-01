@@ -131,4 +131,3 @@ class CommandSequencer implements Sequencer
 		}	
 	}
 }
-

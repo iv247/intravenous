@@ -10,7 +10,7 @@ import intravenous.view.View;
 class Context
 {
 	public var injector(default,null):IInjector;
-	public var initialized(default,null):Bool;
+	public var initialized(default,set):Bool;
 	public var messageProcessor(default,null):MessageProcessor;
 	public var app(default,null):View;
 	
@@ -43,6 +43,12 @@ class Context
 		configuration.configure(this);
 		injector.injectInto(app);
 		initialized = true;
+		messageProcessor.dispatch(new ContextInitialized());
+	}
+
+	public function set_initialized(v:Bool){
+		initialized = v;
+		return initialized;
 	}
 
 	/**
@@ -56,3 +62,5 @@ class Context
 		
 	// }
 }
+
+class ContextInitialized { public function new(){} }

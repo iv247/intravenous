@@ -1,5 +1,7 @@
 package intravenous.configuration;
 
+import intravenous.Context;
+
 interface Configuration {
-	function configure(context:intravenous.Context):Void;
+	function configure(context:Context):Void;
 }

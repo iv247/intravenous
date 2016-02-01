@@ -5,6 +5,7 @@ import intravenous.ioc.IInjector;
 import intravenous.ioc.IV;
 import intravenous.messaging.IVMessageProcessor;
 import intravenous.messaging.MessageProcessor;
+import intravenous.routing.RouteController;
 import intravenous.view.ViewController;
 
 @:access(intravenous.Context)
@@ -21,6 +22,7 @@ class DefaultConfiguration implements Configuration{
 		context.messageProcessor = messageProcessor;
 		configureMessaging();
 		configureViewHandling();
+		configureRouter();
 	}
 
  	function configureMessaging() {
@@ -34,5 +36,10 @@ class DefaultConfiguration implements Configuration{
 		var viewController:ViewController;
 		viewController = injector.instantiate(ViewController);
 		injector.mapValue(ViewController,viewController);
+	}
+
+	function configureRouter() {
+		injector.mapValue(Router, new Router());
+		injector.mapValue(RouteController, injector.instantiate(RouteController));
 	}
 }
