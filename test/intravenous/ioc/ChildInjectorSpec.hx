@@ -77,7 +77,7 @@ class ChildInjectorSpec extends buddy.BuddySuite
 					result = childInjector.getInstance(InjectionMock);
 
 					(result == null).should.be(true);
-			});{}
+			});
 		});
 	}
 }

@@ -145,7 +145,7 @@ class TaskRunner<T> {
 			switch(Type.typeof(ref.o)){
 				case TObject:
 					//ref.o is a class in this case
-					(injector != null) ? injector.instantiate(ref.o) : Type.createInstance(ref.o ,[]);
+					(injector != null) ? injector.instantiate(cast ref.o) : Type.createInstance(cast ref.o ,[]);
 				case TClass(c):
 					 ref.o;
 				case _: //todo: throw error
