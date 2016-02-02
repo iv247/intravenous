@@ -20,15 +20,19 @@ class DefaultConfiguration implements Configuration{
 		messageProcessor = new IVMessageProcessor(injector);
 		context.injector = injector;
 		context.messageProcessor = messageProcessor;
+		configureExtensions();
 		configureMessaging();
 		configureViewHandling();
 		configureRouter();
 	}
 
- 	function configureMessaging() {
+	public function configureExtensions() {
 		IV.addExtension(IVMessageProcessor.DISPATCHER_META,IVMessageProcessor.getDispatcher);
 		IV.extendIocTo("command",messageProcessor.processMeta);
 		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
+	}
+
+ 	function configureMessaging() {
 		injector.mapValue(MessageProcessor,messageProcessor);
 	}
 

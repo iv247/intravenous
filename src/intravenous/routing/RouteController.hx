@@ -24,11 +24,13 @@ class RouteController {
 		//if js
 		//listen fo popstate
 		#if (js && !nodejs)
+			var location = js.Browser.window.location;
 			history = js.Browser.window.history;
 			js.Browser.document.addEventListener('click', handleAnchorClick);
 			js.Browser.window.addEventListener('popstate', function(e){
-				dispatcher.dispatch( new RouteChanged(history.state,currentRoute) );
-			},true);
+				var route = router.getRoute( location.pathname + location.search);
+				dispatcher.dispatch( new RouteChanged(route,currentRoute) );
+			},false);
 			untyped history.pushState = pushState.bind(_,_,_,history.pushState);
 			untyped history.replaceState = pushState.bind(_,_,_,history.replaceState);
 		#end
@@ -41,20 +43,28 @@ class RouteController {
 
 	@command 
 	public function onRouteTo(message:RouteTo){
-		var currentRoute = router.getRoute(message.path);
+		var oldRoute = currentRoute;
 		var newRoute = router.getRoute(message.path);
-
+	
 		if(history != null){
 			history.pushState(router.getRoute(message.path),null,message.path);
 		}else{
-			dispatcher.dispatch( new RouteChanged(newRoute,currentRoute) );
+			dispatcher.dispatch( new RouteChanged(newRoute,oldRoute) );
 		}
 	}
 
 	#if (js && !nodejs)
 		function pushState (state:Dynamic,something:String,path:String,fn:Dynamic->String->String->Void) {
-			fn(state,something,path);
-			dispatcher.dispatch( new RouteChanged(state,history.state) );
+			var route = router.getRoute(path);
+			var oldRoute = currentRoute;
+			currentRoute = route;
+			
+			if(oldRoute !=null && oldRoute.meta.path == currentRoute.meta.path){
+				return;
+			}
+			
+			fn(null,something,path);
+			dispatcher.dispatch( new RouteChanged(currentRoute,oldRoute) );
 		}
 
 		function handleAnchorClick(event) {
