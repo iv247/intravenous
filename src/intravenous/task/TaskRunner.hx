@@ -164,18 +164,20 @@ class TaskRunner<T> {
 						instance.done = onTaskComplete;
 						stop();
 					}
-
 					Reflect.callMethod(instance, Reflect.field(instance, ref.fn), currentArgs);
 
 				case Execution.PARALLEL:
 					if(isAsync){
-						instance.done = onParallelAsyncTaskComplete.bind(ref,_);
 						openTaskRefs.push(ref);
+						#if !php
+							instance.done = onParallelAsyncTaskComplete.bind(ref,_);
+						#else
+							instance.done = new PHPCallback(ref,this).done;
+						#end
 					}
 
 					Reflect.callMethod(instance, Reflect.field(instance, ref.fn), currentArgs);
 			}
-
 		}
 	}
 
@@ -189,15 +191,13 @@ class TaskRunner<T> {
 
 	function onParallelAsyncTaskComplete(ref:TaskRef,?fault:Dynamic) {
 		openTaskRefs.remove(ref);
-		addFault(fault);
+		if(fault != null){
+		   addFault(fault);
+		}
 		start(data);
 	}
 
 	function addFault(fault:Dynamic){
-		if(fault==null){
-			return;
-		}
-
 		taskResult.faults.push({ data: this.data, fault: fault});
 	}
 
@@ -205,3 +205,19 @@ class TaskRunner<T> {
 		return Lambda.has(Type.getInstanceFields(type),fn);
 	}
 }
+
+#if php
+@:access(intravenous.task.TaskRunner)
+class PHPCallback<T> {
+	var ref:TaskRef;
+	var runner:TaskRunner<T>;
+	public function new(r,run){
+		ref = r;
+		runner = run;
+	}
+
+	public function done(fault:Dynamic){
+		runner.onParallelAsyncTaskComplete(ref,fault);
+	}
+}
+#end
