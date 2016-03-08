@@ -5,6 +5,7 @@ import intravenous.ioc.IInjector;
 import intravenous.ioc.IV;
 import intravenous.messaging.IVMessageProcessor;
 import intravenous.messaging.MessageProcessor;
+import intravenous.Router.RouteMeta;
 import intravenous.routing.RouteController;
 import intravenous.view.ViewController;
 
@@ -12,8 +13,11 @@ import intravenous.view.ViewController;
 class DefaultConfiguration implements Configuration{
 	var messageProcessor:IVMessageProcessor;
 	var injector:IInjector;
+	var routeMetas:Array<RouteMeta>;
 
-	public function new(){}
+	public function new(?routes:Array<RouteMeta>){
+		routeMetas = routes;
+	}
 
 	public function configure(context:Context){
 		injector = new IV();
@@ -32,6 +36,11 @@ class DefaultConfiguration implements Configuration{
 		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
 	}
 
+	public function configureClient() {
+		configureExtensions();
+		injector.getInstance(RouteController).init();
+	}
+
  	function configureMessaging() {
 		injector.mapValue(MessageProcessor,messageProcessor);
 	}
@@ -43,7 +52,13 @@ class DefaultConfiguration implements Configuration{
 	}
 
 	function configureRouter() {
-		injector.mapValue(Router, new Router());
+		var router = new Router();
+		if(routeMetas != null){
+			for(i in 0...routeMetas.length){
+				router.add(routeMetas[i]);
+			}
+		}
+		injector.mapValue(Router,router);
 		injector.mapValue(RouteController, injector.instantiate(RouteController));
 	}
 }
