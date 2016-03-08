@@ -36,11 +36,6 @@ class DefaultConfiguration implements Configuration{
 		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
 	}
 
-	public function configureClient() {
-		configureExtensions();
-		injector.getInstance(RouteController).init();
-	}
-
  	function configureMessaging() {
 		injector.mapValue(MessageProcessor,messageProcessor);
 	}
