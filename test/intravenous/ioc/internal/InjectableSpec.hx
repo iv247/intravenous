@@ -22,12 +22,6 @@ class InjectableSpec extends buddy.BuddySuite  {
 				inj.should.be(MockObject);
 			 });
 
-			// it('can not be an instance',{
-			// 	var m = new MockObject();
-			// 	inj = m;
-			// 	inj.should.be(null);
-			// });
-
 			 it('can be made from a class path',{
 				inj = 'intravenous.ioc.mock.MockObject';
 				inj.should.be(MockObject);
@@ -37,18 +31,11 @@ class InjectableSpec extends buddy.BuddySuite  {
 				inj = 'intravenous.ioc.mock.MockEnum';
 				inj.should.be(MockEnum);
 			 });
-			 
+
 			 it('can not be made from invalid paths',{
 				inj = 'intravenous.ioc.NotAClass';
 				inj.should.be(null);
 			 });
-
-			 // it('can be made from a path string var typed as dynamic', {
-			 // 	var test:Dynamic;
-			 // 	test = 'intravenous.ioc.mock.MockEnum';
-			 // 	inj = test;
-			 // 	inj.should.be(MockEnum);
-			 // });
 		  });
 
 		  describe('isClass/isAClass',{
@@ -67,7 +54,7 @@ class InjectableSpec extends buddy.BuddySuite  {
 
 		  describe('isEnum/isAnEnum',{
 			it('should return true if object is an enum', function(){
-				inj = intravenous.ioc.mock.MockEnum;
+				inj = MockEnum;
 				inj.isEnum().should.be(true);
 				Injectable.IS_AN_ENUM(inj).should.be(true);
 			});
