@@ -12,7 +12,7 @@ class EnumSupportSpec extends BuddySuite
 	public function new(){
 		var iv;
 
-		before({
+		beforeEach({
 			iv = new IV();
 		});
 		

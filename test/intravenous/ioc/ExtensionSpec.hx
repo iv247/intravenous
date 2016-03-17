@@ -25,7 +25,7 @@ class ExtensionSpec extends buddy.BuddySuite {
 			IV.extendIocTo("extension",extFn);
 			IV.extendIocTo("extensionMethod",extFn2);
 
-			before({
+			beforeEach({
 				callCount = 0;
 				extensionDef = null;
 				extensionMethodDef = null;

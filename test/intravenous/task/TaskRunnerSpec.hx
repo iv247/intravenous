@@ -11,7 +11,7 @@ class TaskRunnerSpec extends BuddySuite {
 		var model:TaskModel;
 
 		describe('TaskRunner', {
-			before({
+			beforeEach({
 				model = {tasks: new Array<String>()};
 			});
 

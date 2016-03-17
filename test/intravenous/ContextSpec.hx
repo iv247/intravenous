@@ -12,7 +12,7 @@ class ContextSpec extends buddy.BuddySuite
 		var config;
 
 		describe("Context",{
-			before({
+			beforeEach({
 				context = null;
 				config = new DefaultConfiguration();
 			});

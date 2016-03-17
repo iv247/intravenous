@@ -1,2 +1,2 @@
 ./resources/hxml/_base.hxml
---interp
+-x TestMain.n

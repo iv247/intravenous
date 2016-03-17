@@ -14,7 +14,7 @@ class MappingSpec extends BuddySuite {
 
             var iv;
 
-            before({
+            beforeEach({
                 iv = new IV();
             });
 

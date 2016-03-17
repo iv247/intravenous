@@ -12,7 +12,7 @@ class InjectionsSpec extends BuddySuite {
         describe("IInjector implementation", {
             var iv;
 
-            before({
+            beforeEach({
                 iv = new IV();                                
             });
 

@@ -9,14 +9,17 @@ class RouterSpec extends BuddySuite {
 		describe('Router',{
 			var router;
 
-			before({
+			beforeEach({
 				router = new Router();				
 			});
 
-			after({
+			afterEach({
 				router = null;
 			});
 			describe('query string parsing', {	
+				beforeEach({
+					router = new Router();				
+				});
 				it('should create a string map of query params', {
 					var  query = router.getQuery('/one/two?id=five&user=me');
 					query['id'].should.be('five');
@@ -49,6 +52,10 @@ class RouterSpec extends BuddySuite {
 			});
 
 			describe('getting a route based on a path', {
+				beforeEach({
+					router = new Router();				
+				});
+
 				it('should return a valid route when matching path is added',{
 					var route;
 					router
@@ -136,7 +143,8 @@ class RouterSpec extends BuddySuite {
 				it('should not match an invalid route',{
 					var route;
 					router.add({
-						path: '/users/:user/:id'
+						path: '/users/:user/:id',
+						allow: false
 					});
 					
 					route = router.getRoute('/users/clark/20/asdfasfd');
