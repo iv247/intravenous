@@ -1,2 +1,2 @@
 ./resources/hxml/_base.hxml
--x TestMain.n
+-x build/neko/TestMain
