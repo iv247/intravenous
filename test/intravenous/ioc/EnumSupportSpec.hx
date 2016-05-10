@@ -30,7 +30,7 @@ class EnumSupportSpec extends BuddySuite
 
 	        it("should create an enum value without constructor", {
 	        	var mockEnum:MockEnum = iv.instantiate(MockEnum,"MockEnumValue");
-	        	mockEnum.should.be( MockEnum.MockEnumValue );
+	        	mockEnum.should.equal( MockEnum.MockEnumValue );
 	        });
 
 	        it("should create enum and inject constructor values",{
@@ -41,12 +41,12 @@ class EnumSupportSpec extends BuddySuite
 	        	iv.mapDynamic(InjectedObject,InjectedObject);
 
 	        	mockEnum = iv.instantiate(MockEnum,"MockEnumCtor");
-
+	        	
 	        	switch(mockEnum){
 	        		case MockEnum.MockEnumCtor(i1,i2,i3):
 	        			i1.should.be(obj1);
 	        			Std.is(i2,InjectedObject).should.be(true);
-	        			i3.should.be(null);
+	        			i3.should.equal(null);
 	        		default: throw "enum not matched";
 	        	}
 	        });
@@ -63,7 +63,7 @@ class EnumSupportSpec extends BuddySuite
 
 	        	mockEnumWCtor = iv.getInstance(MockEnum,"injectEnumCtorId");
 
-	        	injectionMockWithEnum.enumCtor.should.be(mockEnumWCtor);
+	        	injectionMockWithEnum.enumCtor.should.equal(mockEnumWCtor);
 	        	Std.is(injectionMockWithEnum.enumValue,MockEnum).should.be(true);
 	        });
 
@@ -76,7 +76,7 @@ class EnumSupportSpec extends BuddySuite
 	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
 	        	mockEnumWCtor = iv.getInstance(MockEnum,"injectEnumCtorId");
 
-	        	injectionMockWithEnum.enumCtor.should.be(mockEnumWCtor);
+	        	injectionMockWithEnum.enumCtor.should.equal(mockEnumWCtor);
 	        });
 
 		});
