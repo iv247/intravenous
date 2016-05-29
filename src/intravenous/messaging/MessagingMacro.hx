@@ -1,7 +1,7 @@
 package intravenous.messaging;
 
 #if macro
-class MessagingMacro 
+class MessagingMacro
 {
 	public static var messageTypes : Array<String>;
 
@@ -13,52 +13,53 @@ class MessagingMacro
 			haxe.macro.Context.onGenerate(onGenerate);
 			onGenerateAdded = true;
 		}
-		
+
 		return null;
 	}
 
-	static function onGenerate(types : Array<haxe.macro.Type>) : Void {
+	static function onGenerate(types : Array<haxe.macro.Type>){
 		for(type in types){
 			switch type {
-				case TInst(ref, params): 
+				case TInst(ref, params):
 					addTypeMetaToClass ( ref.get() );
 				default:
 			}
 		}
 	}
 
-	static function addTypeMetaToClass(type : haxe.macro.Type.ClassType) : Void {
-		if(type.isInterface){			
+	static function addTypeMetaToClass(type : haxe.macro.Type.ClassType){
+		if(type.isInterface || type.meta.has('iv')){
 			return;
 		}
-		
+
 		if(type.meta.has('command')){
 			addCommandClassTypes(type);
 		}
 
-		addInterceptToClassFields(type);
-
+		addMetaToClassFields(type);
 	}
 
-	static function addCommandClassTypes(type : haxe.macro.Type.ClassType) : Void {
+	static function addCommandClassTypes(type : haxe.macro.Type.ClassType){
 		var types;
-		for(field in type.fields.get()){
-			if(field.name == 'execute'){
-				switch(field.type){
-					case TFun(args,_): 						
-						types = iv247.util.macro.TypeInfo.getTFunArgs(args);
-						
-						 if(isAsync(args)){
-							type.meta.add('async',[],type.pos);
-						 }
+		if(!type.meta.has('messageTypes')){
+			for(field in type.fields.get()){
+				if(field.name == 'execute'){
+					switch(field.type){
+						case TFun(args,_):
+							types = iv247.util.macro.TypeInfo.getTFunArgs(args);
 
-						 if(isSequenceController(args)){
-						 	type.meta.add("controlSequence",[],type.pos);
-						 }
+							 if(isAsync(args)){
+								type.meta.add('async',[],type.pos);
+							 }
 
-						type.meta.add('messageTypes', [types[0]], type.pos );
-						return;
-					default:
+							 if(isSequenceController(args)){
+							 	type.meta.add("controlSequence",[],type.pos);
+							 }
+
+							 type.meta.add('messageTypes', [types[0]], type.pos );
+							return;
+						case _:
+					}
 				}
 			}
 		}
@@ -73,23 +74,23 @@ class MessagingMacro
 		return iv247.util.macro.TypeInfo.hasType(args,typeName);
 	}
 
-	static function addInterceptToClassFields(type : haxe.macro.Type.ClassType) : Void {
+	static function addMetaToClassFields(type : haxe.macro.Type.ClassType){
 		var types;
-		for(field in type.fields.get()){	
+
+		for(field in type.fields.get()){
 			if(field.meta.has("command")){
 				switch(field.type){
 						case TFun(args,ret) :
-
-								if(isSequenceController(args)){
+								if(!field.meta.has("controlSequence") && isSequenceController(args)){
 							   		field.meta.add('controlSequence',[],field.pos);
 								}
-								if(isAsync(args)){
+								if(!field.meta.has("async") && isAsync(args)){
 									field.meta.add('async',[],field.pos);
 								}
 						default: null;
 				}
 			}
-					
+
 		}
 	}
 }

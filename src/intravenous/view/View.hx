@@ -1,26 +1,21 @@
 
 package intravenous.view;
 
-interface View 
+interface View
 {
-
-	#if js
-	var viewElement(default,null) : js.html.Element;
-	#elseif flash
-	var viewElement(default,null) : flash.display.Sprite;
-	#else
-	var viewElement(default,null) : Dynamic;
-	#end
-
+	var viewElement(get,null) : Dynamic;
+	
 	var parent(default,null):View;
 	
-	var children(default,null) : Array<View>;
+	var children(get,null):Dynamic;
 	
-	public function add(view:View):Void;
+	public function addView(view:Dynamic):Dynamic;
 
-	public function remove(view:View):Void;
+	public function removeView():Dynamic;
 
 	function create():Void;
+	function added():Void;
+	function removed():Void;
 	function render():Void;
 	function onRenderComplete():Void;
 }

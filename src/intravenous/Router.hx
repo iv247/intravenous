@@ -2,32 +2,68 @@ package intravenous;
 
 typedef RouteMeta = {
 	path : String,
+	?view:Class<Dynamic>,
+	?allow: Bool,
 	?data:Dynamic
 };
-typedef Route = {
-	urlExp : EReg,
-	paramNames : Array<String>,
-	params:Map<String,String>,
-	?query:Map<String,String>,
-	meta: {}
-};
+
+class Route {
+	public var urlExp(default,null) : EReg;
+	public var paramNames(default,null) : Array<String>;
+	public var params(default,null):Map<String,String>;
+	public var query(default,null):Map<String,String>;
+	public var meta(default,null): RouteMeta;
+	public var urlExpString(default,null):String;
+
+
+	public function new(expString, paramNamesArray, paramsMap, queryMap, metaData){
+		urlExp = new EReg(expString,'g');
+		urlExpString = expString; 
+		paramNames = paramNamesArray;
+		params = paramsMap;
+		query = queryMap;
+		meta = metaData;
+	}
+
+	@:keep
+	public function hxSerialize(s:haxe.Serializer){
+		s.serialize(urlExpString);
+		s.serialize(urlExpString);
+		s.serialize(paramNames);
+		s.serialize(params);
+		s.serialize(query);
+		s.serialize(meta);
+	}
+
+	@:keep
+	public function hxUnserialize(s:haxe.Unserializer){
+		urlExp =  new EReg(s.unserialize(),'g'); 
+		urlExpString = s.unserialize();
+		paramNames = s.unserialize();
+		params = s.unserialize();
+		query = s.unserialize();
+		meta = s.unserialize();
+	}
+}
+
+//matches the path given and allows anything after
 
 class Router {
 
-	private var _routes:Array<Route>;
+	public var routes:Array<Route>;
 
 	public function new(){
-		_routes = [];
+		routes = [];
 	}
 
-	public function add( meta:RouteMeta ):Router{
+	public function add(meta:RouteMeta):Router{
 		var route = createRoute(meta);
-		_routes.push(route);
+		routes.push(route);
 		return this;
 	}
 
 	/*
-		return a instance of Route
+		return an instance of Route
 		@param absPath - an absolute path to match list of added Routes against
 	*/
 	public function getRoute(absPath:String):Route{
@@ -41,27 +77,34 @@ class Router {
 		//add a trailing slash if one doesn't exist
 		path = ~/([^\/])$/.replace(path,'$1/');
  
-		for(route in _routes){
+		for(route in routes){
 			if(route.urlExp.match(path)){
-				matchedRoute = Reflect.copy(route);
+				matchedRoute = route;
 				for(i in 0...route.paramNames.length){
         			params[route.paramNames[i]] = route.urlExp.matched(i+1);
         		}
         		break;
 			}
 		}
+
 		if(matchedRoute != null){
-			matchedRoute.params = params;
-			matchedRoute.query = getQuery(absPath);
+			return new Route(
+				matchedRoute.urlExpString,
+				matchedRoute.paramNames,
+				params,
+				getQuery(absPath),
+				Reflect.copy(matchedRoute.meta)
+			);
+		}else {
+			return null;
 		}
 
-		return matchedRoute;
 	}
 
 	/*
 		Returns a Map of name value pairs from a standard query string
 	*/
-	public function getQuery(url:String) {
+	public function getQuery(url:String):Map<String,String> {
 		var query = new Map<String,String>();
 		var regEx = ~/(.*\?)/;
 		var pairRegEx =  ~/(=)/;
@@ -78,7 +121,7 @@ class Router {
 		return query;
 	}
 
-	private function createRoute(meta:RouteMeta):Route {
+	function createRoute(meta:RouteMeta):Route {
 		var varMatch = ~/:\w*/g;
 		var content  = meta.path;
 		var stringForRegEx = meta.path;
@@ -95,15 +138,20 @@ class Router {
             content = varMatch.matchedRight();
            
             if(content==''){
-            	stringForRegEx+="/$";
+            	stringForRegEx+= meta.allow ? "/.*": "/$";
             }
         }
 
-		return { 
-			urlExp: new EReg(stringForRegEx,'g'),
-			paramNames: paramNames,
-			meta: Reflect.copy(meta),
-			params: null
-		};
+        if(meta.path == '/'){
+        	stringForRegEx = '^/$';
+        }
+
+		return new Route(
+			stringForRegEx,
+			paramNames,
+			null,
+			null,
+			meta
+		);
 	}
 }

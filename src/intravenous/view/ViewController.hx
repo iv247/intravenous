@@ -1,16 +1,18 @@
 package intravenous.view;
-import intravenous.messaging.MessageProcessor;
-import intravenous.ioc.IInjector;
+
+import intravenous.messaging.IVMessageProcessor;
+import intravenous.view.ViewMessage;
 
 class ViewController
 {
 
-	@inject public var processor:MessageProcessor;
+	@inject 
+	public var processor:IVMessageProcessor;
 
 	public function new(){}
 
-	@command
-	public function execute(message:ViewMessage):Void{
+	@command 
+	public function execute(message:ViewMessage){
 
 		switch(message.type){
 
@@ -24,15 +26,15 @@ class ViewController
 
 	}
 
-	private function viewAdded(message):Void {
+	function viewAdded(message) {
 		//nothing to do for now
 	}
 
-	private function addingView(message):Void {
+	function addingView(message) {
 		processor.injector.injectInto(message.view);
 	}
 
-	private function viewRemoved(message:ViewMessage):Void {
+	function viewRemoved(message:ViewMessage) {
 		processor.deregister(message.view);
 	}
 

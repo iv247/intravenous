@@ -9,14 +9,17 @@ class RouterSpec extends BuddySuite {
 		describe('Router',{
 			var router;
 
-			before({
-				router = new Router();
+			beforeEach({
+				router = new Router();				
 			});
 
-			after({
+			afterEach({
 				router = null;
 			});
 			describe('query string parsing', {	
+				beforeEach({
+					router = new Router();				
+				});
 				it('should create a string map of query params', {
 					var  query = router.getQuery('/one/two?id=five&user=me');
 					query['id'].should.be('five');
@@ -49,9 +52,14 @@ class RouterSpec extends BuddySuite {
 			});
 
 			describe('getting a route based on a path', {
+				beforeEach({
+					router = new Router();				
+				});
+
 				it('should return a valid route when matching path is added',{
 					var route;
-					router.add({
+					router
+					.add({
 						path: '/users/:user/:id'
 					});
 					
@@ -85,16 +93,25 @@ class RouterSpec extends BuddySuite {
 					query['empty'].should.be('');
 				});
 
-				it('should match a valid routes from a multiple added routes', {
+				it('should match a valid routes from multiple added routes', {
 					var params;
 					
 					router
 					.add({
+						path: '/',
+						data: 'main'
+					})
+					.add({
 						path: '/users/:user/:id'
+					})
+					.add({
+						path: '/testing'
 					})
 					.add({
 						path: '/users/:user/:id/:location'
 					});
+
+					router.getRoute('/').meta.data.should.be('main');
 
 					params = router.getRoute('/users/jones/81/newyork').params;
 					params['user'].should.be('jones');
@@ -105,6 +122,10 @@ class RouterSpec extends BuddySuite {
 					params['user'].should.be('clark');
 					params['id'].should.be('20');
 					params.exists('location').should.be(false);
+
+					var paramNames = router.getRoute('/testing').paramNames;
+					paramNames.length.should.be(0);
+					router.getRoute('/testing').should.not.be(null);
 				});
 
 				it('should match a valid route with special characters',{
@@ -116,16 +137,33 @@ class RouterSpec extends BuddySuite {
 					params = router.getRoute('/users/cla=$%&ark/20?sdf').params;
 					params['user'].should.be('cla=$%&ark');
 					params['id'].should.be('20');
+
 				});
 
 				it('should not match an invalid route',{
 					var route;
 					router.add({
-						path: '/users/:user/:id'
+						path: '/users/:user/:id',
+						allow: false
 					});
 					
-					route = router.getRoute('/invalid/clark/20/');
+					route = router.getRoute('/users/clark/20/asdfasfd');
 					route.should.be(null);
+				});
+
+				it('should match a route if the beginning path is valid',{
+					var route;
+					router.add({
+						path: '/users/:user/:id',
+						allow: true,
+
+					});
+					
+					route = router.getRoute('/users/clark/20/asdfasfd');
+					route.should.not.be(null);
+					route.params['user'].should.be('clark');
+					route.params['id'].should.be('20');
+					trace(route.params);
 				});
 			});
 		

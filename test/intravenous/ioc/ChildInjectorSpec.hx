@@ -16,7 +16,7 @@ class ChildInjectorSpec extends buddy.BuddySuite
 				child.parent = parent;
 			};
 
-			before({
+			beforeEach({
 				iv = new IV();
 			});
 
@@ -76,8 +76,8 @@ class ChildInjectorSpec extends buddy.BuddySuite
 				var childInjector = new IV(iv),
 					result = childInjector.getInstance(InjectionMock);
 
-					(result == null).should.be(true);
-			});{}
+					(result).should.be(null);
+			});
 		});
 	}
 }

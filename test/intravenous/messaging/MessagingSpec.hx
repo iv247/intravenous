@@ -1,27 +1,32 @@
 package intravenous.messaging;
 
-import intravenous.messaging.MessageProcessor;
-import intravenous.ioc.IV;
 import intravenous.ioc.IInjector;
-import intravenous.messaging.mock.MockCommand;
-import intravenous.messaging.mock.Message;
+import intravenous.ioc.IV;
 import intravenous.messaging.mock.*;
-import intravenous.messaging.mock.MockCommandOrder;
 import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.MockAsyncCommand;
+import intravenous.messaging.mock.MockCommand;
+import intravenous.messaging.mock.MockCommandOrder;
+import intravenous.messaging.mock.MockCommandOrder;
+import intravenous.messaging.mock.RemoveFromSequenceMock;
 
 using buddy.Should;
-@:access(intravenous.messaging.MessageProcessor)
+@:access(intravenous.messaging.IVMessageProcessor)
 class MessagingSpec extends buddy.BuddySuite
 {
 
-	public var processor: MessageProcessor;
+	public var processor:IVMessageProcessor;
 	public var injector : IInjector;
 
 	public function new(){
 		describe("Messaging", {
-			before({
+			beforeEach({
 				injector = new IV();
-				processor = new MessageProcessor(injector);
+				processor = new IVMessageProcessor(injector);
 				MockCommand.count = 0;
 				IV.extendIocTo('command',processor.processMeta);
 				IV.extendIocTo('commandComplete',processor.processMeta);
@@ -55,7 +60,7 @@ class MessagingSpec extends buddy.BuddySuite
 				var controllerToBeRemoved:intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved;
 				var controller : intravenous.messaging.mock.RemoveFromSequenceMock.Controller;
 				
-				before({
+				beforeEach({
 					message = new RemoveFromSequenceMock();
 					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.Command);
 					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.CommandToBeRemoved);
@@ -88,7 +93,7 @@ class MessagingSpec extends buddy.BuddySuite
 			describe("command classes",{
 				var message;
 
-				before({
+				beforeEach({
 					message = new Message();
 					processor.mapCommand(MockCommand);
 				});
@@ -112,7 +117,7 @@ class MessagingSpec extends buddy.BuddySuite
 				});
 
 				describe("execution order",{
-					before({
+					beforeEach({
 						var mock = injector.instantiate(MockCommandOrder);
 
 						message = new Message();
@@ -196,7 +201,7 @@ class MessagingSpec extends buddy.BuddySuite
 
 			describe("command flow utilizing all features", {
 				var message;
-				before({
+				beforeEach({
 					var controller = injector.instantiate(FullMessageFlowController);
 
 					message = new FullMessageFlow();

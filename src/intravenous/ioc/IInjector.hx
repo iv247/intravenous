@@ -16,8 +16,7 @@ interface IInjector {
     	whenType:Injectable<Enum<T>, Class<T>>, 
     	typeToCreate:Injectable<Enum<T>, Class<T>>, 
     	?id:String, 
-    	?enumCtor:String 
-    ):Void;
+    	?enumCtor:String ):Void;
 
     /**
         Map a type of class or enum to be created and persisted  after the first request for injection
@@ -26,8 +25,7 @@ interface IInjector {
     	whenType:Injectable<Enum<T>, Class<T>>, 
     	instanceType:Injectable<Enum<T>, Class<T>>, 
     	?id : String, 
-    	?enumCtor : String
-    ):Void;
+    	?enumCtor : String):Void;
 
     /**
         Map an Object or Enum Value to a compatible type

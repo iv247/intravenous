@@ -9,7 +9,7 @@ class PostInjectionSpec extends buddy.BuddySuite {
 		var iv:IV;
 
 		describe('IV, after injection into objects, ',{
-			before({
+			beforeEach({
 				iv = new IV();
 
 			});

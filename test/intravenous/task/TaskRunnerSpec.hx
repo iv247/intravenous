@@ -11,14 +11,26 @@ class TaskRunnerSpec extends BuddySuite {
 		var model:TaskModel;
 
 		describe('TaskRunner', {
-			before({
+			beforeEach({
 				model = {tasks: new Array<String>()};
 			});
 
 			it('should throw an error if executed more than once', {
 				runner = new Sequential();
-				runner.execute(model);
-				runner.execute.bind(model).should.throwType(String);
+				#if !php
+					runner
+						.execute(model)
+						.execute.bind(model).should.throwType(String);
+				#else
+					try {
+						runner
+						.execute(model)
+						.execute.bind(model).should.throwType(String);
+					} 
+					catch(error:String){
+						error.should.beType(String);
+					}	
+				#end
 			});
 
 			it('should use injector if one is supplied',{
@@ -28,17 +40,20 @@ class TaskRunnerSpec extends BuddySuite {
 				injector.mapValue(intravenous.ioc.IV,injector);
 
 				runner = new Sequential(injector);
-				runner.add(MockTask);
-				runner.execute(model);
+				runner
+					.add(MockTask)
+					.execute(model);
 
 				model.hasInjection.should.be(true);
 			});
 
 			it('should support classes with an execute method',{
 				runner = new Sequential();
-				runner.add(MockTask);
-				runner.add(MockTask2);
-				runner.execute(model);
+				runner
+					.add(MockTask)
+					.add(MockTask2)
+					.execute(model);
+					
 				model.tasks.should.containExactly(['task1','task2']);
 			});
 
@@ -215,22 +230,21 @@ class TaskRunnerSpec extends BuddySuite {
 
 				it('should deliver all task faults on completion', {
 					var asyncTask = new MockAsyncTask();
-					var asyncTask2 = new MockAsyncTask();
+					var asyncTasktwo = new MockAsyncTask();
 					var taskResult;
-
 					runner = new Parallel();
 
-					runner.add(MockTask)
+					runner
 						.add(asyncTask)
-						.add(asyncTask2)
-						.execute(model)
+						.add(asyncTasktwo)
 						.onComplete(function(result){
 							taskResult = result;
-						}
-					);
+						})
+						.execute(model);
 
 					asyncTask.fault('error1');
-					asyncTask2.fault('error2');
+					asyncTasktwo.fault('error2');
+
 					taskResult.faults.length.should.be(2);
 
 					taskResult.faults[0].data.should.be(model);
@@ -238,7 +252,6 @@ class TaskRunnerSpec extends BuddySuite {
 
 					taskResult.faults[1].data.should.be(model);
 					taskResult.faults[1].fault.should.be('error2');
-
 				});
 
 			});
@@ -271,6 +284,10 @@ class MockTask2 extends MockTask {
 
 class MockAsyncTask extends MockTask {
 	var model:TaskModel;
+
+	public function new(){
+		super();
+	}
 
 	public var done:?Dynamic->Void;
 

@@ -1,28 +1,34 @@
-
 package intravenous;
 
-import intravenous.ioc.IV;
-import intravenous.view.View;
+import intravenous.configuration.Configuration;
+import intravenous.ioc.IInjector;
 import intravenous.messaging.MessageProcessor;
-import intravenous.view.ViewController;
+import intravenous.view.View;
 
-class Context
-{
-	public var injector(default,null) : IV;
-	public var initialized(default,null) : Bool;
-	public var messageProcessor(default,null):MessageProcessor;
-	public var app(default,null):View;
+@:allow(Configuration)
+class Context {
+
+	public var injector(default, null):IInjector;
+	public var initialized(default, set):Bool;
+	public var messageProcessor(default, null):MessageProcessor;
+	public var app(default, null):View;
+
+	var configuration:Configuration;
 
 	/**
 		Creates a new context, optionally initializing on instantiation.
 	**/
-	public function new (?mainView : View, ?autostart : Bool = true) {
+
+	public function new(appConfig:Configuration, ?mainView:View, ?autostart:Bool = true) {
 		app = mainView;
 
-		if(autostart){
+		configuration = appConfig;
+
+		if (autostart) {
 			initialize();
 		}
 	}
+
 	/**
 		Initializes context by:
 
@@ -30,41 +36,35 @@ class Context
 		 * Settting the default configuration if one has not been defined;
 		 * Sets initialized to true;
 	**/
-	public function initialize() : Void {
-		if(injector == null){
-			injector = new IV();
+
+	public function initialize() {
+		if (initialized) {
+			throw 'Context has already been initialized';
 		}
-		configureMessaging();
-		configureViewHandling();
+		configuration.configure(this);
+		injector.injectInto(app);
 		initialized = true;
-	}
-	/**
-		Sets up Command/Messaging feature set
-	**/
-	public function configureMessaging() : Void {
-		messageProcessor = new MessageProcessor(injector);
-		IV.addExtension(MessageProcessor.DISPATCHER_META,MessageProcessor.getDispatcher);
-		IV.extendIocTo("command",messageProcessor.processMeta);
-		IV.extendIocTo("commandComplete",messageProcessor.processMeta);
-		injector.mapValue(MessageProcessor,messageProcessor);
+		messageProcessor.dispatch(new ContextInitialized());
 	}
 
-	public function configureViewHandling() : Void {
-		var viewController;
-		viewController = injector.instantiate(ViewController);
-		injector.mapValue(ViewController,viewController);
-		injector.injectInto(app);
+	public function set_initialized(v:Bool) {
+		initialized = v;
+
+		return initialized;
 	}
 
 	/**
 		Map a command to be created an executed when the commands message type is dispatched
 	**/
-	public function mapCommand(commandClass : Class<Dynamic>) : Void {
+
+	public function mapCommand<T>(commandClass:Class<T>) {
 		messageProcessor.mapCommand(commandClass);
-
 	}
 
-	public function mapView(view : Class<View>, mediator : Class<Dynamic>) : Void {
-		
-	}
+	// public function mapView(view : Class<View<Dynamic>>, mediator : Class<Dynamic>) {
+
+	// }
+}
+
+class ContextInitialized {public function new() {}
 }

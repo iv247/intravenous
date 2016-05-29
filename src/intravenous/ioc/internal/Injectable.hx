@@ -36,25 +36,25 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 		return type;    
 	}
 
-	@:from 
-	public static function fromDynamic(v:Dynamic){
-		var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = null;
+	// @:from 
+	// public static function fromDynamic(v:Dynamic){
+	// 	var inj:Injectable<Enum<Dynamic>,Class<Dynamic>> = null;
 
-		if(IS_AN_ENUM(v)){
-			inj = Type.resolveEnum(Type.getEnumName(v));
-		}
-		else if (IS_A_CLASS(v)) {
-			inj = Type.resolveClass(Type.getClassName(v));
-		}
+	// 	if(IS_AN_ENUM(v)){
+	// 		inj = Type.resolveEnum(Type.getEnumName(v));
+	// 	}
+	// 	else if (IS_A_CLASS(v)) {
+	// 		inj = Type.resolveClass(Type.getClassName(v));
+	// 	}
 		
-		if(inj == null && Std.is(v,String)) {
-			inj = Std.is(v,String) ? fromString(v) : null;
-		}else if(inj == null){
-			trace('$v is an invalid type');
-		}
+	// 	if(inj == null && Std.is(v,String)) {
+	// 		inj = Std.is(v,String) ? fromString(v) : null;
+	// 	}else if(inj == null){
+	// 		trace('$v is an invalid type');
+	// 	}
 
-		return inj; 
-	}
+	// 	return inj; 
+	// }
 
 	public function isClass():Bool {
 		return IS_A_CLASS(this);
