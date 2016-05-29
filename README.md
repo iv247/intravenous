@@ -1,7 +1,7 @@
 
 #OVERVIEW
 
-Originally started as a learning exercise for Haxe development. The API, structure, and license of this project is subject to change. Look into the more mature [mmvc](http://github.com/massiveinteractive/mmvc) and [minject](http://github.com/massiveinteractive/minject) by Massive Interactive if you are looking for a more stable library.
+Originally started as a learning exercise for Haxe development. The API and structure of this project is subject to change. Look into the more mature [mmvc](http://github.com/massiveinteractive/mmvc) and [minject](http://github.com/massiveinteractive/minject) by Massive Interactive if you are looking for a more stable library.
 
 There are plans to release to Haxelib in the future but a few more features and a solid build/release process & documentation will have to be put in place first. 
 
