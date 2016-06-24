@@ -79,7 +79,7 @@ class IVMessageProcessor implements MessageProcessor {
     **/
     public function deregister(o:Dynamic){
         var type = Type.getClass(o),
-            fields = Type.getClassFields(type),
+            // fields = Type.getClassFields(type),
             meta = Meta.getFields(type),
             fields = Reflect.fields(meta),
             fieldMeta,

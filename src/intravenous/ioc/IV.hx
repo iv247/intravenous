@@ -152,10 +152,18 @@ class IV implements IInjector {
             isFunction,
             postMethods = new Map<String,Dynamic>();
 
-        while(type != null){
-         
-            fields = Meta.getFields(type);        
+        while(type != null){            
 
+            // #if !python
+               fields = Meta.getFields(type); 
+            // #else
+            //     try{
+            //         fields = Meta.getFields(type); 
+            //     }catch(e:Dynamic){
+            //         fields = null;
+            //     }
+            // #end
+            
             for(field in Reflect.fields(fields)){
 
                 if(field == "_"){
@@ -189,7 +197,7 @@ class IV implements IInjector {
                 callExtensions(metaField,object,ExtensionType.Property,field); 
             }
 
-            type = Type.getSuperClass(type); 
+            type = Type.getSuperClass(type);
         }
 
         for(postMethod in postMethods){

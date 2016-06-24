@@ -1,6 +1,6 @@
 package intravenous.ioc.internal;
 
-abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T1 from T2  to T1 to T2 {
+abstract Injectable <T : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from T from T2  to T to T2 {
 
 	static inline public function IS_AN_ENUM(v:Dynamic):Bool {
 		#if cpp
@@ -24,16 +24,14 @@ abstract Injectable <T1 : (Enum<Dynamic>), T2 : (Class<Dynamic>)> (Dynamic) from
 	@:from 
 	public static function fromString(path:String) {
 		var classType = Type.resolveClass(path);
-		var type : Injectable<Enum<Dynamic>,Class<Dynamic>>;
 		
 		if(classType != null){
-			type = classType;
+			return cast classType;
 		}
 		else{
-			type = Type.resolveEnum(path);
+			return cast Type.resolveEnum(path);
 		} 
-
-		return type;    
+   
 	}
 
 	// @:from 

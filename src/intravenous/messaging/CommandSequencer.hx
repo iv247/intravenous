@@ -106,8 +106,10 @@ class CommandSequencer implements Sequencer
 			switch(Type.typeof(ref.o)){
 				case TObject:
 					//ref.o is a class in this case
-					instance = (injector != null) ? injector.instantiate(cast ref.o) : Type.createInstance(cast ref.o ,[]);
+					instance =  Type.createInstance(cast ref.o ,[]);
+					injector.injectInto(instance);
 					Reflect.callMethod( instance , Reflect.field(instance,ref.f), currentArgs);
+
 				case TClass(c):
 					Reflect.callMethod(ref.o, Reflect.field(ref.o, ref.f), currentArgs);
 				case _: //todo: throw error

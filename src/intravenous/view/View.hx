@@ -1,17 +1,17 @@
-
 package intravenous.view;
 
+@:keepInit
 interface View
 {
-	var viewElement(get,null) : Dynamic;
+	// var viewElement(get,null) : Dynamic;
 	
-	var parent(default,null):View;
+	// var parent(default,null):View;
 	
-	var children(get,null):Dynamic;
+	// var children(get,null):Dynamic;
 	
-	public function addView(view:Dynamic):Dynamic;
+	// public function addView(view:Dynamic):Dynamic;
 
-	public function removeView():Dynamic;
+	// public function removeView():Dynamic;
 
 	function create():Void;
 	function added():Void;

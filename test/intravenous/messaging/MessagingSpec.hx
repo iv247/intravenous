@@ -2,15 +2,10 @@ package intravenous.messaging;
 
 import intravenous.ioc.IInjector;
 import intravenous.ioc.IV;
-import intravenous.messaging.mock.*;
-import intravenous.messaging.mock.FullMessageFlow;
-import intravenous.messaging.mock.FullMessageFlow;
-import intravenous.messaging.mock.FullMessageFlow;
-import intravenous.messaging.mock.FullMessageFlow;
+import intravenous.messaging.mock.Message;
 import intravenous.messaging.mock.FullMessageFlow;
 import intravenous.messaging.mock.MockAsyncCommand;
 import intravenous.messaging.mock.MockCommand;
-import intravenous.messaging.mock.MockCommandOrder;
 import intravenous.messaging.mock.MockCommandOrder;
 import intravenous.messaging.mock.RemoveFromSequenceMock;
 
@@ -33,13 +28,13 @@ class MessagingSpec extends buddy.BuddySuite
 			});
 
 			describe("objects with command methods", {
+
 				it("should call methods annotated with command", {
 					var message = new Message();
 					injector.mapDynamic(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
 					var mock = injector.instantiate( intravenous.messaging.mock.MockController  );
 					processor.dispatch(message);
 					message.commandCalled.should.be(true);
-
 				});
 
 				it("should remove objects waiting for dispatched objects",{
@@ -102,6 +97,12 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.dispatch(message);
 					processor.dispatch(message);
 					MockCommand.count.should.be(2);
+				});
+
+				it('should have properties injected into them', {
+					injector.mapValue(String, "some value");
+					processor.dispatch(message);
+					message.injectedValue.should.be("some value");
 				});
 
 				it("should call the execute method",{
@@ -198,6 +199,7 @@ class MessagingSpec extends buddy.BuddySuite
 					MockCommand.message.should.be(message);
 				});
 			});
+
 
 			describe("command flow utilizing all features", {
 				var message;

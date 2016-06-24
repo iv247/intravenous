@@ -3,7 +3,6 @@ package intravenous;
 import buddy.BuddySuite;
 
 using buddy.Should;
-
 class RouterSpec extends BuddySuite {
 	public function new(){
 		describe('Router',{

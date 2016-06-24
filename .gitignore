@@ -7,8 +7,4 @@ dist
 *.iws
 *.idea
 .npm-debug.log
-
-test/iv247/iv/*Test.hx
-
 node_modules
-                       .

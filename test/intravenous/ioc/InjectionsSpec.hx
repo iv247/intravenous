@@ -5,8 +5,11 @@ import intravenous.ioc.mock.*;
 import intravenous.ioc.mock.MockConstructorArg;
 import intravenous.ioc.mock.InjectionMock;
 import intravenous.ioc.IV;
+import buddy.CompilationShould;
+
 
 using buddy.Should;
+
 class InjectionsSpec extends BuddySuite {
     public function new() {
         describe("IInjector implementation", {
@@ -168,6 +171,12 @@ class InjectionsSpec extends BuddySuite {
 
                 });
 
+            });
+
+            describe('Compilation errors', {
+                it('should occur when trying to map incompatible classes', {
+                    CompilationShould.failFor(iv.mapDynamic(InjectedObject,MockObject));
+                });
             });
         });
     }
