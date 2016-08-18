@@ -3,7 +3,6 @@ package intravenous.task;
 import intravenous.ioc.IInjector;
 import intravenous.task.TaskDef;
 
-
 @:enum
 abstract Execution(String) {
 	var PARALLEL = 'parallel';
