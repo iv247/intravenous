@@ -28,7 +28,7 @@ class TaskRunnerSpec extends BuddySuite {
 			it('should use injector if one is supplied',{
 				var injector = new intravenous.ioc.IV();
 
-				injector.mapDynamic(MockTask,MockTask);
+				injector.mapTransient(MockTask,MockTask);
 				injector.mapValue(intravenous.ioc.IV,injector);
 
 				new Sequential(injector)

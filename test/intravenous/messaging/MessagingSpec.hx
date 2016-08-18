@@ -31,7 +31,7 @@ class MessagingSpec extends buddy.BuddySuite
 
 				it("should call methods annotated with command", {
 					var message = new Message();
-					injector.mapDynamic(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
+					injector.mapTransient(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
 					var mock = injector.instantiate( intravenous.messaging.mock.MockController  );
 					processor.dispatch(message);
 					message.commandCalled.should.be(true);
@@ -41,7 +41,7 @@ class MessagingSpec extends buddy.BuddySuite
 					var message = new Message(),
 						mock;
 
-					injector.mapDynamic(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
+					injector.mapTransient(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
 					mock = injector.instantiate( intravenous.messaging.mock.MockController  );
 					processor.deregister(mock);
 					processor.dispatch(message);
@@ -60,9 +60,9 @@ class MessagingSpec extends buddy.BuddySuite
 					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.Command);
 					processor.mapCommand(intravenous.messaging.mock.RemoveFromSequenceMock.CommandToBeRemoved);
 
-					injector.mapSingleton( intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved,
+					injector.mapPersistent( intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved,
 						intravenous.messaging.mock.RemoveFromSequenceMock.ControllerToBeRemoved);
-					injector.mapSingleton( intravenous.messaging.mock.RemoveFromSequenceMock.Controller,
+					injector.mapPersistent( intravenous.messaging.mock.RemoveFromSequenceMock.Controller,
 						intravenous.messaging.mock.RemoveFromSequenceMock.Controller);
 
 					controller = injector.getInstance(intravenous.messaging.mock.RemoveFromSequenceMock.Controller);

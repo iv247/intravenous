@@ -38,7 +38,7 @@ class EnumSupportSpec extends BuddySuite
 	        		mockEnum;
 
 	        	iv.mapValue(InjectedObject,obj1,"injectedObjectId");
-	        	iv.mapDynamic(InjectedObject,InjectedObject);
+	        	iv.mapTransient(InjectedObject,InjectedObject);
 
 	        	mockEnum = iv.instantiate(MockEnum,"MockEnumCtor");
 	        	
@@ -55,9 +55,9 @@ class EnumSupportSpec extends BuddySuite
 	        	var mockEnum, injectionMockWithEnum:InjectionMockWEnum, mockEnumWCtor;
 
 	        	iv.mapValue(MockEnum, MockEnum.MockEnumValue);
-	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
+	        	iv.mapTransient(InjectionMockWEnum,InjectionMockWEnum);
 
-	        	iv.mapSingleton(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
+	        	iv.mapPersistent(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
 	        	
 	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
 
@@ -70,8 +70,8 @@ class EnumSupportSpec extends BuddySuite
 	        it("should inject enums into class constructors",{
 	        	var injectionMockWithEnum:InjectionMockWEnum, mockEnumWCtor;
 
-	        	iv.mapDynamic(InjectionMockWEnum,InjectionMockWEnum);
-	        	iv.mapSingleton(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
+	        	iv.mapTransient(InjectionMockWEnum,InjectionMockWEnum);
+	        	iv.mapPersistent(MockEnum,MockEnum,"injectEnumCtorId","MockEnumCtor");
 
 	        	injectionMockWithEnum = iv.getInstance(InjectionMockWEnum);
 	        	mockEnumWCtor = iv.getInstance(MockEnum,"injectEnumCtorId");
