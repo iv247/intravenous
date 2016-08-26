@@ -5,7 +5,7 @@ import intravenous.ioc.IInjector;
 import intravenous.messaging.MessageProcessor;
 import intravenous.view.View;
 
-@:allow(Configuration)
+@:allow(intravenous.configuration.Configuration)
 class Context {
 
 	public var injector(default, null):IInjector;
