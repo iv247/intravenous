@@ -3,7 +3,7 @@ package intravenous;
 typedef RouteMeta = {
 	path : String,
 	?view:Class<Dynamic>,
-	?allow: Bool,
+	?splat: Bool,
 	?data:Dynamic
 };
 
@@ -45,8 +45,6 @@ class Route {
 		meta = s.unserialize();
 	}
 }
-
-//matches the path given and allows anything after
 
 class Router {
 
@@ -138,7 +136,7 @@ class Router {
             content = varMatch.matchedRight();
            
             if(content==''){
-            	stringForRegEx+= meta.allow ? "/.*": "/$";
+            	stringForRegEx+= meta.splat ? "/.*": "/$";
             }
         }
 

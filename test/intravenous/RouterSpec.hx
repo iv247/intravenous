@@ -143,7 +143,7 @@ class RouterSpec extends BuddySuite {
 					var route;
 					router.add({
 						path: '/users/:user/:id',
-						allow: false
+						splat: false
 					});
 					
 					route = router.getRoute('/users/clark/20/asdfasfd');
@@ -154,15 +154,13 @@ class RouterSpec extends BuddySuite {
 					var route;
 					router.add({
 						path: '/users/:user/:id',
-						allow: true,
-
+						splat: true,
 					});
 					
 					route = router.getRoute('/users/clark/20/asdfasfd');
 					route.should.not.be(null);
 					route.params['user'].should.be('clark');
 					route.params['id'].should.be('20');
-					trace(route.params);
 				});
 			});
 		
