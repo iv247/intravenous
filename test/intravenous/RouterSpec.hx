@@ -162,7 +162,6 @@ class RouterSpec extends BuddySuite {
 					route.should.not.be(null);
 					route.params['user'].should.be('clark');
 					route.params['id'].should.be('20');
-					trace(route.params);
 				});
 			});
 		
