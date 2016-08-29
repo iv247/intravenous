@@ -9,7 +9,7 @@ class RouteController {
 	@inject public var router:Router;
 	@inject public var dispatcher:MessageProcessor;
 
-	var currentRoute:Route;
+	var currentRoute(default,null):Route;
 
 	public function new(){};
 
@@ -21,8 +21,6 @@ class RouteController {
 
 	@post
 	public function init() {
-		//if js
-		//listen fo popstate
 		#if (js && !nodejs)
 			var location = js.Browser.window.location;
 			history = js.Browser.window.history;
