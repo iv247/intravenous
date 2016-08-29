@@ -1,18 +1,22 @@
 var page = require('webpage').create();
+var success = /, (0 failures,)/igm;
+var fail= /, ([1-9]+ failures,)/igm;
+page.onConsoleMessage = function(msg) { 
+	console.log(msg);
+    
+    if(success.test(msg)){
+    	phantom.exit(0);
+    }
 
+    if(fail.test(msg)){
+    	phantom.exit(1);
+    }
+};
+
+page.clearMemoryCache();
 page.open('build/js/index.html', function(status) {
     if (status !== 'success') {
         console.log('Error: Unable to access network!');
 		phantom.exit(1);
-    } else {
-		setInterval(function() {
-			var result = page.evaluate(function() { return document.body.innerText; });
-			if(!/\d+ specs, \d+ failures, \d+ pending/.test(result)) return;
-
-			console.log(result);
-
-			var failed = /\d+ specs, [1-9]\d* failures, \d+ pending/.test(result);
-			phantom.exit(failed ? 1 : 0);
-		}, 100);
-    }
+    } 
 });
