@@ -154,15 +154,15 @@ class IV implements IInjector {
 
         while(type != null){            
 
-            // #if !python
+            #if !python
                fields = Meta.getFields(type); 
-            // #else
-            //     try{
-            //         fields = Meta.getFields(type); 
-            //     }catch(e:Dynamic){
-            //         fields = null;
-            //     }
-            // #end
+            #else
+                try{
+                    fields = Meta.getFields(type); 
+                }catch(e:Dynamic){
+                    fields = null;
+                }
+            #end
             
             for(field in Reflect.fields(fields)){
 
