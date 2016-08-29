@@ -9,7 +9,7 @@ import intravenous.view.View;
 class Context {
 
 	public var injector(default, null):IInjector;
-	public var initialized(default, set):Bool;
+	public var initialized(default, null):Bool;
 	public var messageProcessor(default, null):MessageProcessor;
 	public var app(default, null):View;
 
@@ -19,7 +19,8 @@ class Context {
 		Creates a new context, optionally initializing on instantiation.
 	**/
 
-	public function new(appConfig:Configuration, ?mainView:View, ?autostart:Bool = true) {
+	public function new(appConfig:Configuration, ?mainView:View, ?autostart:Bool = true) 
+	{
 		app = mainView;
 
 		configuration = appConfig;
@@ -37,7 +38,8 @@ class Context {
 		 * Sets initialized to true;
 	**/
 
-	public function initialize() {
+	public function initialize() 
+	{
 		if (initialized) {
 			throw 'Context has already been initialized';
 		}
@@ -47,17 +49,12 @@ class Context {
 		messageProcessor.dispatch(new ContextInitialized());
 	}
 
-	public function set_initialized(v:Bool) {
-		initialized = v;
-
-		return initialized;
-	}
-
 	/**
 		Map a command to be created an executed when the commands message type is dispatched
 	**/
 
-	public function mapCommand<T>(commandClass:Class<T>) {
+	public function mapCommand<T>(commandClass:Class<T>) 
+	{
 		messageProcessor.mapCommand(commandClass);
 	}
 
@@ -66,5 +63,4 @@ class Context {
 	// }
 }
 
-class ContextInitialized {public function new() {}
-}
+class ContextInitialized { public function new() {} }
