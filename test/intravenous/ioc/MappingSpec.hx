@@ -75,12 +75,12 @@ class MappingSpec extends BuddySuite {
                 });
             });
 
-            describe ("dynamic types", {
+            describe ("transient types", {
 
                 it ("should be mapped to a compatible type", {
                     var mock;
 
-                    iv.mapDynamic(IMockObject,MockObject);
+                    iv.mapTransient(IMockObject,MockObject);
                     mock = iv.getInstance(IMockObject);
 
                     Std.is(mock,IMockObject).should.be( true );
@@ -89,8 +89,8 @@ class MappingSpec extends BuddySuite {
                 it ("should be mapped to a compatible type based on an id", {
                     var mock, foo;
 
-                    iv.mapDynamic(IMockObject,Foo);
-                    iv.mapDynamic(IMockObject,MockObject,"mockId");
+                    iv.mapTransient(IMockObject,Foo);
+                    iv.mapTransient(IMockObject,MockObject,"mockId");
 
                     mock = iv.getInstance(IMockObject,"mockId");
                     foo = iv.getInstance(IMockObject);
@@ -102,8 +102,8 @@ class MappingSpec extends BuddySuite {
                 it ("should be instantiated on every request", {
                     var mock, mock2, foo, foo2;
 
-                    iv.mapDynamic(IMockObject,Foo);
-                    iv.mapDynamic(IMockObject,MockObject,"mockId");
+                    iv.mapTransient(IMockObject,Foo);
+                    iv.mapTransient(IMockObject,MockObject,"mockId");
 
                     mock = iv.getInstance(IMockObject,"mockId");
                     mock2 = iv.getInstance(IMockObject,"mockId");
@@ -116,18 +116,18 @@ class MappingSpec extends BuddySuite {
 
             });
 
-            describe ("singleton types", {
+            describe ("persistent types", {
                 it ("should map to a compatible type",{
                      var mock;
-                     iv.mapSingleton(IMockObject, MockObject);
+                     iv.mapPersistent(IMockObject, MockObject);
                      mock = iv.getInstance(IMockObject);
                      Std.is(mock,IMockObject).should.be(true);
                 });
 
                 it ("should map to a compatible type based on an id", {
                     var mock, foo;
-                    iv.mapSingleton(IMockObject, MockObject,"mock");
-                    iv.mapSingleton(IMockObject, Foo,"foo");
+                    iv.mapPersistent(IMockObject, MockObject,"mock");
+                    iv.mapPersistent(IMockObject, Foo,"foo");
                     mock = iv.getInstance(IMockObject,"mock");
                     foo = iv.getInstance(IMockObject,"foo");
 
@@ -140,7 +140,7 @@ class MappingSpec extends BuddySuite {
 
                     Foo.instantiated = false;
 
-                    iv.mapSingleton(Foo, Foo);
+                    iv.mapPersistent(Foo, Foo);
                     foo = iv.getInstance(Foo);
                     Foo.instantiated.should.be(true);
                 });
@@ -148,7 +148,7 @@ class MappingSpec extends BuddySuite {
                 it ("should be the same instance on every request", {
                     var foo:Foo;
 
-                    iv.mapSingleton(Foo, Foo);
+                    iv.mapPersistent(Foo, Foo);
                     foo = iv.getInstance(Foo);
                     foo.should.be(iv.getInstance(Foo)); 
                 });

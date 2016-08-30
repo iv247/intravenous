@@ -12,7 +12,7 @@ interface IInjector {
     /**
         Map a type of class or enum to be created each time it's type is requested for injection 
     **/
-    function mapDynamic<T> ( 
+    function mapTransient<T> ( 
     	whenType:Injectable<Enum<T>, Class<T>>, 
     	typeToCreate:Injectable<Enum<T>, Class<T>>, 
     	?id:String, 
@@ -21,7 +21,7 @@ interface IInjector {
     /**
         Map a type of class or enum to be created and persisted  after the first request for injection
     **/
-    function mapSingleton<T> (
+    function mapPersistent<T> (
     	whenType:Injectable<Enum<T>, Class<T>>, 
     	instanceType:Injectable<Enum<T>, Class<T>>, 
     	?id : String, 

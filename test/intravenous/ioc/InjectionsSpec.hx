@@ -28,7 +28,7 @@ class InjectionsSpec extends BuddySuite {
             it("should instantiate objects with constructor args when constructor is annotated with inject",{
                 var object:MockConstructorArg;
 
-                iv.mapDynamic(MockObject,MockObject);
+                iv.mapTransient(MockObject,MockObject);
                 
                 object = iv.instantiate(MockConstructorArg);
 
@@ -38,8 +38,8 @@ class InjectionsSpec extends BuddySuite {
             it("should use injections id's if available for constructor args", {
                 var mock1, mock2, object:MockConstructorArg.WithId;
 
-                iv.mapSingleton(MockObject,MockObject,"mockId");
-                iv.mapSingleton(MockObject,MockObject,"mockId2");
+                iv.mapPersistent(MockObject,MockObject,"mockId");
+                iv.mapPersistent(MockObject,MockObject,"mockId2");
 
                 mock1 = iv.getInstance(intravenous.ioc.mock.MockObject,"mockId");
                 mock2 = iv.getInstance(intravenous.ioc.mock.MockObject,"mockId2");
@@ -54,7 +54,7 @@ class InjectionsSpec extends BuddySuite {
             it("should inject 'inject' annotated properties on an object if mapping exists",{
                 var object = new InjectionMock();
 
-                iv.mapDynamic(InjectedObject,InjectedObject);
+                iv.mapTransient(InjectedObject,InjectedObject);
                 iv.injectInto(object);
 
                 object.injectedObject.should.not.be(null);
@@ -65,7 +65,7 @@ class InjectionsSpec extends BuddySuite {
             it("should inject 'inject' annotated properties with an id", {
                 var object = new InjectionMock();
 
-                iv.mapDynamic(InjectedObject,InjectedObject,"injectedObjectId");
+                iv.mapTransient(InjectedObject,InjectedObject,"injectedObjectId");
                 iv.injectInto(object);
 
                 object.injectedObjectWithId.should.not.be(null);
@@ -74,7 +74,7 @@ class InjectionsSpec extends BuddySuite {
             it("should inject 'injected' annotated properties defined on a super class", {
                 var subclass = new SubClassInjectionMock();
 
-                iv.mapDynamic(InjectedObject,InjectedObject);
+                iv.mapTransient(InjectedObject,InjectedObject);
 
                 iv.injectInto(subclass);
 
@@ -128,8 +128,8 @@ class InjectionsSpec extends BuddySuite {
                 it("should have their 'inject' annotated properties injected",{
                     var injectionMock:InjectionMock;
 
-                    iv.mapDynamic(InjectedObject,InjectedObject);
-                    iv.mapDynamic(InjectionMock,InjectionMock);
+                    iv.mapTransient(InjectedObject,InjectedObject);
+                    iv.mapTransient(InjectionMock,InjectionMock);
                     injectionMock = iv.getInstance(InjectionMock);
                     injectionMock.injectedObject.should.not.be(null);
                     
@@ -138,7 +138,7 @@ class InjectionsSpec extends BuddySuite {
 
                 it("should not inject properties that are not mapped",{
                     var injectionMock:InjectionMock;
-                    iv.mapDynamic(InjectionMock,InjectionMock);
+                    iv.mapTransient(InjectionMock,InjectionMock);
                     injectionMock = iv.getInstance(InjectionMock);
                     injectionMock.injectedObject.should.be(null);
                 });
@@ -147,7 +147,7 @@ class InjectionsSpec extends BuddySuite {
                     var injectedObjectWithId = new InjectedObject(),
                         injectionMock;
 
-                    iv.mapDynamic(InjectionMock,InjectionMock);
+                    iv.mapTransient(InjectionMock,InjectionMock);
                     iv.mapValue(InjectedObject,injectedObjectWithId, "injectedObjectId");
 
                     injectionMock = iv.getInstance(InjectionMock);
@@ -159,10 +159,10 @@ class InjectionsSpec extends BuddySuite {
                 it("should have constructor args injected when instantiated",{
                     var ctorInjectionMock:CtorInjectionMock;
 
-                    iv.mapDynamic(CtorInjectionMock,CtorInjectionMock);
+                    iv.mapTransient(CtorInjectionMock,CtorInjectionMock);
 
-                    iv.mapDynamic(InjectedObject,InjectedObject,"injectedObjectId");
-                    iv.mapDynamic(InjectedObject,InjectedObject);
+                    iv.mapTransient(InjectedObject,InjectedObject,"injectedObjectId");
+                    iv.mapTransient(InjectedObject,InjectedObject);
 
                     ctorInjectionMock = iv.getInstance(CtorInjectionMock);
 
@@ -175,7 +175,7 @@ class InjectionsSpec extends BuddySuite {
 
             describe('Compilation errors', {
                 it('should occur when trying to map incompatible classes', {
-                    CompilationShould.failFor(iv.mapDynamic(InjectedObject,MockObject));
+                    CompilationShould.failFor(iv.mapTransient(InjectedObject,MockObject));
                 });
             });
         });

@@ -48,7 +48,7 @@ class IV implements IInjector {
         injectionMap.set( whenType.getName() + id, Value(value) );       
     } 
 
-    public function mapDynamic<T> (whenType :  Injectable< Enum<T>,Class<T>>,
+    public function mapTransient<T> (whenType :  Injectable< Enum<T>,Class<T>>,
                                    createType : Injectable< Enum<T>,Class<T>>,
                                    ?id : String = "",
                                    ?constr : String) : Void {
@@ -58,7 +58,7 @@ class IV implements IInjector {
         injectionMap.set( key, value );
     }
 
-    public function mapSingleton<T> (whenType : Injectable<Enum<T>,Class<T>>,
+    public function mapPersistent<T> (whenType : Injectable<Enum<T>,Class<T>>,
                                      getInstance : Injectable<Enum<T>,Class<T>>,
                                      ?id : String = "",
                                      ?constr : String) {
@@ -154,15 +154,15 @@ class IV implements IInjector {
 
         while(type != null){            
 
-            // #if !python
+            #if !python
                fields = Meta.getFields(type); 
-            // #else
-            //     try{
-            //         fields = Meta.getFields(type); 
-            //     }catch(e:Dynamic){
-            //         fields = null;
-            //     }
-            // #end
+            #else
+                try{
+                    fields = Meta.getFields(type); 
+                }catch(e:Dynamic){
+                    fields = null;
+                }
+            #end
             
             for(field in Reflect.fields(fields)){
 
