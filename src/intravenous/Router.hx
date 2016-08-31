@@ -1,4 +1,5 @@
 package intravenous;
+using Lambda;
 
 typedef RouteMeta = {
 	path : String,
@@ -14,7 +15,6 @@ class Route {
 	public var query(default,null):Map<String,String>;
 	public var meta(default,null): RouteMeta;
 	public var urlExpString(default,null):String;
-
 
 	public function new(expString, paramNamesArray, paramsMap, queryMap, metaData){
 		urlExp = new EReg(expString,'g');
@@ -37,7 +37,7 @@ class Route {
 
 	@:keep
 	public function hxUnserialize(s:haxe.Unserializer){
-		urlExp =  new EReg(s.unserialize(),'g'); 
+		urlExp = new EReg(s.unserialize(),'g'); 
 		urlExpString = s.unserialize();
 		paramNames = s.unserialize();
 		params = s.unserialize();
@@ -46,7 +46,10 @@ class Route {
 	}
 }
 
+
+
 class Router {
+
 
 	public var routes:Array<Route>;
 
@@ -96,27 +99,28 @@ class Router {
 		}else {
 			return null;
 		}
-
 	}
 
 	/*
 		Returns a Map of name value pairs from a standard query string
 	*/
 	public function getQuery(url:String):Map<String,String> {
-		var query = new Map<String,String>();
 		var regEx = ~/(.*\?)/;
 		var pairRegEx =  ~/(=)/;
 		var pairs = regEx.replace(url,'').split('&');
 
-		for(pair in pairs){
-			if(pairRegEx.match(pair)){
-				query[pairRegEx.matchedLeft()] = pairRegEx.matchedRight();
-			}else{
-				query[pair] = null;
-			}
-		}
-
-		return query;
+		return 
+		pairs.fold(
+			function(pair, queryMap:Map<String,String>){
+				if(pairRegEx.match(pair)){
+					queryMap[pairRegEx.matchedLeft()] = pairRegEx.matchedRight();
+				}else{
+					queryMap[pair] = null;
+				}
+				return queryMap;
+			},
+			new Map<String,String>()
+		);
 	}
 
 	function createRoute(meta:RouteMeta):Route {
