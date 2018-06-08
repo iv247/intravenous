@@ -1,3 +1,2 @@
-./resources/hxml/_base.hxml
 -js build/js/TestMain.js
 -cmd cp -f resources/index.html build/js && phantomjs resources/tests.phantom.js

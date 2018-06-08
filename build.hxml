@@ -1,7 +1,7 @@
+# --each
 ./resources/hxml/_base.hxml
-
-./resources/hxml/neko.hxml
-# ./resources/hxml/node.hxml
+# ./resources/hxml/neko.hxml
+./resources/hxml/node.hxml
 # ./resources/hxml/js.hxml
 # ./resources/hxml/php.hxml
 # ./resources/hxml/cpp.hxml

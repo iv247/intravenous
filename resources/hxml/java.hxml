@@ -1,4 +1,3 @@
-./resources/hxml/_base.hxml
 
 -D no-root
 -java build/java

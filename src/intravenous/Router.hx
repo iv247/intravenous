@@ -70,7 +70,6 @@ class Router {
 	public function getRoute(absPath:String):Route{
 		var params =  new Map<String,String>();
 		var matchedRoute = null;
-		var ex = ~/(\?.*)/;
 		var path;
 		
 		//remove query
@@ -131,8 +130,7 @@ class Router {
 
 		while(varMatch.match(content)){
             var param =  varMatch.matched(0);
-            var left = varMatch.matchedLeft();
-            
+        
             stringForRegEx = StringTools.replace(stringForRegEx,param,'([ \\w|()_"+`~%20-\\[ \\]{}!$^&*,.]*/?)');
             
             paramNames.push(param.substr(1));

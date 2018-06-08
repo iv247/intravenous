@@ -32,7 +32,7 @@ class MessagingSpec extends buddy.BuddySuite
 				it("should call methods annotated with command", {
 					var message = new Message();
 					injector.mapTransient(intravenous.messaging.mock.MockController,intravenous.messaging.mock.MockController );
-					var mock = injector.instantiate( intravenous.messaging.mock.MockController  );
+					injector.instantiate( intravenous.messaging.mock.MockController  );
 					processor.dispatch(message);
 					message.commandCalled.should.be(true);
 				});

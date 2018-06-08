@@ -15,6 +15,7 @@ abstract Parallel<T>(TaskRunner<T>) to TaskRunner<T> to Task  {
 		this = new TaskRunner<T>(Execution.PARALLEL,injector);
 	}
 }
+
 @:forward
 abstract Sequential<T>(TaskRunner<T>) to TaskRunner<T> to Task{
 	public function new<T>(?injector:IInjector){
